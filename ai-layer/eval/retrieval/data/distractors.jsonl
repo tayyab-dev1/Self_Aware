@@ -1,0 +1,481 @@
+{"id": "account.disable", "module": "Security", "content": "Stop an account being signed in to. Everything the person did stays on the record."}
+{"id": "account.reactivate", "module": "Security", "content": "Bring a disabled account back, for somebody returning to the school."}
+{"id": "account.temporary.password.resend", "module": "Security", "content": "Have the system generate and send a fresh temporary password to the contact on the record."}
+{"id": "accounts.read", "module": "Security", "content": "See which accounts exist, where each came from, and which have never been used."}
+{"id": "admission.invite.resend", "module": "Admissions & Inquiry Management", "content": "Resend an admission-form invite the family did not receive, without creating a second one. One step."}
+{"id": "admission.test.correct", "module": "Admissions & Inquiry Management", "content": "Correct a recorded admission test score, with the reason it changed, keeping the previous value. One step, and School Admin only."}
+{"id": "admission.test.mark", "module": "Admissions & Inquiry Management", "content": "Record whether an applicant sat the admission test and, where they did, what they scored. One step, attendance first."}
+{"id": "admission.test.reschedule", "module": "Admissions & Inquiry Management", "content": "Change a saved test date, time or teacher, with the reason it changed, telling the family and both the new and the removed teacher. One step."}
+{"id": "admission.test.schedule", "module": "Admissions & Inquiry Management", "content": "Set the admission test date and time for an applicant and assign the teacher who will conduct it, in one act that tells both the family and the teacher."}
+{"id": "applicant.admit", "module": "Admissions & Inquiry Management", "content": "Admit an applicant the School Admin flagged eligible, which creates the student record, the guardian, the family, the enrolment and the accounts, and sends the credentials. One step, and the largest write in the module."}
+{"id": "applicant.eligibility.flag", "module": "Admissions & Inquiry Management", "content": "Record the School Admin's judgement that an applicant is worth putting to the Principal, or is not, with the reason either way. One step."}
+{"id": "applicant.reject", "module": "Admissions & Inquiry Management", "content": "Reject an applicant after the form and the test, with the reason the family will be told, and close their enquiry. One step."}
+{"id": "application.reject", "module": "HR and payroll", "content": "Record a candidate's rejection with the written explanation sent to them. One step."}
+{"id": "application.shortlist", "module": "HR and payroll", "content": "Draw the shortlist from the applications after the closing date. One step, and only shortlisted candidates are interviewed."}
+{"id": "appointment.letter.accept", "module": "ID cards and certificates", "content": "Record the candidate's acceptance. One step, and it creates no staff record."}
+{"id": "appointment.letter.approve", "module": "ID cards and certificates", "content": "Approve and sign an appointment letter. The configured approver, one step, and it is not yet with the candidate."}
+{"id": "appointment.letter.decline", "module": "ID cards and certificates", "content": "Record that the candidate declined. One step, and recruitment returns to the remaining shortlist."}
+{"id": "appointment.letter.issue", "module": "ID cards and certificates", "content": "Issue an approved letter to the candidate. One step, and it is the moment they may resign elsewhere."}
+{"id": "appointment.letter.prepare", "module": "ID cards and certificates", "content": "Prepare an appointment letter for a selected candidate, carrying the approved salary and the terms. One step, and nothing is issued by it."}
+{"id": "appointment.letter.return", "module": "ID cards and certificates", "content": "Return an appointment letter unapproved, with the reason. One step, and the candidate knows nothing."}
+{"id": "appointment.letter.revise", "module": "ID cards and certificates", "content": "Revise an issued letter, superseding the original with both remaining visible. One step."}
+{"id": "appointment.letter.withdraw", "module": "ID cards and certificates", "content": "Withdraw an issued letter, with the reason. One step, and the candidate may already have resigned elsewhere."}
+{"id": "asset.assign", "module": "Inventory, Assets & Point-of-Sale", "content": "Record who holds an asset, or which room or department it belongs to."}
+{"id": "asset.assignment.history.read", "module": "Inventory, Assets & Point-of-Sale", "content": "Trace where an asset has been and who has held it, from registration to now."}
+{"id": "asset.assignments.read", "module": "Inventory, Assets & Point-of-Sale", "content": "See who holds what, where each asset is, and what is assigned to somebody who is leaving."}
+{"id": "asset.campus.transfer", "module": "Inventory, Assets & Point-of-Sale", "content": "Move an asset to another campus, recorded as a transfer rather than an ordinary reassignment."}
+{"id": "asset.disposal.approve", "module": "Inventory, Assets & Point-of-Sale", "content": "Approve the retirement, having seen what the asset has already cost the school."}
+{"id": "asset.disposal.complete", "module": "Inventory, Assets & Point-of-Sale", "content": "Retire the asset: record any proceeds, post the gain or loss, and take it off the register."}
+{"id": "asset.disposal.raise", "module": "Inventory, Assets & Point-of-Sale", "content": "Raise a disposal against an asset, saying why and how it went. Nothing is retired until it is approved."}
+{"id": "asset.disposal.return", "module": "Inventory, Assets & Point-of-Sale", "content": "Send a disposal back unapproved, with a reason. The asset stays on the register."}
+{"id": "asset.disposals.read", "module": "Inventory, Assets & Point-of-Sale", "content": "See what has left the school, how, for how much, and what is waiting to be retired."}
+{"id": "asset.history.read", "module": "Inventory, Assets & Point-of-Sale", "content": "See what has been changed about an asset since it was registered, and by whom."}
+{"id": "asset.maintenance.read", "module": "Inventory, Assets & Point-of-Sale", "content": "See what an asset has cost to keep, what has been done to it, and what state it is in now."}
+{"id": "asset.maintenance.record", "module": "Inventory, Assets & Point-of-Sale", "content": "Record servicing, a repair, an inspection or a change of condition against an asset, with what it cost."}
+{"id": "asset.reassign", "module": "Inventory, Assets & Point-of-Sale", "content": "Move an asset to a different room, person or department — with a reason where it is being taken from a person."}
+{"id": "asset.register", "module": "Inventory, Assets & Point-of-Sale", "content": "Put a longer-lived item on the asset register when it is bought, with the voucher that paid for it."}
+{"id": "asset.update", "module": "Inventory, Assets & Point-of-Sale", "content": "Correct what the register says about an asset, with the change recorded against whoever made it."}
+{"id": "asset.verification.correction.approve", "module": "Inventory, Assets & Point-of-Sale", "content": "Approve the correction. This is what actually changes the register."}
+{"id": "asset.verification.correction.propose", "module": "Inventory, Assets & Point-of-Sale", "content": "Propose the correction that resolves an exception, with the reason. It applies only once approved."}
+{"id": "asset.verification.correction.return", "module": "Inventory, Assets & Point-of-Sale", "content": "Send a proposed correction back unapproved, with a reason. The register stays as it was."}
+{"id": "asset.verification.record", "module": "Inventory, Assets & Point-of-Sale", "content": "Record what was found: present and in what condition, or an exception saying what is wrong."}
+{"id": "asset.verification.schedule", "module": "Inventory, Assets & Point-of-Sale", "content": "Schedule a physical check of the register against reality, over a room, a person, a department or a campus."}
+{"id": "asset.verification.start", "module": "Inventory, Assets & Point-of-Sale", "content": "Begin the verification. The verifier cannot be the custodian of what is being checked."}
+{"id": "asset.verification.submit", "module": "Inventory, Assets & Point-of-Sale", "content": "Submit the verification, so its exceptions can be resolved."}
+{"id": "asset.verifications.read", "module": "Inventory, Assets & Point-of-Sale", "content": "See what has been verified, what was not found, and which assets go missing every time."}
+{"id": "assets.read", "module": "Inventory, Assets & Point-of-Sale", "content": "See what the school owns, what it cost, where it is, and what is about to run out of warranty or insurance."}
+{"id": "attendance.alert.send", "module": "Attendance", "content": "Tell parents their child was absent, at the scope the sender chooses, once attendance is done. One step, and it changes no mark."}
+{"id": "attendance.child.summary.read", "module": "Reporting", "content": "Your own child's attendance for the month, through the portal — present, absent, on leave, suspended, and the days the school was closed."}
+{"id": "attendance.daily.correct", "module": "Attendance", "content": "Change a mark already saved, with the reason it changed. One step, and the original stays visible."}
+{"id": "attendance.daily.mark", "module": "Attendance", "content": "Save the day's attendance for a class and section, one mark per student. One step, and it is the record a parent is told from."}
+{"id": "attendance.lecture.correct", "module": "Attendance", "content": "Change a mark on a period already marked, with the reason. One step, and the previous mark stays visible."}
+{"id": "attendance.lecture.mark", "module": "Attendance", "content": "Mark attendance for one period of the timetable, for the lecture assigned to the acting teacher. One step, and it says nothing about any other period."}
+{"id": "audit.access.grant", "module": "Security", "content": "Let a named School Admin or Principal read the audit trail. Nobody holds it by default."}
+{"id": "audit.trail.read", "module": "Security", "content": "Search the trail: what was done, when, by whom, on what. Reading it is itself recorded."}
+{"id": "branch.assignments.read", "module": "Multi-branch", "content": "See who is assigned to this branch and in what role."}
+{"id": "branch.consolidatedview.grant", "module": "Multi-branch", "content": "Let one named Principal or Director see figures across branches. Nobody holds this by default."}
+{"id": "branch.context.read", "module": "Multi-branch", "content": "Say which branch the user is in, in what role, and which others they could switch to."}
+{"id": "branch.create", "module": "Multi-branch", "content": "Create a campus with everything the rest of the system reads from it, and seed it with somebody able to staff it."}
+{"id": "branch.deactivate", "module": "Multi-branch", "content": "Close a campus, once its students and staff have gone. It is never deleted."}
+{"id": "branch.reactivate", "module": "Multi-branch", "content": "Reopen a closed campus, with everything it had."}
+{"id": "branch.switch", "module": "Multi-branch", "content": "Move to another branch you are assigned to. This is the one act that changes which campus everything else happens at."}
+{"id": "branch.update", "module": "Multi-branch", "content": "Change a branch's address, contact, branding or bank account."}
+{"id": "branch.user.assign", "module": "Multi-branch", "content": "Give a user access to this branch and record the role they hold here."}
+{"id": "branch.user.assignment.withdraw", "module": "Multi-branch", "content": "End somebody's access to this branch, with a reason. The record of it is kept."}
+{"id": "branch.user.role.change", "module": "Multi-branch", "content": "Change the role somebody holds at this branch. It replaces the role rather than adding a second assignment."}
+{"id": "branches.read", "module": "Multi-branch", "content": "See what campuses exist, who runs each, and who can see across them."}
+{"id": "calendar.broadcast.send", "module": "Attendance", "content": "Tell families and staff about the calendar — a holiday, a closure, or the month ahead. One step."}
+{"id": "calendar.day.add", "module": "Attendance", "content": "Mark a specific date as a holiday or a closure, for the whole school or part of it. One step."}
+{"id": "calendar.day.remove", "module": "Attendance", "content": "Take a day off the calendar, with the reason. One step, and the day becomes a working day again."}
+{"id": "calendar.weeklyoff.set", "module": "Attendance", "content": "Set which days of the week the school is normally closed, applied across a month. One step."}
+{"id": "card.issue", "module": "ID cards and certificates", "content": "Produce a card for a confirmed person, filled from their record. One step, and a pickup card carries the child's photograph rather than the holder's."}
+{"id": "card.replace", "module": "ID cards and certificates", "content": "Issue a replacement card, which generates a new number and voids the old one. One step, and a voided card is never restored."}
+{"id": "certificate.generate", "module": "ID cards and certificates", "content": "Fill the certificate template from the person's own record and produce it for preview. One step, and nothing is issued yet."}
+{"id": "certificate.hold.release", "module": "ID cards and certificates", "content": "Lift a clearance hold once the dues are cleared. Accounts, one step."}
+{"id": "certificate.issue", "module": "ID cards and certificates", "content": "Record that a certificate was issued to the person. One step, and it is what the school answers with later."}
+{"id": "certificate.request", "module": "ID cards and certificates", "content": "Raise a request for a certificate, for a student or an employee. One step, and nothing is issued by it."}
+{"id": "certificate.sign", "module": "ID cards and certificates", "content": "Sign a generated certificate. School Admin or Principal according to the type, one step."}
+{"id": "class.create", "module": "Class & Session Structure", "content": "Create a class for the open academic session, set whether it is Fixed or Subject Wise, and attach the subjects it carries. One step."}
+{"id": "class.deactivate", "module": "Class & Session Structure", "content": "Deactivate a class the school no longer runs, once nothing is still attached to it. One step."}
+{"id": "class.update", "module": "Class & Session Structure", "content": "Change a class — its name, its order, its age range, or the subjects it carries. One step, and the type is not among them once students are placed."}
+{"id": "complaint.parent.action.record", "module": "Help Desk & Complaints", "content": "Record an action taken on a complaint. Every action stays; nothing is edited."}
+{"id": "complaint.parent.close", "module": "Help Desk & Complaints", "content": "Close a reopened complaint after its second outcome. It cannot be reopened again."}
+{"id": "complaint.parent.outcome.confirm", "module": "Help Desk & Complaints", "content": "Accept the outcome of your complaint. This is what closes it."}
+{"id": "complaint.parent.outcome.record", "module": "Help Desk & Complaints", "content": "Record what was done about a complaint. The parent is told it, and it does not close until they confirm."}
+{"id": "complaint.parent.raise", "module": "Help Desk & Complaints", "content": "Raise a formal complaint about something the school has done, about your own child. A harm allegation goes to the Principal alone."}
+{"id": "complaint.parent.redirect", "module": "Help Desk & Complaints", "content": "Pass a complaint the desk cannot resolve to the School Admin, with the reason."}
+{"id": "complaint.parent.reopen", "module": "Help Desk & Complaints", "content": "Refuse the outcome and reopen your complaint — once. The School Admin then holds it."}
+{"id": "complaint.parent.takeup", "module": "Help Desk & Complaints", "content": "Take an open complaint up from the queue. Nobody takes up a complaint about themselves."}
+{"id": "complaint.parent.withdraw", "module": "Help Desk & Complaints", "content": "Withdraw your own complaint before anybody takes it up. It stays on the record."}
+{"id": "complaint.staff.action.record", "module": "Help Desk & Complaints", "content": "Record an action taken on a staff complaint. Every action stays; nothing is edited."}
+{"id": "complaint.staff.close", "module": "Help Desk & Complaints", "content": "Close a reopened staff complaint after its further outcome. It cannot be reopened again."}
+{"id": "complaint.staff.confidential.access.grant", "module": "Help Desk & Complaints", "content": "Let somebody else read a confidential complaint. Only the Principal can, and the grant is recorded."}
+{"id": "complaint.staff.outcome.confirm", "module": "Help Desk & Complaints", "content": "Accept the outcome of your complaint. This is what closes it."}
+{"id": "complaint.staff.outcome.record", "module": "Help Desk & Complaints", "content": "Record what was done about a staff complaint. The raiser is told it, and it does not close until they confirm."}
+{"id": "complaint.staff.raise", "module": "Help Desk & Complaints", "content": "Raise a complaint as a member of staff, and choose — once, now — whether it is confidential."}
+{"id": "complaint.staff.redirect", "module": "Help Desk & Complaints", "content": "Pass an ordinary staff complaint the desk cannot resolve to the School Admin, with the reason."}
+{"id": "complaint.staff.reopen", "module": "Help Desk & Complaints", "content": "Refuse the outcome and reopen your complaint — once."}
+{"id": "complaint.staff.takeup", "module": "Help Desk & Complaints", "content": "Take an ordinary staff complaint up from the queue. The desk never sees a confidential one."}
+{"id": "complaint.staff.withdraw", "module": "Help Desk & Complaints", "content": "Withdraw your own complaint before anybody takes it up. It stays on the record."}
+{"id": "complaints.parent.mine.read", "module": "Help Desk & Complaints", "content": "Follow your own complaints — where each stands and who holds it."}
+{"id": "complaints.parent.read", "module": "Help Desk & Complaints", "content": "See the complaint queue: what is open, who holds what, and what is waiting on a family."}
+{"id": "complaints.staff.mine.read", "module": "Help Desk & Complaints", "content": "Follow your own complaints — where each stands and who holds it."}
+{"id": "complaints.staff.read", "module": "Help Desk & Complaints", "content": "See the staff complaint queue — and, for the Principal alone, the confidential complaints."}
+{"id": "dashboard.figure.drillthrough", "module": "Dashboard", "content": "Open the rows a dashboard figure was calculated from, so the number can be proved. One step: the figure named in words is resolved within the role's permitted set, and the backend applies that figure's own filters — they never enter the plan."}
+{"id": "dashboard.module.view", "module": "Dashboard", "content": "Open a named module's own summary within the actor's row scope. One step, carrying the words the actor used for the module; the parameter resolver turns them into a module_key before the call runs."}
+{"id": "emergency.notice.delivery.read", "module": "Communication", "content": "Read who an emergency notice reached and who it did not. One step, reads only, and the failures come back by name."}
+{"id": "emergency.notice.send", "module": "Communication", "content": "Write an urgent message and send it to everybody, on every channel, at once. One step, no approval, and it cannot be recalled."}
+{"id": "emergency.permission.set", "module": "Communication", "content": "Set who holds the right to send an emergency notice. Super Admin only, one step."}
+{"id": "exam.absence.classify", "module": "Examination", "content": "Classify an exam absence as excused or unexcused, with the reason, which decides what it does to the result. Coordinator only, one step."}
+{"id": "exam.approval.submit", "module": "Examination", "content": "Send a completed exam to the School Admin for approval. One step, and it publishes nothing."}
+{"id": "exam.approve", "module": "Examination", "content": "Approve the exam, which publishes the schedule to the Principal, the teachers, the students and their families in the same act. School Admin only, one step."}
+{"id": "exam.cancel", "module": "Examination", "content": "Cancel an exam that will not run, with the reason, keeping its schedule and approvals readable. One step."}
+{"id": "exam.create", "module": "Examination", "content": "Create an exam and fix each subject's total, passing and grace marks in the same act. Two steps, and the three figures can never be changed afterwards."}
+{"id": "exam.cumulative.run", "module": "Examination", "content": "Combine approved exam results into one weighted figure per student across a section, a class or the session year. One step."}
+{"id": "exam.makeup.absence.record", "module": "Examination", "content": "Record that the student missed the makeup too. One step, and no further makeup follows automatically."}
+{"id": "exam.makeup.approve", "module": "Examination", "content": "Approve a makeup with the reason. Coordinator or Principal as the policy requires, one step."}
+{"id": "exam.makeup.mark", "module": "Examination", "content": "Record the makeup score against the original exam and subject, tagged as a makeup. One step."}
+{"id": "exam.makeup.paper.assign", "module": "Examination", "content": "Decide which paper the makeup is sat on — a fresh one from the bank, or the original where the school allows it. One step."}
+{"id": "exam.makeup.refuse", "module": "Examination", "content": "Refuse a makeup with the reason. One step, and the student's result stands as the classification left it."}
+{"id": "exam.makeup.request", "module": "Examination", "content": "Request a second sitting against one classified absence, for one student and one subject. One step."}
+{"id": "exam.makeup.schedule", "module": "Examination", "content": "Schedule the makeup sitting with its date, time and invigilator, and tell the student and guardian. One step."}
+{"id": "exam.mark.correct", "module": "Examination", "content": "Change a submitted mark before the lock, with the reason and the previous value kept. Coordinator only, one step."}
+{"id": "exam.mark.grace.award", "module": "Examination", "content": "Award grace marks to a student who narrowly fell short, up to the pass mark and no further. One step, and the pass is recorded as achieved by grace."}
+{"id": "exam.mark.set", "module": "Examination", "content": "Record one student's score for a subject in an exam. One step, and every figure is the teacher's."}
+{"id": "exam.marks.lock", "module": "Examination", "content": "Lock a subject's marks once they are final. School Admin only, one step, and nothing changes afterwards without a deliberate reopening."}
+{"id": "exam.marks.reopen", "module": "Examination", "content": "Reopen locked marks so a wrong one can be corrected. School Admin only, one step, and it carries a reason."}
+{"id": "exam.marks.submit", "module": "Examination", "content": "Submit a subject's marks sheet once every student carries a score or the Absent state. One step, and the teacher cannot change a mark afterwards."}
+{"id": "exam.paper.assign", "module": "Examination", "content": "Attach a paper assembled from the question bank to a subject in the exam. One step. A paper a teacher authored arrives as a file and is not planned here."}
+{"id": "exam.paper.attendance.correct", "module": "Examination", "content": "Correct a paper attendance mark where the hall record was wrong, keeping the original. One step."}
+{"id": "exam.paper.attendance.mark", "module": "Examination", "content": "Mark who sat a paper and who did not. One step, and absent is a state, never a score of zero."}
+{"id": "exam.paper.schedule", "module": "Examination", "content": "Give one paper its date, time, duration, invigilator and marks deadline. One step, and the clash and holiday checks belong to the API."}
+{"id": "exam.results.approve", "module": "Examination", "content": "Approve the results and release them, which is the moment families see a grade. Coordinator only, one step."}
+{"id": "exam.results.lock", "module": "Examination", "content": "Lock the released results once the correction period is over. School Admin only, one step."}
+{"id": "exam.results.mine.read", "module": "Reporting", "content": "Your own child's report card and term-on-term comparison — or your own, as a student. Only approved, locked results."}
+{"id": "exam.results.reopen", "module": "Examination", "content": "Reopen a locked result so a wrong one can be put right. School Admin only, one step, and it carries a reason."}
+{"id": "exam.results.return", "module": "Examination", "content": "Return calculated results to the teacher with the reason, before anything is public. Coordinator only, one step."}
+{"id": "exam.return", "module": "Examination", "content": "Return an exam to the Coordinator with the reason it was not approved. School Admin only, one step, and nothing is published."}
+{"id": "exam.schedule.edit", "module": "Examination", "content": "Change a published schedule, with the reason, and tell everybody affected. School Admin only, one step."}
+{"id": "exam.weighting.set", "module": "Examination", "content": "Set what each exam is worth in the year's cumulative figure. One step, and the weights must total a hundred."}
+{"id": "expulsion.appeal.record", "module": "Student records", "content": "Record a family's appeal and its outcome. One step."}
+{"id": "expulsion.certificates.decide", "module": "Student records", "content": "Decide explicitly which certificates are issued. Principal, one step, and the case cannot close without it."}
+{"id": "expulsion.clearance.settle", "module": "Student records", "content": "Settle the fee position on an expulsion: refund the credit and deposit, and record the property returned. Accounts, one step."}
+{"id": "expulsion.decision.record", "module": "Student records", "content": "Record the Principal's decision and its reasons. Principal only, one step, and an appeal window runs before it takes effect."}
+{"id": "expulsion.enrolment.close", "module": "Student records", "content": "Close the enrolment once the decision takes effect. School Admin, one step, and it cannot run before the appeal window has."}
+{"id": "expulsion.hearing.record", "module": "Student records", "content": "Record that the family was informed in writing and heard, and what they said. One step, and no decision can be taken without it."}
+{"id": "expulsion.recommend", "module": "Student records", "content": "Recommend an expulsion from a recorded incident, setting out what happened and what was already tried. Coordinator, one step, and nothing about the child changes."}
+{"id": "fee.batch.authorise", "module": "Fee", "content": "Authorise a school-wide fee run so its invoices are created and every family in the school is billed. School Admin only, one step."}
+{"id": "fee.batch.reverse", "module": "Fee", "content": "Reverse a whole fee run raised in error, unbilling every unpaid invoice in it and returning any credit it drew. One step, and paid invoices are refused."}
+{"id": "fee.cancellation.approve", "module": "Fee", "content": "Approve a cancellation, which withdraws the charge, posts the balancing entry and tells the family. School Admin only, one step."}
+{"id": "fee.cancellation.return", "module": "Fee", "content": "Send a cancellation proposal back to Accounts with what is wrong with it. School Admin only, one step."}
+{"id": "fee.challan.generate", "module": "Fee", "content": "Produce the bank challan for issued, unpaid invoices — one invoice, a class, a section, or a whole issue batch. One per invoice, and it moves no money."}
+{"id": "fee.concession.approve", "module": "Fee", "content": "Approve a fee reduction so it applies to every subsequent invoice. School Admin for a concession or discount; Principal for a scholarship. One step."}
+{"id": "fee.concession.record", "module": "Fee", "content": "Record a proposed fee reduction against a student — a concession, a discount, or a scholarship won on a test — with why it is being granted and how long it lasts. One step, and it reduces nothing yet."}
+{"id": "fee.concession.return", "module": "Fee", "content": "Send a proposed reduction back to Accounts with why it was not approved. One step."}
+{"id": "fee.concession.withdraw", "module": "Fee", "content": "Withdraw an approved reduction before its end date, with the reason. One step, and it leaves the record of what was granted."}
+{"id": "fee.credit.approve", "module": "Fee", "content": "Approve a credit, which posts the entry and holds the money against the household for its next bill. School Admin only, one step."}
+{"id": "fee.credit.return", "module": "Fee", "content": "Send a credit proposal back to Accounts with why it was not approved. School Admin only, one step."}
+{"id": "fee.invoice.issue", "module": "Fee", "content": "Issue the invoices of a previewed run, which charges every family in it and sends them their bill. One step, and it is not reversible per family."}
+{"id": "fee.invoice.preview", "module": "Fee", "content": "Calculate what a fee run would bill, at whatever scope, without creating a single invoice. One step, and nothing is charged."}
+{"id": "fee.latefee.policy.approve", "module": "Fee", "content": "Approve a late fee policy so fines begin accruing from its effective date. School Admin only, one step."}
+{"id": "fee.latefee.policy.create", "module": "Fee", "content": "Build a stepped late fee policy — what is charged, at how many days past the due date, and up to what cap. One step, and it fines nobody."}
+{"id": "fee.latefee.policy.return", "module": "Fee", "content": "Send a late fee policy back to Accounts with what to change. School Admin only, one step."}
+{"id": "fee.ledger.mine.read", "module": "Reporting", "content": "Your own child's fee ledger, or the family statement across all your children — through the portal, and no other family's."}
+{"id": "fee.payment.correction.approve", "module": "Fee", "content": "Approve a payment correction, which reverses the entry, records it where it belongs, supersedes the receipt and restores both invoices. School Admin only, one step."}
+{"id": "fee.payment.correction.raise", "module": "Fee", "content": "Propose correcting a payment record that does not match what actually happened — the money never arrived, or it belongs to somebody else. One step, and it corrects nothing on its own."}
+{"id": "fee.payment.correction.return", "module": "Fee", "content": "Send a payment correction back to Accounts with why it was not approved. School Admin only, one step."}
+{"id": "fee.plan.approve", "module": "Fee", "content": "Approve a family's installment request so a schedule may be defined for it. School Admin only, one step."}
+{"id": "fee.plan.decline", "module": "Fee", "content": "Decline a family's installment request with the reason they are told. School Admin only, one step."}
+{"id": "fee.plan.define", "module": "Fee", "content": "Define the installments of an approved plan and activate it, which takes the family out of overdue tracking and stops late fee. One step."}
+{"id": "fee.plan.request", "module": "Fee", "content": "Record a family's request to pay an outstanding charge in parts, with the reason they need it. One step, and it schedules nothing."}
+{"id": "fee.plan.reschedule", "module": "Fee", "content": "Change an approved plan's installments, with the reason, keeping the total the same. One step."}
+{"id": "fee.refund.approve", "module": "Fee", "content": "Approve a refund so a payment voucher is raised for the money to leave. Principal or Director only, one step."}
+{"id": "fee.refund.pay", "module": "Fee", "content": "Record that an approved refund has actually been paid, on the date the money left. One step, and it discharges the credit."}
+{"id": "fee.refund.raise", "module": "Fee", "content": "Propose returning an unused credit to a household that has left the school, after any outstanding charge is settled from it. One step, and no money moves."}
+{"id": "fee.refund.return", "module": "Fee", "content": "Send a refund proposal back to Accounts with why it was not approved. Principal or Director only, one step."}
+{"id": "fee.structure.approve", "module": "Fee", "content": "Approve a fee structure so invoices can be raised against it from its effective date. School Admin only, one step."}
+{"id": "fee.structure.create", "module": "Fee", "content": "Build a draft fee structure for a class or one of its sections, with an amount against each fee type or each subject. One step, and it bills nobody."}
+{"id": "fee.structure.return", "module": "Fee", "content": "Send a submitted fee structure back to Accounts with what to correct. School Admin only, one step."}
+{"id": "fee.structure.revise", "module": "Fee", "content": "Create a new version of an approved fee structure, with the reason it changed and the date the new prices apply from. One step, and it leaves issued invoices alone."}
+{"id": "fee.structure.submit", "module": "Fee", "content": "Send a draft fee structure for approval, with the date it takes effect from. One step."}
+{"id": "fee.tax.certificate.issue", "module": "Fee", "content": "Issue a household its certificate of tax deducted for the year, which the parent needs to claim the amount against their own return. One step."}
+{"id": "fee.tax.config.approve", "module": "Fee", "content": "Approve a withholding tax configuration so deductions begin from its effective date. School Admin or Principal, one step."}
+{"id": "fee.tax.config.create", "module": "Fee", "content": "Enter a withholding tax configuration — the rate, the household threshold, which fee types count and what the tax is calculated on. One step, and it deducts nothing."}
+{"id": "fee.tax.config.return", "module": "Fee", "content": "Send a tax configuration back to Accounts with why it was not approved. One step."}
+{"id": "fee.writeoff.approve", "module": "Fee", "content": "Approve a write-off, taking the loss on the books. Principal or Director only, one step."}
+{"id": "fee.writeoff.return", "module": "Fee", "content": "Send a write-off proposal back to Accounts with why it was not accepted. Principal or Director only, one step."}
+{"id": "fee.writeoff.reverse", "module": "Fee", "content": "Reverse a write-off because the family has come back and paid, so the payment is recorded normally. One step."}
+{"id": "finance.budget.approve", "module": "Finance", "content": "Approve a budget so vouchers begin consuming its lines and variance is reported against it. One step."}
+{"id": "finance.budget.prepare", "module": "Finance", "content": "Prepare a budget for a financial period, line by line, with last period's actuals offered as a starting point. One step, and it controls nothing yet."}
+{"id": "finance.budget.return", "module": "Finance", "content": "Send a prepared budget back with what to change. One step."}
+{"id": "finance.budget.revise", "module": "Finance", "content": "Revise an approved budget figure, with the reason it moved, keeping the original readable. One step."}
+{"id": "finance.budget.variance.read", "module": "Finance", "content": "Read what has actually been spent or received against a budget line, what is committed, and the variance against both the original and revised figures. One step."}
+{"id": "finance.ledger.read", "module": "Finance", "content": "Read an account's ledger over a period — every entry, both sides, and the running balance. One step, and nothing is posted."}
+{"id": "finance.reconciliation.match", "module": "Finance", "content": "Match a statement line to a recorded movement by hand. One step, and it changes no book."}
+{"id": "finance.reconciliation.signoff", "module": "Finance", "content": "Sign off a reconciliation, with every unmatched item carrying what was done about it. School Admin only, one step, and it cannot be reopened."}
+{"id": "finance.reconciliation.start", "module": "Finance", "content": "Open a reconciliation for a bank or gateway account and a period, carrying the opening balance from the last signed-off one. One step, and it changes no book."}
+{"id": "finance.reconciliation.statement.import", "module": "Finance", "content": "Import a bank or gateway statement into an open reconciliation and match what it can automatically. One step."}
+{"id": "finance.reconciliation.unmatch", "module": "Finance", "content": "Undo a match that was made wrongly, so the difference shows again. One step."}
+{"id": "finance.trialbalance.read", "module": "Finance", "content": "Produce the trial balance as at a date and prove the two columns agree. One step."}
+{"id": "finance.voucher.approve", "module": "Finance", "content": "Approve a voucher at the level its amount requires, posting it to the ledger and creating the payable. One step."}
+{"id": "finance.voucher.create", "module": "Finance", "content": "Enter a movement as a voucher — both sides in one entry, with what the money was for. One step, and it posts nothing."}
+{"id": "finance.voucher.pay", "module": "Finance", "content": "Record that an approved voucher has been paid, discharging the payable and posting the cash movement. One step."}
+{"id": "finance.voucher.return", "module": "Finance", "content": "Send a voucher back to Accounts with what to correct. One step, and it posts nothing."}
+{"id": "finance.voucher.trace", "module": "Finance", "content": "Trace a ledger entry back to what caused it — the invoice, the payment, the correction or the voucher, and from there to the student or supplier behind it. One step."}
+{"id": "gate.barcode.display", "module": "Gate & Entry Protection", "content": "Display the pickup barcode at a gate and set how often it rotates."}
+{"id": "gate.barcode.rotate", "module": "Gate & Entry Protection", "content": "Rotate a gate's barcode now. The old one stops working at once."}
+{"id": "gate.log.access.grant", "module": "Gate & Entry Protection", "content": "Grant a named School Admin or Principal the permission to read the gate log. Super Admin only."}
+{"id": "gate.log.access.read", "module": "Gate & Entry Protection", "content": "Who holds the permission to read the gate log at this branch."}
+{"id": "gate.log.access.revoke", "module": "Gate & Entry Protection", "content": "Take back a named person's permission to read the gate log. Super Admin only."}
+{"id": "gate.log.read", "module": "Gate & Entry Protection", "content": "Open the gate and visitor log for a day: who came, whom they saw, when they came and went, and whether anybody saw them leave. Read only with a permission the Super Admin grants."}
+{"id": "geofence.read", "module": "Gate & Entry Protection", "content": "The branch's pickup boundary and window, as set."}
+{"id": "geofence.set", "module": "Gate & Entry Protection", "content": "Set the branch's pickup boundary — its centre and radius — and the hours within which a pickup prompt may appear."}
+{"id": "grade.bands.define", "module": "Examination", "content": "Define the grade bands applied to one subject in this exam. One step, and the bands must cover nought to a hundred without overlapping."}
+{"id": "handover.item.reassign", "module": "HR and payroll", "content": "Hand one item a leaver holds to a named member of staff. One step, and the leaving date cannot pass with items unassigned."}
+{"id": "handover.marks.transfer", "module": "HR and payroll", "content": "Transfer responsibility for an exam subject's outstanding marks to whoever takes it over. One step."}
+{"id": "inquiry.approve", "module": "Admissions & Inquiry Management", "content": "Approve a reviewed inquiry, which issues the single-use admission-form invite and sends it by WhatsApp to the number on the inquiry. One step."}
+{"id": "inquiry.close", "module": "Admissions & Inquiry Management", "content": "Close an enquiry as not interested, with the reason the family gave. One step, and reversible by inquiry.reopen."}
+{"id": "inquiry.contact.log", "module": "Admissions & Inquiry Management", "content": "Record what happened on a follow-up call or visit, and move the enquiry's next follow-up date. One step."}
+{"id": "inquiry.message", "module": "Admissions & Inquiry Management", "content": "Send a message to one enquiring family or several, through a channel the enquiry holds a contact for, and log it against the enquiry. One step."}
+{"id": "inquiry.record", "module": "Admissions & Inquiry Management", "content": "Record an enquiry taken by phone, in person or at an event, with the follow-up that keeps it alive. One step."}
+{"id": "inquiry.reject", "module": "Admissions & Inquiry Management", "content": "Reject a reviewed inquiry with the reason the family will be told, and close the enquiry. One step."}
+{"id": "inquiry.reopen", "module": "Admissions & Inquiry Management", "content": "Re-open an enquiry closed by mistake, restoring its previous status and setting a new follow-up date. One step."}
+{"id": "inquiry.review", "module": "Admissions & Inquiry Management", "content": "Record the School Admin's review of a submitted inquiry and move it — forwarded to the Principal, returned to Staff, or held for the family to be contacted. One step."}
+{"id": "interview.marks.record", "module": "HR and payroll", "content": "Record a candidate's interview marks beside their form and CV. One step."}
+{"id": "interview.schedule", "module": "HR and payroll", "content": "Set a shortlisted candidate's interview time and invite them. One step, and the proposal can always be overridden."}
+{"id": "leave.request.approve", "module": "Attendance", "content": "Approve a leave request, which marks the student as on leave for those days and suppresses the absence alert. Coordinator or School Admin, one step."}
+{"id": "leave.request.cancel", "module": "Attendance", "content": "Cancel a leave request before it starts, so the attendance mark reverts. Guardian, one step."}
+{"id": "leave.request.endorse", "module": "Attendance", "content": "Endorse a leave request the student raised themselves, so it reaches the Coordinator. Guardian only, one step."}
+{"id": "leave.request.reject", "module": "Attendance", "content": "Reject a leave request with the reason the family is told. Coordinator or School Admin, one step."}
+{"id": "leave.request.submit", "module": "Attendance", "content": "Record that a student will be away, with the dates and why. One step, and it excuses nothing until it is approved."}
+{"id": "meeting.cancel", "module": "Communication", "content": "Cancel a meeting before it happens, from either side, with the reason. One step, and the slot is released."}
+{"id": "meeting.outcome.record", "module": "Communication", "content": "Record after the meeting whether it took place, and any note. One step, and the note is held against the student."}
+{"id": "meeting.request.decline", "module": "Communication", "content": "Decline a meeting request with the reason the guardian is told. One step."}
+{"id": "meeting.request.submit", "module": "Communication", "content": "A guardian asks to meet a teacher who teaches their own child. One step, and the teacher chooses the time."}
+{"id": "meeting.slot.confirm", "module": "Communication", "content": "The teacher picks a slot and confirms the meeting. One step, and both sides are told."}
+{"id": "meetingday.approve", "module": "Communication", "content": "Approve the declaration. This is the act that cancels the teaching, stops the attendance and tells every family."}
+{"id": "meetingday.cancel", "module": "Communication", "content": "Call the meeting off. The day becomes a teaching day again and everybody who was told has to be told again."}
+{"id": "meetingday.declare", "module": "Communication", "content": "Declare the day of the school-wide parent-teacher meeting, and send it to the Principal for approval."}
+{"id": "meetingday.lectures.read", "module": "Communication", "content": "See which lectures will not run on a meeting day, which teachers that affects, and who is expected where."}
+{"id": "meetingday.move", "module": "Communication", "content": "Move a declared meeting to another day. The old day teaches again, everybody is told, and the new day needs the Principal."}
+{"id": "meetingday.return", "module": "Communication", "content": "Send a declaration back unapproved, with a reason. Nothing was marked and nobody was told."}
+{"id": "meetingday.revise", "module": "Communication", "content": "Correct a returned declaration and put it back in front of the Principal."}
+{"id": "meetingdays.read", "module": "Communication", "content": "See the meeting days declared, held, cancelled and moved, and which classes each covers."}
+{"id": "merit.list.approval.submit", "module": "Examination", "content": "Send a generated merit list to the Principal or School Admin for approval. One step."}
+{"id": "merit.list.approve", "module": "Examination", "content": "Approve a merit list so it can be published. Principal, Director or School Admin, one step, and it publishes nothing."}
+{"id": "merit.list.generate", "module": "Examination", "content": "Rank the students in scope into an ordered list on a stated criterion. One step, and nobody sees it yet."}
+{"id": "merit.list.publish", "module": "Examination", "content": "Publish an approved merit list, choosing what families are shown. Coordinator, one step, and the choice is never defaulted."}
+{"id": "merit.list.withdraw", "module": "Examination", "content": "Withdraw a published merit list with the reason. One step, and it does not unsend what families have read."}
+{"id": "mfa.enforce", "module": "Security", "content": "Require a second factor on a role or on a named person, so they cannot turn it off."}
+{"id": "mfa.enforcement.remove", "module": "Security", "content": "Stop requiring a second factor on a role or a person. Their enrolled factor stays."}
+{"id": "mfa.factor.recover", "module": "Security", "content": "Reset somebody's lost second factor, with the reason recorded. It resets rather than bypasses."}
+{"id": "mfa.self.setting.set", "module": "Security", "content": "Turn a second factor on or off for your own account, where it is not enforced on you."}
+{"id": "mfa.status.read", "module": "Security", "content": "See who is required to hold a second factor, who actually has one, and who is about to be locked out."}
+{"id": "onlineexam.release", "module": "Examination", "content": "Release an online exam so it appears in the accounts of the students sitting it. School Admin only, one step."}
+{"id": "onlineexam.schedule", "module": "Examination", "content": "Set the window, the duration and the sitting conditions for a paper sat through the system. One step, and it releases nothing."}
+{"id": "onlineexam.written.mark", "module": "Examination", "content": "Award marks to a student's written answers in an online paper. One step, and the objective part is already scored."}
+{"id": "paper.create", "module": "Examination", "content": "Start a paper for a class and subject, to be filled from the bank. One step."}
+{"id": "paper.finalise", "module": "Examination", "content": "Finalise a reviewed paper, fixing its questions. Coordinator only, one step."}
+{"id": "paper.question.add", "module": "Examination", "content": "Pull a question from the bank into a paper, in its place and for its marks. One step."}
+{"id": "paper.version.create", "module": "Examination", "content": "Make a new version of a finalised paper, leaving the one already sat intact. Coordinator only, one step."}
+{"id": "password.policy.set", "module": "Security", "content": "Set the rules a password must meet. The Super Admin sets the policy and never handles a password."}
+{"id": "payroll.override.apply", "module": "HR and payroll", "content": "Override a figure in a generated run, with the reason. Principal or Director only, one step."}
+{"id": "payroll.run.approve", "module": "HR and payroll", "content": "Approve a payroll run. Accounts, one step, and it pays nobody on its own."}
+{"id": "payroll.run.generate", "module": "HR and payroll", "content": "Generate the month's salaries from attendance, for every working employee or for one. One step, and nothing is typed."}
+{"id": "payroll.run.release", "module": "HR and payroll", "content": "Release payment for an approved run, which posts to the ledger. Accounts, one step, and the money goes."}
+{"id": "payroll.run.return", "module": "HR and payroll", "content": "Send a run back for an attendance correction before it can be approved. One step."}
+{"id": "payroll.run.start", "module": "HR and payroll", "content": "Open a payroll run for a month. One step, and it calculates nothing and shows no figures."}
+{"id": "payslip.mine.read", "module": "Reporting", "content": "Your own payslip and your own leave balance — nothing further."}
+{"id": "permission.branch.release", "module": "Security", "content": "Release a permission to a branch, so that branch's School Admin may grant it."}
+{"id": "pickup.card.limit.set", "module": "ID cards and certificates", "content": "Set how many pickup cards a child may have. School Admin, one step."}
+{"id": "pickup.card.request", "module": "ID cards and certificates", "content": "A guardian asks for a pickup card for their own child. One step, checked against the limit the school has set."}
+{"id": "pickup.card.void", "module": "ID cards and certificates", "content": "Void one pickup card, at once. One step, and it is the only control a bearer card has."}
+{"id": "pickup.cards.read", "module": "Gate & Entry Protection", "content": "Which pickup cards exist for a child — active, cancelled or replaced — and never who holds them."}
+{"id": "pickup.cards.void.all", "module": "ID cards and certificates", "content": "Void every pickup card naming one child, at once. One step, and it is the only way to stop a person collecting."}
+{"id": "pickup.collection.record", "module": "ID cards and certificates", "content": "Record that a child was released — which child, which card number or code, and when. One step, and it cannot record who collected."}
+{"id": "pickup.collection.verify", "module": "ID cards and certificates", "content": "Verify a collection where the person has arrived with no card, by a one-time code to the guardian. One step."}
+{"id": "pickup.collections.read", "module": "Gate & Entry Protection", "content": "The collection record: which children left during the day, when, and against which request — the only record in the system of a child leaving."}
+{"id": "pickup.queue.read", "module": "Gate & Entry Protection", "content": "The open pickup requests for your sections — who is waiting, how each request was raised, and for how long."}
+{"id": "pickup.release.refuse", "module": "Gate & Entry Protection", "content": "Do not release the child — the staff member has doubts about the person collecting. The note is recorded and the School Admin is called."}
+{"id": "pickup.request.cancel", "module": "Gate & Entry Protection", "content": "Cancel your own pickup request while it waits in the queue. It stays on the record."}
+{"id": "pickup.request.complete", "module": "Gate & Entry Protection", "content": "Record the handover: the child was released against this request, at this time. It records no collector — there is no list to check against."}
+{"id": "pickup.request.geofence.confirm", "module": "Gate & Entry Protection", "content": "A guardian who has arrived confirms they are here to collect, and which of their children. The confirmation raises the request; being nearby raises nothing."}
+{"id": "pickup.request.send", "module": "Gate & Entry Protection", "content": "Send the child to the gate. The class teacher is told so the child can leave the lesson."}
+{"id": "pickup.requests.escalated.read", "module": "Gate & Entry Protection", "content": "Pickup requests that have waited past the configured minutes — a guardian is at the gate and the coordinator has not answered."}
+{"id": "pickup.requests.mine.read", "module": "Gate & Entry Protection", "content": "Where your own pickup requests stand."}
+{"id": "pickup.scans.refused.read", "module": "Gate & Entry Protection", "content": "The refused pickup card scans — cancelled cards, withdrawn students and barcodes the school did not issue — each with its time and gate."}
+{"id": "question.create", "module": "Examination", "content": "Write a question into the bank with its class, subject, answer key and marks. One step, and writing it and banking it are the same act."}
+{"id": "question.retire", "module": "Examination", "content": "Retire a question with the reason, keeping it attached to the papers that used it. Coordinator only, one step."}
+{"id": "quiz.create", "module": "Examination", "content": "Create a quiz for a class and subject, online or on paper. One step, and it needs no approval and no release."}
+{"id": "quiz.makeup.offer", "module": "Examination", "content": "Decide to give a student who missed a quiz a second go, and say how. One step, and no approval stands in the way."}
+{"id": "quiz.makeup.score.record", "module": "Examination", "content": "Record the score a student earned in a quiz makeup, tagged as a makeup, replacing the absence. One step."}
+{"id": "quiz.marks.upload", "module": "Examination", "content": "Upload the marks for a quiz, whether marked by hand or after an online sitting. One step."}
+{"id": "quiz.questions.attach", "module": "Examination", "content": "Attach questions from the bank to a quiz. One step, and it is the same single bank the exams use."}
+{"id": "quiz.student.absent", "module": "Examination", "content": "Mark a student absent from a quiz, so it is left out of their average rather than counted as nought. One step."}
+{"id": "quiz.student.reopen", "module": "Examination", "content": "Reopen an online quiz's window for one student, which is how a makeup is given. One step."}
+{"id": "quiz.window.set", "module": "Examination", "content": "Set an online quiz's window and attempt mode. One step, and it applies to online quizzes only."}
+{"id": "readmission.match.confirm", "module": "Admissions & Inquiry Management", "content": "Confirm that the previous student ID a returning family gave is the child on the school's own record, so the re-admission proceeds onto that record rather than a new one. One step."}
+{"id": "readmission.reactivate", "module": "Admissions & Inquiry Management", "content": "Re-admit a former student onto their existing record, keeping their original student ID and roll number and closing the previous enrolment. One step."}
+{"id": "report.accounting.run", "module": "Reporting", "content": "Run an accounting report — the general ledger by account, the trial balance, journals, income and expenditure, budget against actual, the voucher register — for the account, date range and branch the reader sets. Against the ledger, and it changes nothing."}
+{"id": "report.attendance.run", "module": "Reporting", "content": "Run an attendance report — the daily register, today's absentees, monthly summaries, percentages, leave taken, late arrivals, and the staff attendance for the month that payroll calculates from — for the period and scope the reader sets."}
+{"id": "report.combined.run", "module": "Reporting", "content": "Run a report across all branches at once, as one combined set of figures. The Super Admin alone — nobody else can run it, open it or be given it."}
+{"id": "report.exam.run", "module": "Reporting", "content": "Run an examination report — marks-entry status, result sheets, subject performance, grade distribution, the merit list, exam absentees, grace marks by teacher, report cards, term-on-term comparison — for the exam, class and section the reader sets. A result report runs only on approved, locked marks."}
+{"id": "report.export", "module": "Reporting", "content": "Take a report you have run away as a file — a spreadsheet for a list, a PDF for anything — carrying exactly what was on screen and nothing further. Every export is recorded."}
+{"id": "report.fee.run", "module": "Reporting", "content": "Run a fee report from the catalogue — collections, the cash book, defaulters with ageing, outstanding by class, section or family, the registers — for the period and scope the reader sets. Against the fee ledger itself, and it changes nothing."}
+{"id": "report.hr.run", "module": "Reporting", "content": "Run a staff or payroll report — the directory, headcount, the payroll register, the bank transfer sheet, leave, staff on leave today, advances, joiners and leavers, appraisals — for the month, role and branch the reader sets. The salary visibility rule is applied to every one."}
+{"id": "report.inventory.run", "module": "Reporting", "content": "Run a stock or asset report — balances, movements, the reorder list, count variances, purchase advances, the asset register, assets by location, maintenance and warranties, disposals — for the period, item, location and branch the reader sets."}
+{"id": "report.operational.run", "module": "Reporting", "content": "Run an operational report — certificates and cards issued, messages with their delivery status, meeting requests, the visitor log, pickups and early departures, open complaints with ageing, complaint categories — for the period, category, status and branch the reader sets."}
+{"id": "report.student.run", "module": "Reporting", "content": "Run a student or admission report — rosters, the directory, enrolment strength, admissions, leavers with reasons, the trend, the inquiry pipeline, applications pending, entry tests, declined inquiries, missing documents, family groupings — for the session, class, section and status the reader sets."}
+{"id": "report.timetable.run", "module": "Reporting", "content": "Run a timetable report — a section's timetable, a teacher's, workload in periods per week, free periods by slot, substitutions by teacher — for the section, teacher, day or week the reader sets. Only the published timetable."}
+{"id": "reports.catalogue.read", "module": "Reporting", "content": "Which reports you may run — the one catalogue every report is chosen from, filtered to what your role permits."}
+{"id": "resignation.approve", "module": "HR and payroll", "content": "Approve a resignation, which starts the notice period and produces the handover checklist. One step."}
+{"id": "resignation.cancel", "module": "HR and payroll", "content": "Cancel the notice period, which withdraws the resignation and returns the employee to normal. School Admin, one step."}
+{"id": "resignation.notice.start", "module": "HR and payroll", "content": "Set or change the length of the notice period, which sets the leaving date. School Admin, one step."}
+{"id": "resignation.reject", "module": "HR and payroll", "content": "Reject a resignation with the reason. One step."}
+{"id": "resignation.submit", "module": "HR and payroll", "content": "Resign from your own portal, with the reason and the date you wish to leave. One step, and nobody resigns on somebody else's behalf."}
+{"id": "role.create", "module": "Security", "content": "Create a role and choose the permissions it holds, module by module."}
+{"id": "role.deactivate", "module": "Security", "content": "Retire a role nobody holds. It stays readable, because the audit trail references it."}
+{"id": "role.permissions.update", "module": "Security", "content": "Add or remove permissions on a role. Everybody holding it is affected at once."}
+{"id": "role.reactivate", "module": "Security", "content": "Bring a deactivated role back into use, with its permission set intact."}
+{"id": "roles.read", "module": "Security", "content": "See what each role may reach, who holds it, and which roles nobody holds."}
+{"id": "salary.approval.submit", "module": "HR and payroll", "content": "Send a recorded salary for approval. One step, and it is still not in force."}
+{"id": "salary.approve", "module": "HR and payroll", "content": "Approve a salary so it takes effect from its date. The configured approver only, one step."}
+{"id": "salary.change", "module": "HR and payroll", "content": "Record a new figure that supersedes the current one from its effective date, with the reason. One step, and the previous figure is kept."}
+{"id": "salary.return", "module": "HR and payroll", "content": "Return a salary unapproved, with the reason. One step, and no figure comes into force."}
+{"id": "salary.set", "module": "HR and payroll", "content": "Record what an employee is paid, from when. One step, and it is not in force until it is approved."}
+{"id": "search.global", "module": "Admin — system-wide", "content": "Find a student or staff member by name or by a system-issued number, within the role and branch scope the session already carries. One step. The matches are reported; no profile is opened."}
+{"id": "section.create", "module": "Class & Session Structure", "content": "Create a section under a class with its capacity and its class incharge, and optionally the WhatsApp group link placement will use. One step."}
+{"id": "section.deactivate", "module": "Class & Session Structure", "content": "Deactivate a section the school no longer runs, once no student is still placed in it. One step."}
+{"id": "section.group.invite.resend", "module": "Class & Session Structure", "content": "Send a section's stored WhatsApp group link again to a placed student's guardian, when they say it never arrived. One step."}
+{"id": "section.group.link.set", "module": "Class & Session Structure", "content": "Store or replace the WhatsApp invite link held against a section, which is what makes the placement invite automatic. One step."}
+{"id": "section.update", "module": "Class & Session Structure", "content": "Change a section — its capacity, its class incharge, its name, or the subjects it carries. One step."}
+{"id": "session.end", "module": "Admin — system-wide", "content": "End the controller's own session and invalidate it server-side. One step, no lookups, nothing to resolve."}
+{"id": "staff.advance.approve", "module": "HR and payroll", "content": "Approve an advance with its amount and its recovery schedule together. One step, and the schedule is agreed here rather than afterwards."}
+{"id": "staff.advance.issue", "module": "HR and payroll", "content": "Issue an approved advance through the ordinary payment voucher route. Accounts, one step, and the money leaves."}
+{"id": "staff.advance.reject", "module": "HR and payroll", "content": "Reject an advance request with the reason. One step."}
+{"id": "staff.advance.repayment.record", "module": "HR and payroll", "content": "Record money the employee repaid outside payroll. One step, and it reduces the balance the same way a deduction does."}
+{"id": "staff.advance.request", "module": "HR and payroll", "content": "Ask for an advance on salary, with the reason and a proposed repayment schedule. One step, and nobody grants themselves one."}
+{"id": "staff.advance.settlement.recover", "module": "HR and payroll", "content": "Recover an outstanding advance from an exiting employee's final settlement. One step, and it does not simply lapse."}
+{"id": "staff.attendance.correction.approve", "module": "Attendance", "content": "Approve a staff attendance correction so the corrected code takes effect. Principal only, one step."}
+{"id": "staff.attendance.correction.raise", "module": "Attendance", "content": "Raise a correction to a staff attendance record, with the reason. One step, and it changes nothing until the Principal approves it."}
+{"id": "staff.attendance.correction.reject", "module": "Attendance", "content": "Reject a staff attendance correction, leaving the original record standing. Principal only, one step."}
+{"id": "staff.attendance.manualmark.start", "module": "Attendance", "content": "Start a manual staff attendance mark where the card is not to hand, which sends a one-time code to the number on that staff record. One step, and nobody is marked yet."}
+{"id": "staff.attendance.manualmark.verify", "module": "Attendance", "content": "Enter the code the staff member supplies and mark their attendance. One step, and the record shows it was verified by code rather than scanned."}
+{"id": "staff.attendance.mark", "module": "Attendance", "content": "Record a staff member's day — when they arrived and how the day is coded. One step, and payroll reads the code."}
+{"id": "staff.attendance.timeout", "module": "Attendance", "content": "Record when a staff member left, later in the day. One step, and a missing time out does not invalidate the day."}
+{"id": "staff.classification.set", "module": "HR and payroll", "content": "Set the employment category the record carries. One step, and leave entitlement and pay both read it."}
+{"id": "staff.document.record", "module": "HR and payroll", "content": "Record a document the employee handed over on joining, with the date and who verified it. One step."}
+{"id": "staff.leave.approve", "module": "HR and payroll", "content": "Approve a staff leave request, which codes the days in attendance and makes the employee unavailable. The configured approver only, one step."}
+{"id": "staff.leave.cancel", "module": "HR and payroll", "content": "Cancel a leave request before it starts, restoring the allowance. One step."}
+{"id": "staff.leave.reject", "module": "HR and payroll", "content": "Reject a staff leave request with the written reason. The configured approver only, one step."}
+{"id": "staff.leave.request", "module": "HR and payroll", "content": "Request leave, checked against the monthly paid allowance before it goes. One step, and the employee is told what is paid before they submit."}
+{"id": "staff.leaveallowance.set", "module": "HR and payroll", "content": "Record how many paid leaves the employee gets each month. One step, and both payroll and leave management work from this one figure."}
+{"id": "staff.performance.compare", "module": "HR and payroll", "content": "Show teachers' attendance and leave beside the results of the classes they taught. One step, reads only, and produces no rating."}
+{"id": "staff.performance.export", "module": "HR and payroll", "content": "Export the comparison for the scope and period. One step, and the export carries the same role limits as the screen."}
+{"id": "staff.record.approval.submit", "module": "HR and payroll", "content": "Send a completed staff record for approval. One step, and it joins no roster until it is approved."}
+{"id": "staff.record.approve", "module": "HR and payroll", "content": "Approve a staff record so it joins the roster and becomes payable. The configured approver only, one step."}
+{"id": "staff.record.change.submit", "module": "HR and payroll", "content": "Submit a change to an approved staff record, with the reason. One step, and it goes through approval unless the approver is making it."}
+{"id": "staff.record.correction.request", "module": "HR and payroll", "content": "Ask for a correction to your own record. One step, and it changes nothing by itself."}
+{"id": "staff.record.create", "module": "HR and payroll", "content": "Open an employee's record from their accepted appointment letter on the day they join, and fill in the personal details. Two steps, and the agreed terms are carried rather than typed."}
+{"id": "staff.record.return", "module": "HR and payroll", "content": "Return a staff record with the reason it was not approved. One step, and nobody joins the roster."}
+{"id": "staff.settlement.calculate", "module": "HR and payroll", "content": "Calculate a leaver's final settlement. Accounts, one step, and it pays nothing."}
+{"id": "staff.settlement.release", "module": "HR and payroll", "content": "Release a leaver's settlement once the handover is clear. Accounts, one step, and the money goes."}
+{"id": "staff.visibility.right.set", "module": "HR and payroll", "content": "Set which roles hold a staff-record or salary visibility right. Super Admin only, one step, and it takes effect at once."}
+{"id": "stock.adjustment.approve", "module": "Inventory, Assets & Point-of-Sale", "content": "Approve the adjustment. This is the act that changes the balance."}
+{"id": "stock.adjustment.raise", "module": "Inventory, Assets & Point-of-Sale", "content": "Raise an adjustment for a difference, with the reason. Nothing moves until it is approved."}
+{"id": "stock.adjustment.return", "module": "Inventory, Assets & Point-of-Sale", "content": "Send an adjustment back unapproved, with a reason. The balance stays as it was."}
+{"id": "stock.advance.issue", "module": "Inventory, Assets & Point-of-Sale", "content": "Hand the cash over against an approved request, as an amount owed back by the person who takes it."}
+{"id": "stock.advance.recover", "module": "Inventory, Assets & Point-of-Sale", "content": "Recover an advance that was never settled from the holder's salary."}
+{"id": "stock.advance.settle", "module": "Inventory, Assets & Point-of-Sale", "content": "Post the settlement: the amount to the ledger and the stock onto the shelf, together or not at all."}
+{"id": "stock.advances.read", "module": "Inventory, Assets & Point-of-Sale", "content": "See what cash is out of the school, who holds it, and how long it has been out."}
+{"id": "stock.cashreturned.record", "module": "Inventory, Assets & Point-of-Sale", "content": "Record the unspent cash handed back, so an advance does not close with money still in a pocket."}
+{"id": "stock.count.record", "module": "Inventory, Assets & Point-of-Sale", "content": "Enter what was physically on the shelf, item by item, against the frozen system figure."}
+{"id": "stock.count.schedule", "module": "Inventory, Assets & Point-of-Sale", "content": "Schedule a stock count. Counting is periodic and not optional — a balance nobody has checked is one nobody trusts."}
+{"id": "stock.count.start", "module": "Inventory, Assets & Point-of-Sale", "content": "Begin the count. The system balances are frozen at this moment, so an issue during the count is not a difference."}
+{"id": "stock.count.submit", "module": "Inventory, Assets & Point-of-Sale", "content": "Submit the count, so its differences can be raised as adjustments."}
+{"id": "stock.counts.read", "module": "Inventory, Assets & Point-of-Sale", "content": "See what counts have been taken, what they found, and which shelves are short every time."}
+{"id": "stock.issue.approve", "module": "Inventory, Assets & Point-of-Sale", "content": "Approve an issue above the threshold, so the stock may leave the store."}
+{"id": "stock.issue.chase", "module": "Inventory, Assets & Point-of-Sale", "content": "Ask a holder to bring back a returnable item that has been out too long."}
+{"id": "stock.issue.record", "module": "Inventory, Assets & Point-of-Sale", "content": "Hand stock out against a named person, having seen what they already hold."}
+{"id": "stock.issues.outstanding.read", "module": "Inventory, Assets & Point-of-Sale", "content": "See every returnable item still out, who holds it and for how long."}
+{"id": "stock.item.create", "module": "Inventory, Assets & Point-of-Sale", "content": "Create a stock item once, with the unit it is counted in and the level at which it must be bought again."}
+{"id": "stock.item.deactivate", "module": "Inventory, Assets & Point-of-Sale", "content": "Take an item out of use with a reason. It stops being requestable and stays readable."}
+{"id": "stock.item.history.read", "module": "Inventory, Assets & Point-of-Sale", "content": "See what changed on an item, who changed it and when — a reorder level that moved is a purchasing decision."}
+{"id": "stock.item.reactivate", "module": "Inventory, Assets & Point-of-Sale", "content": "Bring a deactivated item back into use, with its unit, history and balance intact."}
+{"id": "stock.item.update", "module": "Inventory, Assets & Point-of-Sale", "content": "Change an item as circumstances change — but never its unit once anything has moved against it."}
+{"id": "stock.items.read", "module": "Inventory, Assets & Point-of-Sale", "content": "See what the store carries, what is on hand, and what has fallen to the level where it must be bought again."}
+{"id": "stock.person.holdings.read", "module": "Inventory, Assets & Point-of-Sale", "content": "See what one person has already been issued, how long ago, and what is still outstanding against them."}
+{"id": "stock.receipt.record", "module": "Inventory, Assets & Point-of-Sale", "content": "Record what physically arrived against the approved request, with the supplier receipt."}
+{"id": "stock.reimbursement.approve", "module": "Inventory, Assets & Point-of-Sale", "content": "Agree to pay back the difference where the purchase cost more than the advance."}
+{"id": "stock.reimbursement.refuse", "module": "Inventory, Assets & Point-of-Sale", "content": "Decline to pay the difference, with the reason recorded."}
+{"id": "stock.request.approve", "module": "Inventory, Assets & Point-of-Sale", "content": "Agree that the school will spend the money — in full, or for less than was asked for."}
+{"id": "stock.request.reject", "module": "Inventory, Assets & Point-of-Sale", "content": "Refuse the spend, with a reason the requester reads."}
+{"id": "stock.request.submit", "module": "Inventory, Assets & Point-of-Sale", "content": "List the supplies you need, with a quantity and a reason for each, and submit them."}
+{"id": "stock.request.withdraw", "module": "Inventory, Assets & Point-of-Sale", "content": "Take back a request before it is approved, with a reason. It stays on the record."}
+{"id": "stock.requests.read", "module": "Inventory, Assets & Point-of-Sale", "content": "See where a request stands, or see the whole round together as the approver does."}
+{"id": "stock.return.record", "module": "Inventory, Assets & Point-of-Sale", "content": "Record a returnable item coming back, with the date and the condition it came back in."}
+{"id": "stock.round.close", "module": "Inventory, Assets & Point-of-Sale", "content": "Close the round to further requests, so the whole of it goes to the approver at once."}
+{"id": "stock.round.open", "module": "Inventory, Assets & Point-of-Sale", "content": "Open a request round and ask every member of staff what supplies they need."}
+{"id": "stock.round.remind", "module": "Inventory, Assets & Point-of-Sale", "content": "Remind the staff who have not answered the round, since a round nobody answered buys nothing."}
+{"id": "student.identity.update", "module": "Student", "content": "Change one identity field on a student record — student ID, roll number, identity number or date of birth — with the written reason it required. School Admin only, one field at a time."}
+{"id": "student.import.authorise", "module": "Student", "content": "Authorise an import batch that is above the row threshold, so its valid rows are created. School Admin only, one step."}
+{"id": "student.import.cancel", "module": "Student", "content": "Cancel a validated import batch before it runs, so nothing is created. One step."}
+{"id": "student.import.run", "module": "Student", "content": "Create the students from the valid rows of a validated import batch, leaving the rejected rows reported and uncreated. One step, and each row stands or falls on its own."}
+{"id": "student.import.status", "module": "Student", "content": "Read how an import batch went — how many rows were read, created, rejected and skipped, and why each rejection happened. One step."}
+{"id": "student.move", "module": "Class & Session Structure", "content": "Move an already-placed student to another section, with the reason it happened. One step: they come off the old register and go onto the new one."}
+{"id": "student.place", "module": "Class & Session Structure", "content": "Place an admitted student into a class and section, which puts them on the register, makes them markable for attendance and sends their guardian the section's group link. One step, one student or a whole cohort."}
+{"id": "student.read", "module": "Student", "content": "Open a student's record within the actor's row scope, showing what their role is permitted to see. One step, and the act global search deliberately stops short of."}
+{"id": "student.supportrecord.review", "module": "Student records", "content": "Record that a student's open special educational need or safeguarding record has been reviewed. Principal, one step, and it must happen before a sanction is approved."}
+{"id": "student.transfer.accept", "module": "Multi-branch", "content": "Accept the student at this campus, and decide what happens to the balance they bring."}
+{"id": "student.transfer.place", "module": "Multi-branch", "content": "Give the student a class, a section and a roll number here. This is what completes the transfer."}
+{"id": "student.transfer.raise", "module": "Multi-branch", "content": "Raise a transfer to another campus, having checked what the student still owes and still holds."}
+{"id": "student.transfer.refuse", "module": "Multi-branch", "content": "Decline to take the student, with a reason the leaving branch and the family are told."}
+{"id": "student.transfer.release", "module": "Multi-branch", "content": "Release the student from this branch, and open the door the receiving branch needs to decide."}
+{"id": "student.transfers.read", "module": "Multi-branch", "content": "See which transfers are open, which are stuck waiting on the other branch, and which were refused."}
+{"id": "student.update", "module": "Student", "content": "Correct the personal, guardian and contact details on a student record. One step, and identity fields are not among them."}
+{"id": "subject.skill.define", "module": "Examination", "content": "Define an academic skill a subject teaches in a class. One step, and it cannot be rated against until a rubric is attached."}
+{"id": "subject.skill.rate", "module": "Examination", "content": "Rate a student at a band of a skill's rubric, with a note where the band alone does not explain it. One step."}
+{"id": "subject.skill.ratings.submit", "module": "Examination", "content": "Submit a subject's skill ratings for a class, so they attach to the result. One step."}
+{"id": "subject.skill.retire", "module": "Examination", "content": "Retire a skill no longer taught, with the reason, keeping the ratings already given readable. One step."}
+{"id": "subject.skill.rubric.attach", "module": "Examination", "content": "Attach the achievement bands a skill is rated on, each stating what it means. One step."}
+{"id": "suspension.approve", "module": "Student records", "content": "Approve a suspension, setting the dates, whether an examination may be sat, and the conditions of return. Principal only, one step."}
+{"id": "suspension.end.early", "module": "Student records", "content": "End an active suspension before its return date, with the reason. Principal, one step, and the state reverts from that date."}
+{"id": "suspension.recommend", "module": "Student records", "content": "Recommend a suspension from a recorded incident, with the reason and the days proposed. Coordinator, one step, and it excludes nobody yet."}
+{"id": "suspension.return", "module": "Student records", "content": "Return a suspension recommendation unapproved, with the reason. Principal, one step, and the student attends as normal."}
+{"id": "teacher.freeslots.list", "module": "Communication", "content": "List the slots in which a teacher is genuinely free. One step, reads only, and free means free."}
+{"id": "teacher.meeting.request.close", "module": "Communication", "content": "Close a request the guardian will not take up. One step, and it stays on the record."}
+{"id": "teacher.meeting.request.raise", "module": "Communication", "content": "A teacher raises a meeting with a guardian about something they have noticed, proposing the slot themselves. One step, and the reason goes with the slot."}
+{"id": "teacher.meeting.request.respond", "module": "Communication", "content": "The guardian confirms the proposed slot, declines it, or declines and proposes an alternative. One step."}
+{"id": "teacher.meeting.slot.propose", "module": "Communication", "content": "Offer a further slot after a guardian declined. One step, and the teacher chooses it."}
+{"id": "termination.approve", "module": "HR and payroll", "content": "Approve a termination, which ends the employment and tells the employee. The configured approver only, one step, and there is no route back."}
+{"id": "termination.effect.set", "module": "HR and payroll", "content": "Set whether the termination runs with notice or takes immediate effect. One step, and immediate means the leaving date is the date of approval."}
+{"id": "termination.open", "module": "HR and payroll", "content": "Open a termination case with the reason and the supporting record it rests on. One step, and it takes effect only when approved."}
+{"id": "termination.return", "module": "HR and payroll", "content": "Return a termination case unapproved, with the reason. One step, and the employee is told nothing."}
+{"id": "timetable.approval.submit", "module": "Timetable", "content": "Send a completed draft timetable to the School Admin. One step, and it publishes nothing."}
+{"id": "timetable.approve", "module": "Timetable", "content": "Approve a section's timetable. School Admin only, one step, and it publishes nothing on its own."}
+{"id": "timetable.change.approve", "module": "Timetable", "content": "Approve a pending change to a published timetable, which applies it and tells everybody affected exactly what changed. School Admin only, one step."}
+{"id": "timetable.change.propose", "module": "Timetable", "content": "Propose a change to a published timetable, with the reason. One step, and it changes nothing until the School Admin approves it."}
+{"id": "timetable.change.return", "module": "Timetable", "content": "Return a proposed timetable change with the reason. School Admin only, one step, and the published timetable stands unchanged."}
+{"id": "timetable.freeteachers.list", "module": "Timetable", "content": "List the teachers genuinely free in one slot for a subject. One step, reads nothing but availability, and changes nothing."}
+{"id": "timetable.mine.read", "module": "Reporting", "content": "Your own timetable as a teacher, or your section's as a student or guardian — the published one."}
+{"id": "timetable.publish", "module": "Timetable", "content": "Publish an approved timetable, which tells every teacher in it and the section's students and guardians. One step."}
+{"id": "timetable.return", "module": "Timetable", "content": "Return a timetable to the Coordinator with the reason it was not approved. School Admin only, one step."}
+{"id": "timetable.slot.assign", "module": "Timetable", "content": "Put a subject, a teacher and a room into one slot of a section's week. One step, and the clash check runs before it is saved rather than after."}
+{"id": "timetable.slot.clear", "module": "Timetable", "content": "Empty one slot of a draft timetable. One step, and it is an ordinary edit while nothing is published."}
+{"id": "vacancy.create", "module": "HR and payroll", "content": "Post a vacancy with its requirements and its salary budget. Two steps, and it is not posted without the budget."}
+{"id": "vacancy.outcome.approve", "module": "HR and payroll", "content": "Approve the recommended outcome and set the joining date, which tells every candidate. Principal or Director, one step."}
+{"id": "vacancy.outcome.recommend", "module": "HR and payroll", "content": "Recommend a candidate for appointment, with an outcome for every other applicant. One step, and the Principal decides."}
+{"id": "vacancy.outcome.return", "module": "HR and payroll", "content": "Return a recommended outcome with the reason. One step, and no candidate is told anything."}
+{"id": "vacancy.withdraw", "module": "HR and payroll", "content": "Withdraw a vacancy before it closes, with the reason. One step."}
+{"id": "visit.close.unconfirmed", "module": "Gate & Entry Protection", "content": "Close visits still open at the end of the day, with the departure recorded as unconfirmed — nobody saw them leave."}
+{"id": "visit.log.in", "module": "Gate & Entry Protection", "content": "Log a visitor in at the desk — who they are, who they have come to see and why — checked against the pre-registrations and the blocklist, with a numbered pass issued."}
+{"id": "visit.log.out", "module": "Gate & Entry Protection", "content": "Log a visitor out: the time they left, and the pass back — or recorded outstanding where it did not come back."}
+{"id": "visit.read", "module": "Gate & Entry Protection", "content": "Open one visit as it was recorded — for an investigation, or to check a disputed account. Nothing is corrected here."}
+{"id": "visit.refuse", "module": "Gate & Entry Protection", "content": "Refuse a visitor entry at the desk and record why. A refusal is recorded as well as an admission."}
+{"id": "visitor.pass.recover", "module": "Gate & Entry Protection", "content": "An outstanding pass has come back. It is marked returned and goes back into circulation."}
+{"id": "visitor.pass.retire", "module": "Gate & Entry Protection", "content": "Retire a pass that was never recovered. The number goes out of use for good."}
+{"id": "visitors.expected.read", "module": "Gate & Entry Protection", "content": "The visitors expected — the pre-registrations the desk checks arrivals against."}
+{"id": "visits.mine.read", "module": "Gate & Entry Protection", "content": "Visits to you — who has come to see you, and whether they are still waiting."}
+{"id": "visits.open.read", "module": "Gate & Entry Protection", "content": "The visits still open and the passes still out, as a list of their own, so the desk can chase them."}
+{"id": "website.inquiryform.history.read", "module": "School Website", "content": "Show when the form was up and when it was down, who changed it, and how many inquiries each period brought."}
+{"id": "website.inquiryform.publish", "module": "School Website", "content": "Put the admission inquiry form on the website so families can apply."}
+{"id": "website.inquiryform.read", "module": "School Website", "content": "Say whether the inquiry form is on the site right now, since when, and how many inquiries have come in."}
+{"id": "website.inquiryform.remove", "module": "School Website", "content": "Take the inquiry form off the website, and say on the page why. Never a dead page."}
+{"id": "website.item.approve", "module": "School Website", "content": "Approve an item for the website. Approval publishes it — there is no state between the two."}
+{"id": "website.item.edit", "module": "School Website", "content": "Correct an item that is already on the site. The change is logged, and whoever read the old version read it."}
+{"id": "website.item.history.read", "module": "School Website", "content": "See what a published item said before somebody changed it, who changed it and when."}
+{"id": "website.item.publish", "module": "School Website", "content": "Put an item on the site directly, at a school that requires no approval."}
+{"id": "website.item.remove", "module": "School Website", "content": "Take a published item off the site, with a reason. It stays on the record — it was public and may be asked about."}
+{"id": "website.item.return", "module": "School Website", "content": "Send an item back to its writer unapproved, with a reason. Nothing has reached the site."}
+{"id": "website.item.submit", "module": "School Website", "content": "Send a written item to the Principal for approval, where the school requires it."}
+{"id": "website.item.write", "module": "School Website", "content": "Write a news item, notice or bulletin for the school website. It is a draft — writing is not publishing."}
+{"id": "website.items.read", "module": "School Website", "content": "See what is on the school website and what is waiting: by category, by status, by who wrote it, over a period."}
+{"id": "website.posting.history.read", "module": "School Website", "content": "See when a post was advertised, when it came off, why, and what each listing brought in."}
+{"id": "website.posting.publish", "module": "School Website", "content": "Put a vacancy on the careers page so candidates can find it and apply. The screen calls this listing a vacancy."}
+{"id": "website.posting.remove", "module": "School Website", "content": "Take a posting off the careers page, with the reason recorded. A filled vacancy left up collects applications the school cannot answer."}
+{"id": "website.postings.read", "module": "School Website", "content": "See what is on the careers page, what it has attracted, and what is about to close."}
+{"id": "withdrawal.approve", "module": "Student records", "content": "Approve a withdrawal, which closes the enrolment on the leaving date and requests the family's certificates. One step."}
+{"id": "withdrawal.clearance.confirm", "module": "Student records", "content": "Confirm clearance: settle the fee position, pay out any unused credit and refund the deposit. Accounts, one step."}
+{"id": "withdrawal.property.record", "module": "Student records", "content": "Record school property returned by a leaving student. One step, and anything not returned stays outstanding."}
+{"id": "withdrawal.raise", "module": "Student records", "content": "Open a withdrawal when a student is leaving, with the route it arose by and the reason. One step, and nothing closes until clearance and approval."}
+{"id": "withdrawal.return", "module": "Student records", "content": "Return a withdrawal unapproved, with the reason. One step, and the student stays enrolled."}

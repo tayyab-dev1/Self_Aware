@@ -1,0 +1,2 @@
+com.diversive.agent.config.AgentGatewayAutoConfiguration
+com.diversive.agent.config.AgentGatewayOpenApiConfiguration

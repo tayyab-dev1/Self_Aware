@@ -1,0 +1,100 @@
+{"text": "remind the Class 5 Blue parents that their fees are overdue", "lang": "en", "expected": "fee.reminder.send", "source": "authored"}
+{"text": "send an SMS to every family in 7 Green who hasn't paid yet", "lang": "en", "expected": "fee.reminder.send", "source": "authored"}
+{"text": "chase the defaulters in Grade 9 Red by WhatsApp", "lang": "en", "expected": "fee.reminder.send", "source": "authored"}
+{"text": "email the guardians in section 3 Yellow about their pending dues", "lang": "en", "expected": "fee.reminder.send", "source": "authored"}
+{"text": "nudge the parents who still owe for September", "lang": "en", "expected": "fee.reminder.send", "source": "authored"}
+{"text": "text all families with unpaid invoices in class 2 blue", "lang": "en", "expected": "fee.reminder.send", "source": "authored"}
+{"text": "class 5 blue ke parents ko fees ka message bhej do", "lang": "ur-Latn", "expected": "fee.reminder.send", "source": "authored", "gloss": "send the fee message to the class 5 blue parents"}
+{"text": "jin bachon ki fees reh gayi hai unke walidain ko SMS karo", "lang": "ur-Latn", "expected": "fee.reminder.send", "source": "authored", "gloss": "SMS the parents of children whose fees are left"}
+{"text": "7 green walon ko WhatsApp par baqaya yaad karwao", "lang": "ur-Latn", "expected": "fee.reminder.send", "source": "authored", "gloss": "remind 7 green about arrears on WhatsApp"}
+{"text": "defaulters ko email bhejna hai", "lang": "ur-Latn", "expected": "fee.reminder.send", "source": "authored", "gloss": "need to email the defaulters"}
+{"text": "parents ko batao ke fees late ho gayi hai", "lang": "ur-Latn", "expected": "fee.reminder.send", "source": "authored", "gloss": "tell the parents the fees are late"}
+{"text": "sab nadehindagan ko reminder chala do", "lang": "ur-Latn", "expected": "fee.reminder.send", "source": "authored", "gloss": "run a reminder to all non-payers"}
+{"text": "Grade 9 ke jin ki fees due hai unhe msg kar do", "lang": "ur-Latn", "expected": "fee.reminder.send", "source": "authored", "gloss": "message those in Grade 9 whose fees are due"}
+{"text": "who hasn't paid fees in class 5 blue", "lang": "en", "expected": "fee.overdue.list", "source": "authored"}
+{"text": "list the families with outstanding balances in Grade 6", "lang": "en", "expected": "fee.overdue.list", "source": "authored"}
+{"text": "how much does Ahmed Raza still owe", "lang": "en", "expected": "fee.overdue.list", "source": "authored"}
+{"text": "show me everyone more than 60 days overdue", "lang": "en", "expected": "fee.overdue.list", "source": "authored"}
+{"text": "which students have unpaid invoices over 10,000", "lang": "en", "expected": "fee.overdue.list", "source": "authored"}
+{"text": "give me the defaulters list for the whole school", "lang": "en", "expected": "fee.overdue.list", "source": "authored"}
+{"text": "class 5 blue mein kis kis ki fees baqi hai?", "lang": "ur-Latn", "expected": "fee.overdue.list", "source": "authored", "gloss": "whose fees are pending in class 5 blue?"}
+{"text": "Ahmed Raza ka kitna baqaya hai", "lang": "ur-Latn", "expected": "fee.overdue.list", "source": "authored", "gloss": "how much does Ahmed Raza owe"}
+{"text": "do mahine se purane defaulters dikhao", "lang": "ur-Latn", "expected": "fee.overdue.list", "source": "authored", "gloss": "show defaulters older than two months"}
+{"text": "poore school ka outstanding batao", "lang": "ur-Latn", "expected": "fee.overdue.list", "source": "authored", "gloss": "tell the whole school's outstanding"}
+{"text": "jinhon ne abhi tak fees jama nahi karwai unki list", "lang": "ur-Latn", "expected": "fee.overdue.list", "source": "authored", "gloss": "list of those who haven't deposited fees yet"}
+{"text": "das hazaar se zyada wale nadehindagan kaun hain", "lang": "ur-Latn", "expected": "fee.overdue.list", "source": "authored", "gloss": "who are the non-payers above ten thousand"}
+{"text": "section 3 yellow ke baqaya jaat dikha do", "lang": "ur-Latn", "expected": "fee.overdue.list", "source": "authored", "gloss": "show section 3 yellow's arrears"}
+{"text": "Bilal's father paid 9,000 cash for October, record it", "lang": "en", "expected": "fee.payment.record", "source": "authored"}
+{"text": "mark the September invoice for Hina Tariq as paid, 6500 by bank challan", "lang": "en", "expected": "fee.payment.record", "source": "authored"}
+{"text": "a parent just paid at the counter, enter the receipt", "lang": "en", "expected": "fee.payment.record", "source": "authored"}
+{"text": "log a partial payment of 3000 against invoice INV/LHR/26-27/000031", "lang": "en", "expected": "fee.payment.record", "source": "authored"}
+{"text": "the bank stamped challan came back for Usman, 12,000 received on Monday", "lang": "en", "expected": "fee.payment.record", "source": "authored"}
+{"text": "Bilal ke abbu 9000 naqad de gaye hain, entry kar do", "lang": "ur-Latn", "expected": "fee.payment.record", "source": "authored", "gloss": "Bilal's father left 9000 cash, make the entry"}
+{"text": "Hina Tariq ki fees bank challan se aa gayi hai", "lang": "ur-Latn", "expected": "fee.payment.record", "source": "authored", "gloss": "Hina Tariq's fee came through bank challan"}
+{"text": "counter par 4500 wasool hue, raseed bana do", "lang": "ur-Latn", "expected": "fee.payment.record", "source": "authored", "gloss": "4500 collected at the counter, make the receipt"}
+{"text": "Usman ke challan ki stamp wali copy mil gayi, 12000", "lang": "ur-Latn", "expected": "fee.payment.record", "source": "authored", "gloss": "got the stamped copy of Usman's challan, 12000"}
+{"text": "aadhi fees jama hui hai, 3000 record karo", "lang": "ur-Latn", "expected": "fee.payment.record", "source": "authored", "gloss": "half the fee was deposited, record 3000"}
+{"text": "walid sahib ne October ki fees ada kar di", "lang": "ur-Latn", "expected": "fee.payment.record", "source": "authored", "gloss": "the father paid October's fees"}
+{"text": "paisay mil gaye hain Ayesha ke invoice ke", "lang": "ur-Latn", "expected": "fee.payment.record", "source": "authored", "gloss": "the money for Ayesha's invoice has been received"}
+{"text": "how much fee did we collect today", "lang": "en", "expected": "dashboard.main.read", "source": "authored"}
+{"text": "what's the collection this month so far", "lang": "en", "expected": "dashboard.main.read", "source": "authored"}
+{"text": "show the dashboard numbers for my branch", "lang": "en", "expected": "dashboard.main.read", "source": "authored"}
+{"text": "total outstanding for the branch right now", "lang": "en", "expected": "dashboard.main.read", "source": "authored"}
+{"text": "give me today's figures", "lang": "en", "expected": "dashboard.main.read", "source": "authored"}
+{"text": "is mahine ki wasooli kitni hui", "lang": "ur-Latn", "expected": "dashboard.main.read", "source": "authored", "gloss": "how much was collected this month"}
+{"text": "aaj kitne paisay aaye", "lang": "ur-Latn", "expected": "dashboard.main.read", "source": "authored", "gloss": "how much money came in today"}
+{"text": "branch ka total baqaya kitna hai abhi", "lang": "ur-Latn", "expected": "dashboard.main.read", "source": "authored", "gloss": "how much is the branch's total outstanding now"}
+{"text": "mujhe aaj ki summary dikhao", "lang": "ur-Latn", "expected": "dashboard.main.read", "source": "authored", "gloss": "show me today's summary"}
+{"text": "collection ki report mukhtasar mein batao", "lang": "ur-Latn", "expected": "dashboard.main.read", "source": "authored", "gloss": "tell the collection briefly"}
+{"text": "mahine ka hisaab kitaab kya hai", "lang": "ur-Latn", "expected": "dashboard.main.read", "source": "authored", "gloss": "what are this month's accounts"}
+{"text": "this invoice went to the wrong student and nobody has paid it, cancel it", "lang": "en", "expected": "fee.cancellation.raise", "source": "authored"}
+{"text": "we billed Sara twice for August, the second one needs to go", "lang": "en", "expected": "fee.cancellation.raise", "source": "authored"}
+{"text": "Zain left in July but still got a September bill, get rid of it", "lang": "en", "expected": "fee.cancellation.raise", "source": "authored"}
+{"text": "the invoice has the wrong billing period and is unpaid, raise a cancellation", "lang": "en", "expected": "fee.cancellation.raise", "source": "authored"}
+{"text": "void the transport charge we added by mistake, the family hasn't paid it", "lang": "en", "expected": "fee.cancellation.raise", "source": "authored"}
+{"text": "request cancellation of the duplicate invoice for Hamza", "lang": "en", "expected": "fee.cancellation.raise", "source": "authored"}
+{"text": "Sara ka August ka bill do dafa ban gaya, ek hata do", "lang": "ur-Latn", "expected": "fee.cancellation.raise", "source": "authored", "gloss": "Sara's August bill was made twice, remove one"}
+{"text": "Zain July mein school chhor gaya tha, September ka bill kyun bana, cancel karo", "lang": "ur-Latn", "expected": "fee.cancellation.raise", "source": "authored", "gloss": "Zain left in July, why was September's bill made, cancel it"}
+{"text": "ye invoice kisi aur bache ka hai aur abhi jama bhi nahi hua", "lang": "ur-Latn", "expected": "fee.cancellation.raise", "source": "authored", "gloss": "this invoice belongs to another child and hasn't been paid"}
+{"text": "galti se transport charge lag gaya, paisay nahi diye, khatam karo", "lang": "ur-Latn", "expected": "fee.cancellation.raise", "source": "authored", "gloss": "transport charge added by mistake, not paid, end it"}
+{"text": "ghalat mahine ka bill bana hai, cancellation bhejo", "lang": "ur-Latn", "expected": "fee.cancellation.raise", "source": "authored", "gloss": "a bill for the wrong month was made, send a cancellation"}
+{"text": "Hamza ka duplicate bill nikal do", "lang": "ur-Latn", "expected": "fee.cancellation.raise", "source": "authored", "gloss": "remove Hamza's duplicate bill"}
+{"text": "is bill ki rakam hi ghalat hai aur kisi ne pay nahi kiya", "lang": "ur-Latn", "expected": "fee.cancellation.raise", "source": "authored", "gloss": "this bill's amount is wrong and nobody paid it"}
+{"text": "the family paid a charge that was wrong, put the money on their account", "lang": "en", "expected": "fee.credit.raise", "source": "authored"}
+{"text": "Ali's parents paid the duplicate invoice too, credit it against next month", "lang": "en", "expected": "fee.credit.raise", "source": "authored"}
+{"text": "they were overcharged by 2,000 and already paid, adjust it in the next bill", "lang": "en", "expected": "fee.credit.raise", "source": "authored"}
+{"text": "the sibling discount was missed and they paid full fee, credit the difference", "lang": "en", "expected": "fee.credit.raise", "source": "authored"}
+{"text": "raise a credit for the lab fee Maryam paid that she shouldn't have been charged", "lang": "en", "expected": "fee.credit.raise", "source": "authored"}
+{"text": "hold the extra amount they paid on the account instead of refunding", "lang": "en", "expected": "fee.credit.raise", "source": "authored"}
+{"text": "Ali walon ne duplicate bill bhi bhar diya, agle mahine mein adjust karo", "lang": "ur-Latn", "expected": "fee.credit.raise", "source": "authored", "gloss": "Ali's family paid the duplicate bill too, adjust next month"}
+{"text": "2000 zyada le liye aur wo de bhi chuke, credit kar do", "lang": "ur-Latn", "expected": "fee.credit.raise", "source": "authored", "gloss": "took 2000 extra and they already paid, credit it"}
+{"text": "sibling discount nahi laga tha aur poori fees jama ho gayi", "lang": "ur-Latn", "expected": "fee.credit.raise", "source": "authored", "gloss": "sibling discount wasn't applied and the full fee was paid"}
+{"text": "Maryam se lab fee ghalat li gayi thi, paisay unke khate mein rakh do", "lang": "ur-Latn", "expected": "fee.credit.raise", "source": "authored", "gloss": "lab fee was wrongly taken from Maryam, keep the money in their account"}
+{"text": "ghalat charge ka paisa aa chuka hai, agle bill se kaat lena", "lang": "ur-Latn", "expected": "fee.credit.raise", "source": "authored", "gloss": "money for the wrong charge has come, deduct it from the next bill"}
+{"text": "family ne jo zyada diya wo account mein credit karo", "lang": "ur-Latn", "expected": "fee.credit.raise", "source": "authored", "gloss": "credit what the family paid extra to the account"}
+{"text": "bill ghalat tha magar ada ho gaya, ab kya karein, credit bana do", "lang": "ur-Latn", "expected": "fee.credit.raise", "source": "authored", "gloss": "the bill was wrong but got paid, make a credit"}
+{"text": "remove the late fine from Danish's October invoice, the bank was closed", "lang": "en", "expected": "fee.latefee.waive", "source": "authored"}
+{"text": "waive the 500 rupee late charge for the Qureshi family", "lang": "en", "expected": "fee.latefee.waive", "source": "authored"}
+{"text": "the late fee was added even though they paid on the due date, take it off", "lang": "en", "expected": "fee.latefee.waive", "source": "authored"}
+{"text": "forgive the fine on this invoice, there was a death in the family", "lang": "en", "expected": "fee.latefee.waive", "source": "authored"}
+{"text": "drop the late payment penalty on invoice INV/LHR/26-27/000045", "lang": "en", "expected": "fee.latefee.waive", "source": "authored"}
+{"text": "can you waive this month's late fee for Fatima", "lang": "en", "expected": "fee.latefee.waive", "source": "authored"}
+{"text": "Danish ke October ke bill se jurmana hata do, bank band tha", "lang": "ur-Latn", "expected": "fee.latefee.waive", "source": "authored", "gloss": "remove the fine from Danish's October bill, the bank was closed"}
+{"text": "Qureshi family ka 500 ka late charge maaf karo", "lang": "ur-Latn", "expected": "fee.latefee.waive", "source": "authored", "gloss": "waive the Qureshi family's 500 late charge"}
+{"text": "unhon ne waqt par diya tha phir bhi late fee lag gayi", "lang": "ur-Latn", "expected": "fee.latefee.waive", "source": "authored", "gloss": "they paid on time but a late fee was still added"}
+{"text": "ghar mein fotgi hui thi, jurmana na lagaen", "lang": "ur-Latn", "expected": "fee.latefee.waive", "source": "authored", "gloss": "there was a death at home, don't charge the fine"}
+{"text": "Fatima ki late fee maaf kar dein", "lang": "ur-Latn", "expected": "fee.latefee.waive", "source": "authored", "gloss": "please waive Fatima's late fee"}
+{"text": "sirf penalty hatani hai, asal fees wahi rahe", "lang": "ur-Latn", "expected": "fee.latefee.waive", "source": "authored", "gloss": "only the penalty should be removed, the actual fee stays"}
+{"text": "the Khan family moved abroad and can't be reached, propose writing off their dues", "lang": "en", "expected": "fee.writeoff.propose", "source": "authored"}
+{"text": "we've tried for a year to recover 18,000 from this family, time to write it off", "lang": "en", "expected": "fee.writeoff.propose", "source": "authored"}
+{"text": "this old balance will never be paid, the father passed away and there is no income", "lang": "en", "expected": "fee.writeoff.propose", "source": "authored"}
+{"text": "propose a write-off for Rehan's unpaid fees from 2024", "lang": "en", "expected": "fee.writeoff.propose", "source": "authored"}
+{"text": "the debt is real but uncollectable, send it to the principal for write-off", "lang": "en", "expected": "fee.writeoff.propose", "source": "authored"}
+{"text": "family's phone is off and the address is empty, we give up on the outstanding amount", "lang": "en", "expected": "fee.writeoff.propose", "source": "authored"}
+{"text": "Khan family bahar chali gayi, rabta nahi ho raha, baqaya write off karwao", "lang": "ur-Latn", "expected": "fee.writeoff.propose", "source": "authored", "gloss": "the Khan family went abroad, can't be contacted, get the arrears written off"}
+{"text": "saal bhar se 18000 mang rahe hain, ab nahi milenge", "lang": "ur-Latn", "expected": "fee.writeoff.propose", "source": "authored", "gloss": "we've been asking for 18000 for a year, it won't come now"}
+{"text": "walid ka intiqal ho gaya, ye purana baqaya kabhi ada nahi hoga", "lang": "ur-Latn", "expected": "fee.writeoff.propose", "source": "authored", "gloss": "the father passed away, this old balance will never be paid"}
+{"text": "Rehan ki 2024 ki fees ka baqaya khatam karne ki darkhwast principal ko bhejo", "lang": "ur-Latn", "expected": "fee.writeoff.propose", "source": "authored", "gloss": "send a request to the principal to end Rehan's 2024 arrears"}
+{"text": "fees sahi thi lekin wasooli na-mumkin hai", "lang": "ur-Latn", "expected": "fee.writeoff.propose", "source": "authored", "gloss": "the fees were correct but recovery is impossible"}
+{"text": "family ka koi pata nahi, ghar khali hai, ye raqam chhor do", "lang": "ur-Latn", "expected": "fee.writeoff.propose", "source": "authored", "gloss": "no trace of the family, the house is empty, let this amount go"}
+{"text": "ye qarz doobne wala hai, write off ki tajweez tayyar karo", "lang": "ur-Latn", "expected": "fee.writeoff.propose", "source": "authored", "gloss": "this debt is going bad, prepare a write-off proposal"}

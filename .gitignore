@@ -1,0 +1,23 @@
+# Local settings (copy from .env.example)
+.env
+
+# Java / Maven
+**/target/
+*.class
+
+# Python / uv
+**/.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Editors and OS
+.idea/
+.vscode/
+*.iml
+.DS_Store
+
+# Retrieval eval: cached embeddings of the eval texts (rebuilt on demand)
+ai-layer/eval/.cache/

@@ -1,0 +1,60 @@
+{"text": "authorise the school-wide September run", "lang": "en", "source": "contract", "origin": "fee.batch.authorise"}
+{"text": "poora batch reverse kar do, galat period ka bill ban gaya tha", "lang": "ur-Latn", "source": "contract", "origin": "fee.batch.reverse", "gloss": "reverse the whole batch, it was billed for the wrong period"}
+{"text": "approve the cancellation on Bilal's September invoice", "lang": "en", "source": "contract", "origin": "fee.cancellation.approve"}
+{"text": "cancellation wapas bhej do, wajah saaf nahi hai", "lang": "ur-Latn", "source": "contract", "origin": "fee.cancellation.return", "gloss": "send the cancellation back, the reason is not clear"}
+{"text": "print the challan for Ayesha's September invoice", "lang": "en", "source": "contract", "origin": "fee.challan.generate"}
+{"text": "concession approve kar do", "lang": "ur-Latn", "source": "contract", "origin": "fee.concession.approve", "gloss": "approve the concession"}
+{"text": "record a 25% tuition concession for this student, valid to the end of the session", "lang": "en", "source": "contract", "origin": "fee.concession.record"}
+{"text": "concession wapas bhej do", "lang": "ur-Latn", "source": "contract", "origin": "fee.concession.return", "gloss": "send the concession back"}
+{"text": "withdraw this concession, the family's circumstances have improved", "lang": "en", "source": "contract", "origin": "fee.concession.withdraw"}
+{"text": "credit approve kar do", "lang": "ur-Latn", "source": "contract", "origin": "fee.credit.approve", "gloss": "approve the credit"}
+{"text": "return this credit — no money was received against that invoice", "lang": "en", "source": "contract", "origin": "fee.credit.return"}
+{"text": "Grade 4 ke September ke invoice bana do", "lang": "ur-Latn", "source": "contract", "origin": "fee.invoice.issue", "gloss": "raise Grade 4's September invoices"}
+{"text": "preview the September invoices for Grade 4", "lang": "en", "source": "contract", "origin": "fee.invoice.preview"}
+{"text": "late fee policy approve kar do", "lang": "ur-Latn", "source": "contract", "origin": "fee.latefee.policy.approve", "gloss": "approve the late fee policy"}
+{"text": "build a late fee policy — 200 after 7 days, 500 after 30, capped at 1,000", "lang": "en", "source": "contract", "origin": "fee.latefee.policy.create"}
+{"text": "policy wapas bhej do, jurmana bohat zyada hai", "lang": "ur-Latn", "source": "contract", "origin": "fee.latefee.policy.return", "gloss": "send the policy back, the fine is too high"}
+{"text": "approve the correction on this payment", "lang": "en", "source": "contract", "origin": "fee.payment.correction.approve"}
+{"text": "ye payment galat student ke against lag gayi hai", "lang": "ur-Latn", "source": "contract", "origin": "fee.payment.correction.raise", "gloss": "this payment went against the wrong student"}
+{"text": "return this correction, the charge is what's wrong not the payment", "lang": "en", "source": "contract", "origin": "fee.payment.correction.return"}
+{"text": "qiston ki darkhwast manzoor kar do", "lang": "ur-Latn", "source": "contract", "origin": "fee.plan.approve", "gloss": "approve the installment request"}
+{"text": "decline this request — they've broken two plans already this year", "lang": "en", "source": "contract", "origin": "fee.plan.decline"}
+{"text": "teen qisten bana do — 2000 har mahine, October se", "lang": "ur-Latn", "source": "contract", "origin": "fee.plan.define", "gloss": "make three installments — 2000 a month, from October"}
+{"text": "record a plan request for this family, they've asked to pay in three parts", "lang": "en", "source": "contract", "origin": "fee.plan.request"}
+{"text": "plan badal do, December wali qist January mein kar do", "lang": "ur-Latn", "source": "contract", "origin": "fee.plan.reschedule", "gloss": "change the plan, move December's installment to January"}
+{"text": "approve the refund for the Khan family", "lang": "en", "source": "contract", "origin": "fee.refund.approve"}
+{"text": "refund ka paisa de diya hai, mark kar do", "lang": "ur-Latn", "source": "contract", "origin": "fee.refund.pay", "gloss": "the refund money has been handed over, mark it"}
+{"text": "raise a refund for the Khan family, they've left and hold 2,000 credit", "lang": "en", "source": "contract", "origin": "fee.refund.raise"}
+{"text": "refund wapas bhej do", "lang": "ur-Latn", "source": "contract", "origin": "fee.refund.return", "gloss": "send the refund back"}
+{"text": "approve the Grade 4 fee structure", "lang": "en", "source": "contract", "origin": "fee.structure.approve"}
+{"text": "Grade 4 ke liye fee structure bana do — tuition 5000 mahana", "lang": "ur-Latn", "source": "contract", "origin": "fee.structure.create", "gloss": "build a fee structure for Grade 4 — tuition 5000 monthly"}
+{"text": "return this structure — the exam fee should be per term not annual", "lang": "en", "source": "contract", "origin": "fee.structure.return"}
+{"text": "Grade 4 ki fees badha do, January se 5500", "lang": "ur-Latn", "source": "contract", "origin": "fee.structure.revise", "gloss": "raise Grade 4's fees, 5500 from January"}
+{"text": "submit the Grade 4 structure for approval, effective 1 August", "lang": "en", "source": "contract", "origin": "fee.structure.submit"}
+{"text": "is family ka tax certificate jaari karo", "lang": "ur-Latn", "source": "contract", "origin": "fee.tax.certificate.issue", "gloss": "issue this family's tax certificate"}
+{"text": "approve the tax configuration", "lang": "en", "source": "contract", "origin": "fee.tax.config.approve"}
+{"text": "withholding tax ki configuration daal do — rate 5%, threshold 200,000", "lang": "ur-Latn", "source": "contract", "origin": "fee.tax.config.create", "gloss": "enter the withholding tax configuration — rate 5%, threshold 200,000"}
+{"text": "return this configuration, the threshold is wrong", "lang": "en", "source": "contract", "origin": "fee.tax.config.return"}
+{"text": "write off approve kar do", "lang": "ur-Latn", "source": "contract", "origin": "fee.writeoff.approve", "gloss": "approve the write-off"}
+{"text": "return this write-off proposal, we haven't tried hard enough to recover it", "lang": "en", "source": "contract", "origin": "fee.writeoff.return"}
+{"text": "family wapas aa gayi hai aur paisa de rahi hai, write off reverse karo", "lang": "ur-Latn", "source": "contract", "origin": "fee.writeoff.reverse", "gloss": "the family has come back and is paying, reverse the write-off"}
+{"text": "find Ahmed Raza", "lang": "en", "source": "contract", "origin": "search.global"}
+{"text": "unko form ka link dobara bhejo, unko mila nahi", "lang": "ur-Latn", "source": "contract", "origin": "admission.invite.resend", "gloss": "send them the form link again, they did not get it"}
+{"text": "send absence alerts for Grade 4 section B today", "lang": "en", "source": "contract", "origin": "attendance.alert.send"}
+{"text": "Grade 4 bana do", "lang": "ur-Latn", "source": "contract", "origin": "class.create", "gloss": "create Grade 4"}
+{"text": "who did not get the emergency notice?", "lang": "en", "source": "contract", "origin": "emergency.notice.delivery.read"}
+{"text": "fees ka dashboard kholo", "lang": "ur-Latn", "source": "contract", "origin": "dashboard.module.view", "gloss": "open the fee dashboard"}
+{"text": "classify this absence as excused — the student was on approved leave", "lang": "en", "source": "contract", "origin": "exam.absence.classify"}
+{"text": "budget approve kar do", "lang": "ur-Latn", "source": "contract", "origin": "finance.budget.approve", "gloss": "approve the budget"}
+{"text": "put up the pickup barcode at the main gate, rotating daily", "lang": "en", "source": "contract", "origin": "gate.barcode.display"}
+{"text": "is umeedwar ko rad kar do, wajah likh dein", "lang": "ur-Latn", "source": "contract", "origin": "application.reject", "gloss": "reject this candidate, with the explanation"}
+{"text": "record that I spoke to the transport contractor about the bus complaint", "lang": "en", "source": "contract", "origin": "complaint.parent.action.record"}
+{"text": "umeedwar ne letter qubool kar liya hai", "lang": "ur-Latn", "source": "contract", "origin": "appointment.letter.accept", "gloss": "the candidate has accepted the letter"}
+{"text": "assign the projector to the physics laboratory", "lang": "en", "source": "contract", "origin": "asset.assign"}
+{"text": "is branch mein kaun kaun assign hai?", "lang": "ur-Latn", "source": "contract", "origin": "branch.assignments.read", "gloss": "who is assigned to this branch?"}
+{"text": "what is my son's attendance percentage?", "lang": "en", "source": "contract", "origin": "attendance.child.summary.read"}
+{"text": "March mein koi inquiry kyun nahi aayi?", "lang": "ur-Latn", "source": "contract", "origin": "website.inquiryform.history.read", "gloss": "why did no inquiry come in March?"}
+{"text": "disable the account of the teacher who left", "lang": "en", "source": "contract", "origin": "account.disable"}
+{"text": "date of birth theek kar do, B-form pe 14 March 2016 likha hai", "lang": "ur-Latn", "source": "contract", "origin": "student.identity.update", "gloss": "correct the date of birth, the B-Form says 14 March 2016"}
+{"text": "the family has appealed — record it", "lang": "en", "source": "contract", "origin": "expulsion.appeal.record"}
+{"text": "5-A ka timetable manzoori ke liye bhej do", "lang": "ur-Latn", "source": "contract", "origin": "timetable.approval.submit", "gloss": "send 5-A's timetable for approval"}

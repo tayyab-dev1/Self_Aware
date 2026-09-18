@@ -1,0 +1,749 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>School Assistant — pipeline view</title>
+<style>
+  :root {
+    --bg: #f5f6f8; --panel: #ffffff; --ink: #1b1f24; --muted: #5f6b7a; --line: #e2e6eb; --soft: #f1f3f6;
+    --accent: #1f6feb; --accent-ink: #ffffff; --user: #e8f0fe; --user-ink: #0b2a5c;
+    --answer: #eaf6ee; --answer-line: #2f8f4e; --question: #fff6e0; --question-line: #b7791f;
+    --confirm: #eef2ff; --confirm-line: #4f46e5; --refusal: #fdecec; --refusal-line: #c53030;
+    --chip: #eef1f4; --code: #6b7280; --shadow: 0 1px 2px rgba(16, 24, 40, .06);
+    --k-model: #7c3aed; --k-model-bg: #f3edff; --k-backend: #0f7b4f; --k-backend-bg: #e6f6ee;
+    --k-search: #0e7490; --k-search-bg: #e3f5f9; --k-code: #475569; --k-code-bg: #eef1f5;
+    --s-ok: #2f8f4e; --s-failed: #c53030; --s-skipped: #8a94a3; --s-paused: #b7791f;
+    --j-key: #5f6b7a; --j-str: #0b5cad; --j-num: #9a3412; --j-bool: #7c3aed;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0f1216; --panel: #161a20; --ink: #e6e9ee; --muted: #9aa5b1; --line: #2a313a; --soft: #1b2027;
+      --accent: #4c8dff; --accent-ink: #0b1220; --user: #1c2b45; --user-ink: #dbe7ff;
+      --answer: #13261a; --answer-line: #4cc27a; --question: #2a2213; --question-line: #e0a53a;
+      --confirm: #1c1f3a; --confirm-line: #8b87ff; --refusal: #2c1717; --refusal-line: #f07171;
+      --chip: #222831; --code: #9aa5b1; --shadow: none;
+      --k-model: #b69cff; --k-model-bg: #251d3d; --k-backend: #5fd39a; --k-backend-bg: #142a20;
+      --k-search: #5cc8e0; --k-search-bg: #11272d; --k-code: #aab4c3; --k-code-bg: #20262e;
+      --s-ok: #4cc27a; --s-failed: #f07171; --s-skipped: #7c8795; --s-paused: #e0a53a;
+      --j-key: #9aa5b1; --j-str: #8cc4ff; --j-num: #ffb27a; --j-bool: #c9b3ff;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink);
+         font: 14px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+  header.top { display: flex; align-items: center; gap: 12px; padding: 10px 20px; background: var(--panel);
+               border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+  header.top h1 { font-size: 16px; margin: 0; }
+  header.top .sub { color: var(--muted); font-size: 12px; }
+  .spacer { flex: 1; }
+  .pill { font-size: 12px; padding: 3px 10px; border-radius: 999px; background: var(--chip); color: var(--muted);
+          cursor: default; white-space: nowrap; }
+  .pill.ok { background: var(--answer); color: var(--answer-line); }
+  .pill.bad { background: var(--refusal); color: var(--refusal-line); }
+  button { font: inherit; border-radius: 8px; border: 1px solid var(--line); background: var(--panel); color: var(--ink);
+           padding: 6px 12px; cursor: pointer; }
+  button:hover:not(:disabled) { border-color: var(--accent); }
+  button.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+  button.link { border: 0; background: none; padding: 0; color: var(--accent); font-size: 12px; }
+  button:disabled { opacity: .5; cursor: default; }
+  input, textarea { font: inherit; color: var(--ink); background: var(--panel); border: 1px solid var(--line);
+                    border-radius: 8px; padding: 8px 10px; }
+  input:focus, textarea:focus, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+  .code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--code); }
+
+  main { display: grid; grid-template-columns: minmax(340px, 5fr) minmax(0, 7fr); gap: 16px; padding: 14px 20px;
+         height: calc(100vh - 58px); }
+  main.no-pipeline { grid-template-columns: minmax(0, 1fr) 340px; }
+  @media (max-width: 980px) { main, main.no-pipeline { grid-template-columns: 1fr; height: auto; } }
+  .panel { display: flex; flex-direction: column; background: var(--panel); border: 1px solid var(--line);
+           border-radius: 12px; box-shadow: var(--shadow); min-height: 520px; overflow: hidden; }
+
+  /* --- chat --- */
+  .log { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+  .empty { color: var(--muted); margin: auto; text-align: center; max-width: 420px; }
+  .msg { max-width: 88%; border-radius: 12px; padding: 10px 12px; white-space: pre-wrap; word-wrap: break-word; }
+  .msg.user { align-self: flex-end; background: var(--user); color: var(--user-ink); }
+  .msg.bot { align-self: flex-start; background: var(--chip); border-left: 4px solid var(--line); }
+  .msg.answer { background: var(--answer); border-left-color: var(--answer-line); }
+  .msg.question { background: var(--question); border-left-color: var(--question-line); }
+  .msg.confirmation { background: var(--confirm); border-left-color: var(--confirm-line); }
+  .msg.refusal { background: var(--refusal); border-left-color: var(--refusal-line); }
+  .msg.system { align-self: center; background: transparent; color: var(--muted); font-size: 12px; padding: 0; }
+  .msg.selected { box-shadow: 0 0 0 2px var(--accent); }
+  .meta { display: flex; gap: 6px; align-items: center; margin-bottom: 4px; font-size: 11px; color: var(--muted);
+          white-space: normal; flex-wrap: wrap; }
+  .tag { text-transform: uppercase; letter-spacing: .04em; font-weight: 600; }
+  .actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; white-space: normal; }
+  .option { text-align: left; }
+  .option small { display: block; color: var(--muted); }
+  .steps { margin-top: 8px; white-space: normal; }
+  .step { font-size: 12px; color: var(--muted); }
+  details { white-space: normal; }
+  summary { cursor: pointer; color: var(--muted); font-size: 12px; }
+  .data { overflow-x: auto; margin-top: 6px; }
+  table { border-collapse: collapse; font-size: 12px; width: 100%; }
+  th, td { text-align: left; padding: 4px 8px; border-bottom: 1px solid var(--line); white-space: nowrap; vertical-align: top; }
+  th { color: var(--muted); font-weight: 600; }
+  td.num { text-align: right; font-variant-numeric: tabular-nums; }
+  dl { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 2px 12px; margin: 0; font-size: 12px; }
+  dt { color: var(--muted); }
+  dd { margin: 0; font-variant-numeric: tabular-nums; min-width: 0; }
+  dt.wide { grid-column: 1 / -1; margin-top: 4px; font-weight: 600; }
+  dd.wide { grid-column: 1 / -1; }
+  .composer { display: flex; gap: 8px; padding: 12px; border-top: 1px solid var(--line); }
+  .composer textarea { flex: 1; resize: none; height: 44px; }
+  .thinking { align-self: flex-start; color: var(--muted); font-size: 13px; display: flex; gap: 8px; align-items: center; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); animation: pulse 1s infinite ease-in-out; }
+  .dot:nth-child(2) { animation-delay: .15s; } .dot:nth-child(3) { animation-delay: .3s; }
+  @keyframes pulse { 0%, 100% { opacity: .25; } 50% { opacity: 1; } }
+
+  /* --- right column --- */
+  .tabs { display: flex; gap: 4px; padding: 8px 10px 0; border-bottom: 1px solid var(--line); }
+  .tab { border: 0; border-bottom: 2px solid transparent; border-radius: 0; background: none; padding: 8px 12px; color: var(--muted); }
+  .tab[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--accent); font-weight: 600; }
+  .tabpane { flex: 1; overflow-y: auto; padding: 14px 16px; }
+  .card { background: var(--soft); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; margin-bottom: 12px; }
+  .card h2 { font-size: 13px; margin: 0 0 2px; }
+  .card p { margin: 0 0 8px; color: var(--muted); font-size: 12px; }
+  .group { margin-top: 10px; }
+  .group h3 { font-size: 12px; margin: 0 0 4px; }
+  .group h3 span { font-weight: 400; color: var(--muted); }
+  .example { display: block; width: 100%; text-align: left; margin: 4px 0; padding: 6px 10px; font-size: 13px; }
+  .token-row { display: flex; gap: 8px; }
+  .token-row input { flex: 1; min-width: 0; }
+  .hint { font-size: 12px; color: var(--muted); margin-top: 6px; }
+
+  /* --- pipeline --- */
+  .p-head { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; margin-bottom: 4px; }
+  .p-head h2 { font-size: 15px; margin: 0; }
+  .p-turn { color: var(--muted); font-size: 13px; overflow-wrap: anywhere; }
+  .p-summary { display: flex; gap: 8px; flex-wrap: wrap; margin: 8px 0 10px; }
+  .stat { font-size: 12px; background: var(--soft); border: 1px solid var(--line); border-radius: 999px; padding: 2px 10px; }
+  .stat b { font-variant-numeric: tabular-nums; }
+  .legend { display: flex; gap: 12px; flex-wrap: wrap; font-size: 11px; color: var(--muted); margin-bottom: 10px; }
+  .legend span::before { content: ""; display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin-right: 5px;
+                         background: var(--kc); vertical-align: middle; }
+  .flow { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; margin-bottom: 14px; }
+  .flow .arrow { color: var(--muted); font-size: 11px; }
+  .chip { font-size: 12px; border-radius: 999px; padding: 2px 9px; border: 1px solid transparent; cursor: pointer;
+          background: var(--kb); color: var(--kc); }
+  .chip.failed { border-color: var(--s-failed); }
+  .chip.skipped { opacity: .55; text-decoration: line-through; }
+  .chip.paused { border-color: var(--s-paused); }
+  .k-model { --kc: var(--k-model); --kb: var(--k-model-bg); }
+  .k-backend { --kc: var(--k-backend); --kb: var(--k-backend-bg); }
+  .k-search { --kc: var(--k-search); --kb: var(--k-search-bg); }
+  .k-code { --kc: var(--k-code); --kb: var(--k-code-bg); }
+
+  .stage { display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 10px; opacity: 0; transform: translateY(6px);
+           animation: rise .35s ease forwards; }
+  @keyframes rise { to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) { .stage { animation: none; opacity: 1; transform: none; } }
+  .rail { display: flex; flex-direction: column; align-items: center; }
+  .s-num { width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; font-size: 12px; font-weight: 700;
+         background: var(--kb); color: var(--kc); border: 2px solid var(--kc); flex: none; }
+  .line { flex: 1; width: 2px; background: var(--line); margin: 2px 0; }
+  .stage:last-child .line { display: none; }
+  .s-body { background: var(--panel); border: 1px solid var(--line); border-left: 4px solid var(--kc); border-radius: 10px;
+            padding: 10px 12px; margin-bottom: 12px; min-width: 0; scroll-margin-top: 8px; }
+  .s-body.flash { box-shadow: 0 0 0 3px var(--accent); transition: box-shadow .2s; }
+  .s-top { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .s-top h3 { margin: 0; font-size: 14px; }
+  .actor { font-size: 11px; border-radius: 999px; padding: 1px 8px; background: var(--kb); color: var(--kc); font-weight: 600; }
+  .dur { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .status { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; }
+  .status.ok { color: var(--s-ok); } .status.failed { color: var(--s-failed); }
+  .status.skipped { color: var(--s-skipped); } .status.paused { color: var(--s-paused); }
+  .does { margin: 4px 0 0; color: var(--muted); font-size: 12.5px; }
+  .note { margin: 6px 0 0; font-size: 12.5px; padding: 6px 8px; border-radius: 6px; background: var(--soft); overflow-wrap: anywhere; }
+  .note.failed { background: var(--refusal); color: var(--refusal-line); }
+  .note.paused { background: var(--question); color: var(--question-line); }
+  .io { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; margin-top: 8px; }
+  .io.stacked { grid-template-columns: minmax(0, 1fr); }
+  @media (max-width: 1200px) { .io { grid-template-columns: minmax(0, 1fr); } }
+  .io > div { min-width: 0; background: var(--soft); border-radius: 8px; padding: 6px 8px; overflow-x: auto; }
+  .io h4 { margin: 0 0 4px; font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); display: flex; gap: 8px; }
+  .io h4 .raw { margin-left: auto; text-transform: none; letter-spacing: 0; }
+  .j-key { color: var(--j-key); } .j-str { color: var(--j-str); } .j-num { color: var(--j-num); font-variant-numeric: tabular-nums; }
+  .j-bool { color: var(--j-bool); } .j-null { color: var(--muted); font-style: italic; }
+  .j-chips { display: flex; flex-wrap: wrap; gap: 3px; }
+  .j-chip { font-size: 11.5px; background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 0 6px; }
+  .j-list { margin: 0; padding-left: 18px; font-size: 12px; }
+  .j-list > li + li { margin-top: 4px; }
+  pre { margin: 4px 0 0; white-space: pre-wrap; word-break: break-word; font: 11.5px/1.45 ui-monospace, SFMono-Regular, Menlo, monospace;
+        max-height: 320px; overflow: auto; background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 6px 8px; }
+  .waiting { color: var(--muted); display: flex; gap: 10px; align-items: center; margin-top: 30px; justify-content: center; }
+  .p-empty { color: var(--muted); max-width: 520px; margin: 30px auto; text-align: center; }
+  .p-empty ol { text-align: left; display: inline-block; margin: 10px 0 0; }
+</style>
+</head>
+<body>
+<header class="top">
+  <div>
+    <h1>School Assistant</h1>
+    <div class="sub">POC test page · each turn goes to <span class="code">POST /chat</span> as the signed-in user, and the pipeline it ran is shown on the right</div>
+  </div>
+  <div class="spacer"></div>
+  <span id="health" class="pill" title="">checking…</span>
+  <button id="pipeline-toggle" type="button" aria-pressed="true">Hide pipeline</button>
+  <button id="new-chat" type="button">New conversation</button>
+</header>
+
+<main id="main">
+  <section class="panel" aria-label="Conversation">
+    <div id="log" class="log" aria-live="polite">
+      <div class="empty" id="empty">
+        Type a sentence in English or Roman Urdu, or pick one from <b>Try it</b>.<br>
+        A new sentence takes about 10 seconds (two model calls); answers to questions are instant.
+      </div>
+    </div>
+    <form id="composer" class="composer">
+      <textarea id="message" placeholder="e.g. class 5 blue ka baqaya dikhao" aria-label="Message" maxlength="1000"></textarea>
+      <button id="send" class="primary" type="submit">Send</button>
+    </form>
+  </section>
+
+  <section class="panel" aria-label="Pipeline and examples">
+    <div class="tabs" role="tablist">
+      <button class="tab" id="tab-pipeline" role="tab" type="button" aria-selected="true" aria-controls="pane-pipeline">Pipeline</button>
+      <button class="tab" id="tab-try" role="tab" type="button" aria-selected="false" aria-controls="pane-try">Try it</button>
+    </div>
+
+    <div class="tabpane" id="pane-pipeline" role="tabpanel">
+      <div id="pipeline">
+        <div class="p-empty">
+          <b>Send a sentence to see the pipeline it runs.</b><br>
+          Every stage appears here with what it was given, what it did and what it produced:
+          <ol>
+            <li>who is asking, and what they may use (backend)</li>
+            <li>the plan cache</li>
+            <li>decompose into English intents (Haiku), then a check</li>
+            <li>embed, search the capability index, fuse</li>
+            <li>plan (Sonnet), then the validator</li>
+            <li>preflight and, once confirmed, execute (backend)</li>
+            <li>the reply, written without a model</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <div class="tabpane" id="pane-try" role="tabpanel" hidden>
+      <div class="card">
+        <h2>Sign in</h2>
+        <p>The backend's dev token: <span class="code">BACKEND_DEV_USER_TOKEN</span> in <span class="code">self_aware/.env</span>.</p>
+        <div class="token-row">
+          <input id="token" type="password" placeholder="local-dev-token-change-me" autocomplete="off" aria-label="User token">
+          <button id="save-token" type="button">Use</button>
+        </div>
+        <div id="token-hint" class="hint">Kept in this browser tab only.</div>
+      </div>
+      <div class="card">
+        <h2>What you can try</h2>
+        <p>Everything below works against the seeded demo school. Nothing changes until you confirm.</p>
+        <div id="examples"></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script>
+(() => {
+  "use strict";
+
+  const EXAMPLES = [
+    { title: "Overdue fees", note: "a read: answered straight away", items: [
+      "class 5 blue ka baqaya dikhao",
+      "show the overdue fees for the whole school",
+      "teen mahine se zyada purana baqaya kis ka hai?" ] },
+    { title: "Dashboard", note: "a read", items: [
+      "aaj ka collection kitna hua?",
+      "what's the collection this month so far" ] },
+    { title: "Fee reminders", note: "a write: asks you to confirm, then logs reminders", items: [
+      "class 5 blue ke defaulters ko whatsapp par reminder bhejo",
+      "class 5 ke defaulters ko sms par reminder bhejo",
+      "class 6 blue ko fees ka reminder bhejo" ] },
+    { title: "Record a payment", note: "a write: records a real payment in the demo school", items: [
+      "Ahmed Raza ki September ki fees 5000 cash aaj mili hai, record karo",
+      "record a payment for Ahmed Raza's September invoice" ] },
+    { title: "Two things at once", note: "two steps, one confirmation", items: [
+      "Ahmed Raza ki September ki fees 2000 cash aaj mili hai, record karo, phir class 5 blue ka baqaya dikhao" ] },
+    { title: "Understood, not built yet", note: "picked correctly, then refused as not available", items: [
+      "ye bill galat student ke naam bana hai, cancel karwana hai",
+      "Ahmed Raza ke September bill ka jurmana maaf kar do, bank band tha",
+      "family ne duplicate bill bhi bhar diya, credit kar do" ] },
+    { title: "Refused", note: "nothing in this system does it", items: [
+      "kal Lahore mein mausam kaisa hoga?",
+      "Grade 4 ka timetable bana do" ] },
+  ];
+
+  // What a developer can do about a refusal that is not the sentence's fault.
+  const HINTS = {
+    MODEL_UNAVAILABLE: "The Claude CLI could not be used. The failed stage in the pipeline says why; if it says the OAuth session expired, sign the CLI in again from a terminal (claude auth login, see the README).",
+    MODEL_FAILED: "The model answered, but a check refused its answer. The failed stage in the pipeline lists the broken rules.",
+    BACKEND_UNAVAILABLE: "Is the backend running? (make backend-run)",
+    SESSION_EXPIRED: "A question or confirmation waits 30 minutes for an answer (AI_LAYER_CHAT_SESSION_TTL_SECONDS). Send the sentence again; the plan cache makes the repeat quick.",
+    NOT_READY: "The AI layer has not synced the capability metadata yet; check the status pill.",
+  };
+
+  const KINDS = [["k-backend", "Backend"], ["k-model", "Model call"], ["k-search", "Embeddings + search"], ["k-code", "AI layer code, no model"]];
+  const STATUS_TEXT = { ok: "done", failed: "failed", skipped: "skipped", paused: "waiting for the user" };
+
+  const $ = (id) => document.getElementById(id);
+  const log = $("log");
+  const store = {
+    get(key) { try { return sessionStorage.getItem(key); } catch { return null; } },
+    set(key, value) { try { value == null ? sessionStorage.removeItem(key) : sessionStorage.setItem(key, value); } catch { /* ignore */ } },
+  };
+  let sessionId = store.get("chat.session");
+  let token = store.get("chat.token") || "";
+  let busy = false;
+  let showPipeline = store.get("chat.pipeline") !== "0";
+  const turns = [];   // { said, reply, trace, elapsed, box, problem }
+  let selected = -1;
+  let waitTimer = null;
+
+  function el(tag, attrs = {}, ...children) {
+    const node = document.createElement(tag);
+    for (const [key, value] of Object.entries(attrs)) {
+      if (value == null) continue;
+      if (key === "class") node.className = value;
+      else if (key === "text") node.textContent = value;
+      else if (key.startsWith("on")) node.addEventListener(key.slice(2), value);
+      else node.setAttribute(key, value);
+    }
+    for (const child of children) if (child != null) node.append(child);
+    return node;
+  }
+
+  function scroll() { log.scrollTop = log.scrollHeight; }
+  function hideEmpty() { const empty = $("empty"); if (empty) empty.remove(); }
+
+  function addUser(text) {
+    hideEmpty();
+    log.append(el("div", { class: "msg user", text }));
+    scroll();
+  }
+
+  function addSystem(text) {
+    hideEmpty();
+    log.append(el("div", { class: "msg system", text }));
+    scroll();
+  }
+
+  const humanise = (key) => key.replace(/_/g, " ").replace(/^./, (c) => c.toUpperCase());
+  const isNumberLike = (value) => typeof value === "number" || (typeof value === "string" && /^-?\d+(\.\d+)?$/.test(value));
+  const show = (value) => isNumberLike(value) ? Number(value).toLocaleString("en-US", { maximumFractionDigits: 2 }) : String(value);
+  const seconds = (ms) => ms == null ? "" : ms < 1000 ? `${Math.round(ms)} ms` : `${(ms / 1000).toFixed(1)} s`;
+
+  // --- the backend's data, in a reply --------------------------------------------------------
+
+  function renderData(data) {
+    if (data == null || typeof data !== "object") return null;
+    const wrap = el("div", { class: "data" });
+    const scalars = Object.entries(data).filter(([k, v]) => v !== null && typeof v !== "object" && !k.endsWith("_id"));
+    if (scalars.length) {
+      const dl = el("dl");
+      for (const [key, value] of scalars) dl.append(el("dt", { text: humanise(key) }), el("dd", { text: show(value) }));
+      wrap.append(dl);
+    }
+    for (const [key, value] of Object.entries(data)) {
+      if (!Array.isArray(value) || !value.length || typeof value[0] !== "object") continue;
+      const columns = Object.keys(value[0]).filter((c) => !c.endsWith("_id"));
+      const table = el("table");
+      table.append(el("thead", {}, el("tr", {}, ...columns.map((c) => el("th", { text: humanise(c) })))));
+      const body = el("tbody");
+      for (const row of value) {
+        body.append(el("tr", {}, ...columns.map((c) => el("td", { class: isNumberLike(row[c]) ? "num" : "", text: row[c] == null ? "" : show(row[c]) }))));
+      }
+      table.append(body);
+      wrap.append(el("div", { class: "step", text: `${humanise(key)} (${value.length})` }), table);
+    }
+    return wrap.childNodes.length ? wrap : null;
+  }
+
+  // --- chat replies ------------------------------------------------------------------------
+
+  function addReply(reply, turnIndex) {
+    hideEmpty();
+    const turn = turns[turnIndex];
+    const box = el("div", { class: `msg bot ${reply.type}` });
+    const meta = el("div", { class: "meta" }, el("span", { class: "tag", text: reply.type }));
+    if (reply.code) meta.append(el("span", { class: "code", text: reply.code }));
+    if (reply.plan_id) meta.append(el("span", { class: "code", text: `plan ${reply.plan_id.slice(0, 8)}` }));
+    if (turn.trace) {
+      meta.append(el("button", { class: "link", type: "button", onclick: () => selectTurn(turnIndex, true) },
+        `Pipeline: ${turn.trace.length} stages · ${seconds(turn.elapsed)} ›`));
+    }
+    box.append(meta, document.createTextNode(reply.text));
+    const hint = HINTS[reply.code];
+    if (hint) box.append(el("div", { class: "step", text: hint }));
+
+    if (reply.type === "question" && reply.options.length) {
+      const actions = el("div", { class: "actions" });
+      reply.options.forEach((option, index) => {
+        actions.append(el("button", { class: "option", type: "button",
+          onclick: () => { lock(actions); send({ choice: option.id }, `${index + 1}. ${option.label}`); } },
+          document.createTextNode(`${index + 1}. ${option.label}`),
+          option.context ? el("small", { text: option.context }) : null));
+      });
+      box.append(actions);
+    }
+    if (reply.type === "confirmation") {
+      const actions = el("div", { class: "actions" });
+      actions.append(
+        el("button", { class: "primary", type: "button", onclick: () => { lock(actions); send({ confirm: true }, "Yes, go ahead"); } }, "Yes, go ahead"),
+        el("button", { type: "button", onclick: () => { lock(actions); send({ confirm: false }, "Cancel"); } }, "Cancel"));
+      box.append(actions);
+    }
+    if (reply.steps.length) {
+      const steps = el("div", { class: "steps" });
+      for (const step of reply.steps) {
+        const line = `${reply.steps.length > 1 ? `Step ${step.step} · ` : ""}${step.capability_id} · ${step.status}` +
+          (step.count != null ? ` · count ${step.count}` : "");
+        steps.append(el("div", { class: "step code", text: line }));
+        const rendered = renderData(step.data);
+        if (rendered) {
+          const details = el("details", {}, el("summary", { text: "Data from the backend" }), rendered);
+          details.open = reply.steps.length === 1;
+          steps.append(details);
+        }
+      }
+      box.append(steps);
+    }
+    turn.box = box;
+    log.append(box);
+    scroll();
+  }
+
+  function lock(container) { container.querySelectorAll("button").forEach((b) => { b.disabled = true; }); }
+
+  // --- any stage input or output, readable ---------------------------------------------------
+
+  const isScalar = (v) => v === null || ["string", "number", "boolean"].includes(typeof v);
+  const isPlainObject = (v) => v !== null && typeof v === "object" && !Array.isArray(v);
+
+  function scalar(value) {
+    if (value === null || value === undefined) return el("span", { class: "j-null", text: "none" });
+    if (typeof value === "number") return el("span", { class: "j-num", text: String(value) });
+    if (typeof value === "boolean") return el("span", { class: "j-bool", text: String(value) });
+    const text = String(value);
+    if (text.length > 160 || text.includes("\n")) {
+      const details = el("details", {}, el("summary", { text: `text · ${text.length.toLocaleString("en-US")} characters` }), el("pre", { text }));
+      details.open = text.length <= 600;
+      return details;
+    }
+    return el("span", { class: "j-str", text });
+  }
+
+  function chips(values) {
+    if (!values.length) return el("span", { class: "j-null", text: "empty" });
+    return el("div", { class: "j-chips" }, ...values.map((v) => el("span", { class: "j-chip", text: v === null ? "none" : String(v) })));
+  }
+
+  function cell(value) {
+    if (isScalar(value)) return scalar(value);
+    if (Array.isArray(value) && value.every(isScalar)) return chips(value);
+    return el("span", { class: "code", text: JSON.stringify(value) });
+  }
+
+  function renderValue(value, depth = 0) {
+    if (isScalar(value) || value === undefined) return scalar(value);
+    if (depth > 6) return el("pre", { text: JSON.stringify(value, null, 2) });
+    if (Array.isArray(value)) {
+      if (!value.length) return el("span", { class: "j-null", text: "empty" });
+      if (value.every(isScalar)) return chips(value);
+      const tableLike = value.every((row) => isPlainObject(row) &&
+        Object.values(row).every((v) => isScalar(v) || (Array.isArray(v) && v.every(isScalar))));
+      if (tableLike) {
+        const columns = [...new Set(value.flatMap((row) => Object.keys(row)))];
+        const table = el("table", {},
+          el("thead", {}, el("tr", {}, ...columns.map((c) => el("th", { text: humanise(c) })))),
+          el("tbody", {}, ...value.map((row) => el("tr", {}, ...columns.map((c) =>
+            el("td", { class: typeof row[c] === "number" ? "num" : null }, cell(row[c])))))));
+        return el("div", { class: "data" }, table);
+      }
+      return el("ol", { class: "j-list" }, ...value.map((item) => el("li", {}, renderValue(item, depth + 1))));
+    }
+    const entries = Object.entries(value);
+    if (!entries.length) return el("span", { class: "j-null", text: "empty" });
+    const dl = el("dl");
+    for (const [key, item] of entries) {
+      // A list of records or a nested object gets the full width under its name.
+      const wide = !isScalar(item) && !(Array.isArray(item) && item.every(isScalar));
+      dl.append(el("dt", { class: wide ? "j-key wide" : "j-key", text: humanise(key) }),
+        el("dd", { class: wide ? "wide" : null }, renderValue(item, depth + 1)));
+    }
+    return dl;
+  }
+
+  function ioBox(title, value) {
+    const view = el("div", {}, renderValue(value));
+    const raw = el("pre", { text: JSON.stringify(value, null, 2) });
+    raw.hidden = true;
+    const toggle = el("button", { class: "link raw", type: "button" }, "raw JSON");
+    toggle.addEventListener("click", () => {
+      raw.hidden = !raw.hidden;
+      view.hidden = !raw.hidden;
+      toggle.textContent = raw.hidden ? "raw JSON" : "readable";
+    });
+    return el("div", {}, el("h4", {}, document.createTextNode(title), toggle), view, raw);
+  }
+
+  // --- the pipeline panel ------------------------------------------------------------------
+
+  function kindOf(stage) {
+    if (stage.actor.startsWith("Model call")) return "k-model";
+    if (stage.actor.startsWith("Backend")) return "k-backend";
+    if (stage.actor.includes("embeddings")) return "k-search";
+    return "k-code";
+  }
+
+  function stat(label, value) {
+    return el("span", { class: "stat" }, document.createTextNode(`${label} `), el("b", { text: String(value) }));
+  }
+
+  function renderPipeline(index) {
+    stopWaiting();
+    const pane = $("pipeline");
+    const turn = turns[index];
+    if (!turn) return;
+    const trace = turn.trace || [];
+    const head = el("div", { class: "p-head" },
+      el("h2", { text: `Turn ${index + 1}` }),
+      el("span", { class: "p-turn", text: `“${turn.said}”` }),
+      el("span", { class: "spacer" }),
+      trace.length ? el("button", { class: "link", type: "button", onclick: () => renderPipeline(index) }, "Replay ↻") : null);
+
+    if (!trace.length) {
+      pane.replaceChildren(head, el("p", { class: "p-empty", text: turn.problem || "This turn has no pipeline trace." }));
+      return;
+    }
+
+    const total = (kind) => trace.filter((s) => kindOf(s) === kind).reduce((sum, s) => sum + (s.duration_ms || 0), 0);
+    const modelCalls = trace.filter((s) => kindOf(s) === "k-model").length;
+    const summary = el("div", { class: "p-summary" },
+      stat("stages", trace.length),
+      stat("model calls", modelCalls),
+      stat("in models", seconds(total("k-model"))),
+      stat("in search", seconds(total("k-search"))),
+      stat("in the backend", seconds(total("k-backend"))),
+      stat("round trip", seconds(turn.elapsed)),
+      stat("reply", `${turn.reply.type}${turn.reply.code ? " · " + turn.reply.code : ""}`));
+
+    const legend = el("div", { class: "legend" }, ...KINDS.map(([kind, label]) => el("span", { class: kind, text: label })));
+    const flow = el("div", { class: "flow" });
+    const list = el("div", { class: "stages" });
+
+    trace.forEach((stage, n) => {
+      const kind = kindOf(stage);
+      const body = el("div", { class: "s-body" });
+      if (n) flow.append(el("span", { class: "arrow", text: "→" }));
+      flow.append(el("button", { class: `chip ${kind} ${stage.status}`, type: "button", title: STATUS_TEXT[stage.status],
+        onclick: () => {
+          body.scrollIntoView({ behavior: "smooth", block: "start" });
+          body.classList.add("flash");
+          setTimeout(() => body.classList.remove("flash"), 900);
+        } }, `${n + 1}. ${stage.title}`));
+
+      body.append(
+        el("div", { class: "s-top" },
+          el("h3", { text: stage.title }),
+          el("span", { class: "actor", text: stage.actor }),
+          el("span", { class: "spacer" }),
+          stage.duration_ms != null ? el("span", { class: "dur", text: seconds(stage.duration_ms) }) : null,
+          el("span", { class: `status ${stage.status}`, text: STATUS_TEXT[stage.status] })),
+        el("p", { class: "does", text: stage.does }));
+      if (stage.note) body.append(el("p", { class: `note ${stage.status}`, text: stage.note }));
+      const hasInput = stage.input != null;
+      const hasOutput = stage.output != null;
+      if (hasInput || hasOutput) {
+        // Side by side when both are short; one above the other when either is large.
+        const small = (v) => JSON.stringify(v).length <= 400;
+        const sideBySide = hasInput && hasOutput && small(stage.input) && small(stage.output);
+        const io = el("div", { class: sideBySide ? "io" : "io stacked" });
+        if (hasInput) io.append(ioBox("Input", stage.input));
+        if (hasOutput) io.append(ioBox("Output", stage.output));
+        body.append(io);
+      }
+      const item = el("article", { class: `stage ${kind}` },
+        el("div", { class: "rail" }, el("span", { class: "s-num", text: String(n + 1) }), el("span", { class: "line" })),
+        body);
+      item.style.animationDelay = `${n * 110}ms`;
+      list.append(item);
+    });
+
+    pane.replaceChildren(head, summary, legend, flow, list);
+    $("pane-pipeline").scrollTop = 0;
+  }
+
+  function selectTurn(index, reveal) {
+    selected = index;
+    if (reveal && !showPipeline) setPipeline(true);
+    if (reveal) openTab("pipeline");
+    turns.forEach((t, i) => t.box && t.box.classList.toggle("selected", showPipeline && i === index));
+    renderPipeline(index);
+  }
+
+  function showWaiting(said, isSentence) {
+    stopWaiting();
+    const started = performance.now();
+    const counter = el("b", { text: "0.0 s" });
+    const expect = isSentence
+      ? "A new sentence usually makes two model calls, so this takes about 10 seconds (less when the plan cache has it). The stages appear when the turn finishes."
+      : "An answer, a choice or a confirmation needs no model call: the backend does the work.";
+    $("pipeline").replaceChildren(
+      el("div", { class: "p-head" }, el("h2", { text: `Turn ${turns.length + 1}` }), el("span", { class: "p-turn", text: `“${said}”` })),
+      el("div", { class: "waiting" }, el("span", { class: "dot" }), el("span", { class: "dot" }), el("span", { class: "dot" }),
+        document.createTextNode(" running… "), counter),
+      el("p", { class: "p-empty", text: expect }));
+    waitTimer = setInterval(() => { counter.textContent = `${((performance.now() - started) / 1000).toFixed(1)} s`; }, 100);
+    openTab("pipeline");
+  }
+
+  function stopWaiting() { if (waitTimer) { clearInterval(waitTimer); waitTimer = null; } }
+
+  // --- talking to the AI layer -------------------------------------------------------------
+
+  function setBusy(value) {
+    busy = value;
+    $("send").disabled = value;
+    const existing = document.querySelector(".thinking");
+    if (value && !existing) {
+      log.append(el("div", { class: "thinking" }, el("span", { class: "dot" }), el("span", { class: "dot" }), el("span", { class: "dot" }), document.createTextNode(" working…")));
+      scroll();
+    } else if (!value && existing) {
+      existing.remove();
+    }
+  }
+
+  async function send(turn, shown) {
+    if (busy) return;
+    if (!token) { addSystem("Enter the dev token in Try it first."); openTab("try"); $("token").focus(); return; }
+    const said = shown ?? turn.message;
+    addUser(said);
+    setBusy(true);
+    if (showPipeline) showWaiting(said, turn.message != null);
+    const started = performance.now();
+    const record = { said, reply: null, trace: null, elapsed: null, box: null, problem: null };
+    try {
+      const response = await fetch("/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+        body: JSON.stringify({ ...(sessionId ? { session_id: sessionId } : {}), ...turn, trace: true }),
+      });
+      const body = await response.json().catch(() => ({}));
+      record.elapsed = performance.now() - started;
+      if (response.ok) {
+        sessionId = body.session_id;
+        store.set("chat.session", sessionId);
+        record.reply = body;
+        record.trace = body.trace || null;
+        if (!record.trace) record.problem = "The AI layer sent no trace: AI_LAYER_CHAT_TRACE_ENABLED is off.";
+      } else if (response.status === 401) {
+        record.problem = "The backend did not accept that token. Check BACKEND_DEV_USER_TOKEN and press Use again.";
+      } else if (response.status === 503) {
+        record.problem = `Not available: ${body.detail || "the AI layer or the backend is not ready"}.`;
+      } else {
+        record.problem = `Request failed (HTTP ${response.status}): ${typeof body.detail === "string" ? body.detail : JSON.stringify(body.detail || body)}`;
+      }
+    } catch (error) {
+      record.elapsed = performance.now() - started;
+      record.problem = `Could not reach the AI layer: ${error.message}`;
+    } finally {
+      setBusy(false);
+      refreshHealth();
+    }
+    turns.push(record);
+    if (record.reply) addReply(record.reply, turns.length - 1);
+    else addSystem(record.problem);
+    selectTurn(turns.length - 1, false);
+  }
+
+  async function refreshHealth() {
+    const pill = $("health");
+    try {
+      const response = await fetch("/health/ready");
+      const body = await response.json();
+      const checks = Object.entries(body.checks || {});
+      const failing = checks.filter(([, check]) => !check.ok);
+      pill.className = `pill ${body.status === "ready" ? "ok" : "bad"}`;
+      pill.textContent = body.status === "ready" ? "ready" : `not ready: ${failing.map(([name]) => name).join(", ")}`;
+      pill.title = checks.map(([name, check]) => `${check.ok ? "✓" : "✗"} ${name}: ${check.detail}`).join("\n");
+    } catch {
+      pill.className = "pill bad";
+      pill.textContent = "AI layer unreachable";
+      pill.title = "";
+    }
+  }
+
+  function renderExamples() {
+    const container = $("examples");
+    for (const group of EXAMPLES) {
+      const section = el("div", { class: "group" }, el("h3", {}, document.createTextNode(group.title + " "), el("span", { text: `— ${group.note}` })));
+      for (const text of group.items) {
+        section.append(el("button", { class: "example", type: "button", onclick: () => { $("message").value = text; $("message").focus(); } }, text));
+      }
+      container.append(section);
+    }
+  }
+
+  function openTab(name) {
+    for (const tab of ["pipeline", "try"]) {
+      $(`tab-${tab}`).setAttribute("aria-selected", String(tab === name));
+      $(`pane-${tab}`).hidden = tab !== name;
+    }
+  }
+
+  function setPipeline(value) {
+    showPipeline = value;
+    store.set("chat.pipeline", value ? null : "0");
+    const button = $("pipeline-toggle");
+    button.textContent = value ? "Hide pipeline" : "Show pipeline";
+    button.setAttribute("aria-pressed", String(value));
+    $("main").classList.toggle("no-pipeline", !value);
+    $("tab-pipeline").hidden = !value;
+    if (!value) openTab("try");
+    turns.forEach((t, i) => t.box && t.box.classList.toggle("selected", value && i === selected));
+  }
+
+  $("composer").addEventListener("submit", (event) => {
+    event.preventDefault();
+    const text = $("message").value.trim();
+    if (!text || busy) return;
+    $("message").value = "";
+    send({ message: text });
+  });
+  $("message").addEventListener("keydown", (event) => {
+    if (event.key === "Enter" && !event.shiftKey) { event.preventDefault(); $("composer").requestSubmit(); }
+  });
+  $("save-token").addEventListener("click", () => {
+    token = $("token").value.trim();
+    store.set("chat.token", token || null);
+    $("token-hint").textContent = token ? "Token set for this tab." : "Kept in this browser tab only.";
+    if (token && showPipeline) openTab("pipeline");
+  });
+  $("new-chat").addEventListener("click", () => {
+    sessionId = null;
+    store.set("chat.session", null);
+    turns.length = 0;
+    selected = -1;
+    stopWaiting();
+    log.replaceChildren();
+    addSystem("New conversation.");
+    $("pipeline").replaceChildren(el("p", { class: "p-empty", text: "Send a sentence to see the pipeline it runs." }));
+  });
+  $("tab-pipeline").addEventListener("click", () => openTab("pipeline"));
+  $("tab-try").addEventListener("click", () => openTab("try"));
+  $("pipeline-toggle").addEventListener("click", () => setPipeline(!showPipeline));
+
+  if (token) { $("token").value = token; $("token-hint").textContent = "Token set for this tab."; }
+  setPipeline(showPipeline);
+  openTab(token && showPipeline ? "pipeline" : "try");
+  renderExamples();
+  refreshHealth();
+  setInterval(refreshHealth, 15000);
+})();
+</script>
+</body>
+</html>

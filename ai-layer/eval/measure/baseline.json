@@ -1,0 +1,29 @@
+{
+ "all": {
+  "recall_at_30": 0.9542857142857143,
+  "plan_accuracy": 0.8857142857142857,
+  "refusal_correctness": 0.926530612244898,
+  "validator_catch_rate": 1.0,
+  "sentences": 175,
+  "refusal_cases": 70,
+  "faults_applied": 600
+ },
+ "en": {
+  "recall_at_30": 0.9682539682539683,
+  "plan_accuracy": 0.9365079365079365,
+  "refusal_correctness": 0.9693877551020408,
+  "validator_catch_rate": 1.0,
+  "sentences": 63,
+  "refusal_cases": 35,
+  "faults_applied": 307
+ },
+ "ur-Latn": {
+  "recall_at_30": 0.9464285714285714,
+  "plan_accuracy": 0.8571428571428571,
+  "refusal_correctness": 0.8979591836734694,
+  "validator_catch_rate": 1.0,
+  "sentences": 112,
+  "refusal_cases": 35,
+  "faults_applied": 293
+ }
+}

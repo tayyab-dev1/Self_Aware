@@ -1,0 +1,61 @@
+# Local infrastructure for the AI layer POC.
+#
+#   postgres     Postgres 16 + pgvector, the one database both services share.
+#                make db-up / db-down / db-reset
+#   embeddings   BGE-M3 served by Hugging Face Text Embeddings Inference (CPU).
+#                Optional profile, ~3 GB of memory: make embeddings-up / embeddings-down
+#
+# The init script in ./postgres/initdb runs only when the data volume is first
+# created. It gives each service its own role and its own schema.
+
+name: sms-ai-layer
+
+services:
+  postgres:
+    image: pgvector/pgvector:0.8.6-pg16
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-sms}
+      POSTGRES_USER: ${POSTGRES_SUPERUSER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_SUPERUSER_PASSWORD:-postgres_dev_password}
+      # Read by postgres/initdb/01-roles-schemas-extensions.sh
+      BACKEND_DB_USER: ${BACKEND_DB_USER:-sms_backend}
+      BACKEND_DB_PASSWORD: ${BACKEND_DB_PASSWORD:-backend_dev_password}
+      AI_LAYER_INDEX_DB_USER: ${AI_LAYER_INDEX_DB_USER:-sms_ai_layer}
+      AI_LAYER_INDEX_DB_PASSWORD: ${AI_LAYER_INDEX_DB_PASSWORD:-ai_layer_dev_password}
+    ports:
+      # Bound to localhost only: these are development passwords.
+      - "127.0.0.1:${POSTGRES_HOST_PORT:-5433}:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./postgres/initdb:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      # TCP on 127.0.0.1 only answers once the init script has finished
+      # (during init, Postgres listens on the unix socket only).
+      test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -p 5432 -U \"$${POSTGRES_USER}\" -d \"$${POSTGRES_DB}\""]
+      interval: 3s
+      timeout: 3s
+      retries: 30
+
+  embeddings:
+    # Runs outside the AI layer because current PyTorch and ONNX Runtime ship no
+    # Intel-Mac builds; this Linux image runs anywhere Docker does. Retrieval
+    # (Phase 4) and the description-similarity build check both call it, and the
+    # 0.92 threshold is only meaningful for this exact model, so both are pinned.
+    image: ghcr.io/huggingface/text-embeddings-inference:cpu-1.9.3
+    profiles: ["embeddings"]
+    command:
+      - --model-id=BAAI/bge-m3
+      - --revision=5617a9f61b028005a4858fdac845db406aefb181
+      - --port=80
+      # The default 16384-token batch makes warm-up allocate more than Docker's
+      # ~4 GB and the container is OOM-killed. Capability descriptions and intents
+      # are short, so 2048 tokens per batch is plenty; clients batch larger jobs.
+      - --max-batch-tokens=2048
+    ports:
+      - "127.0.0.1:${EMBEDDINGS_HOST_PORT:-8083}:80"
+    volumes:
+      - embeddings-models:/data   # downloaded weights survive restarts (~2.3 GB)
+
+volumes:
+  postgres-data:
+  embeddings-models:

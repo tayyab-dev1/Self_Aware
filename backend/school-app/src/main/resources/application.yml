@@ -1,0 +1,79 @@
+# School backend configuration. Every value can be overridden by an environment
+# variable; the defaults match self_aware/.env.example.
+
+spring:
+  application:
+    name: school-app
+
+  datasource:
+    # The backend role owns the "school" schema (see docker/postgres/initdb).
+    url: jdbc:postgresql://${BACKEND_DB_HOST:localhost}:${BACKEND_DB_PORT:5433}/${BACKEND_DB_NAME:sms}?currentSchema=school,public
+    username: ${BACKEND_DB_USER:sms_backend}
+    password: ${BACKEND_DB_PASSWORD:backend_dev_password}
+
+  flyway:
+    schemas: school
+    default-schema: school
+    # The schema is created by the database init script with the right owner.
+    create-schemas: false
+    # db/migration = schema, always. db/seed = the demo school for the POC.
+    # A real deployment drops classpath:db/seed. Both folders share one version
+    # sequence: pick the next free V-number across the two.
+    locations: classpath:db/migration,classpath:db/seed
+
+  jackson:
+    deserialization:
+      # CLAUDE.md convention: reject unknown JSON fields.
+      fail-on-unknown-properties: true
+
+server:
+  # Loopback by default, like Postgres and the AI layer. Set BACKEND_HOST=0.0.0.0 in a container.
+  address: ${BACKEND_HOST:127.0.0.1}
+  port: ${BACKEND_PORT:8080}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+
+springdoc:
+  group-configs:
+    - group: agent-gateway
+      display-name: Agent gateway
+      paths-to-match: /agent/**
+
+agent:
+  gateway:
+    preflight:
+      # HMAC key that signs preflight tokens, at least 32 bytes. Empty = a random key per start:
+      # safe, but tokens die with a restart and do not work across several backend instances.
+      token-secret: ${BACKEND_AGENT_TOKEN_SECRET:}
+      # How long a confirmation may wait before execute; after that, preflight runs again.
+      token-ttl: 5m
+      # The most steps one plan may have.
+      max-steps: 3
+    execute:
+      # The delta rule: at or below this many records, any change since the confirmation stops a write...
+      small-count: 20
+      # ...and above it, a change of more than this percentage of the confirmed count does.
+      count-tolerance-percent: 5
+      # How many times a step is tried when the data changes underneath it (a serialization conflict).
+      max-attempts: 3
+
+school:
+  # "Today" for overdue fees is the school's date, not the server's.
+  time-zone: Asia/Karachi
+  agent:
+    # POC stand-in for real sign-in: a request bearing this token acts as this user.
+    # Empty token = nobody can use /agent/session/* or /agent/preflight. Never logged. Real auth replaces this.
+    dev-user:
+      token: ${BACKEND_DEV_USER_TOKEN:}
+      username: ${BACKEND_DEV_USERNAME:sana.iqbal}
+
+logging:
+  level:
+    com.diversive: INFO
+  pattern:
+    # Every line logged while a plan is handled carries its plan_id and session_id (CLAUDE.md conventions).
+    level: "%5p%replace( [plan_id=%X{plan_id} session_id=%X{session_id}]){' \\[plan_id= session_id=\\]', ''}"

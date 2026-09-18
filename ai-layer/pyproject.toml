@@ -1,0 +1,72 @@
+[project]
+name = "ai-layer"
+version = "0.1.0"
+description = "Natural-language layer over the school backend: understands a sentence, builds a plan, never touches business data."
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "asyncpg>=0.31.0",
+    "fastapi>=0.141.1",
+    "httpx>=0.28.1",
+    "pydantic>=2.13.5",
+    "pydantic-settings>=2.15.0",
+    "structlog>=26.1.0",
+    "uvicorn[standard]>=0.52.4",
+]
+
+[dependency-groups]
+dev = [
+    "datamodel-code-generator>=0.81.0",
+    "mypy>=2.3.1",
+    "pytest>=9.1.1",
+    "pytest-asyncio>=1.4.0",
+    "ruff>=0.16.7",
+    "testcontainers>=4.15.0",
+]
+
+[tool.uv]
+# An application, not a library: run from this folder, nothing to build or publish.
+package = false
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "session"
+asyncio_default_test_loop_scope = "session"
+addopts = "-ra --strict-markers"
+markers = [
+    "integration: needs Docker (starts a throwaway Postgres + pgvector container)",
+    "embeddings: needs the embeddings service running (make embeddings-up)",
+    "model: calls Haiku or Sonnet through the Claude CLI, on the Claude subscription",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+# Generated from openapi/agent-gateway.json; regenerate instead of editing.
+extend-exclude = ["app/gateway/models.py"]
+
+[tool.ruff.lint]
+select = [
+    "E", "W", "F",  # pycodestyle, pyflakes
+    "I",            # import order
+    "B",            # bugbear
+    "UP",           # modern syntax
+    "ASYNC",        # blocking calls inside async code
+    "T20",          # no print(): use structlog
+    "SIM", "RUF",
+]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+plugins = ["pydantic.mypy"]
+files = ["app", "domain", "scripts", "tests", "eval"]
+
+[[tool.mypy.overrides]]
+module = ["asyncpg", "asyncpg.*", "testcontainers.*", "docker.*"]
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = ["tests.*", "eval.*"]
+disallow_untyped_defs = false

@@ -1,0 +1,398 @@
+{
+  "capabilities" : [ {
+    "blast_radius" : "none",
+    "description" : "Shows the main dashboard figures for the user's branch, such as how much fee money was collected today or this month and how much is still outstanding, each with the time it was calculated. Which figures appear depends on the user's role. Not for the list of families behind an outstanding figure - use fee.overdue.list.",
+    "disambiguate_from" : [ ],
+    "effect" : {
+      "facts" : [ "branch_name", "calculated_at", "collected_this_month", "collected_today", "total_outstanding" ],
+      "reply_template" : "{branch_name}, as of {calculated_at}: {collected_today} collected today and {collected_this_month} this month; {total_outstanding} still outstanding."
+    },
+    "id" : "dashboard.main.read",
+    "module" : "dashboard",
+    "params" : [ ],
+    "preconditions" : [ ],
+    "read_only" : true,
+    "version" : "0613f8fee64a94773186a24e266075462b3a79df8adc5db2ee4bea2baccb2aad"
+  }, {
+    "blast_radius" : "single",
+    "description" : "Proposes cancelling a fee charge that should never have been raised and against which nothing has been paid, such as an invoice billed to the wrong student or a duplicate invoice. It cancels nothing on its own: a School Admin must approve it. Not for a wrong charge the family has already paid - use fee.credit.raise. Not for a correct debt the school will never collect - use fee.writeoff.propose. Not for removing only a late fee - use fee.latefee.waive.",
+    "disambiguate_from" : [ "fee.credit.raise", "fee.latefee.waive", "fee.writeoff.propose" ],
+    "effect" : {
+      "confirmation_template" : "Propose cancelling {invoice_label} because: {reason}. Nothing is cancelled until a School Admin approves.",
+      "creates" : "one cancellation proposal awaiting approval",
+      "facts" : [ "cancellation_id" ],
+      "notifies" : "the School Admin who approves cancellations",
+      "pending_template" : "Propose cancelling the invoice.",
+      "reply_template" : "Cancellation {cancellation_id} proposed for {invoice_label}. It now waits for approval."
+    },
+    "id" : "fee.cancellation.raise",
+    "module" : "fee",
+    "params" : [ {
+      "allowed" : [ ],
+      "label" : "invoice_label",
+      "meaning" : "The invoice raised in error",
+      "multiple" : false,
+      "name" : "invoice_id",
+      "required" : true,
+      "resolver" : "invoice",
+      "type" : "integer"
+    }, {
+      "allowed" : [ "billed_to_wrong_student", "wrong_amount", "wrong_billing_period", "duplicate_invoice", "student_had_left", "structure_applied_in_error", "other" ],
+      "meaning" : "Why the charge should not have been raised, as the user stated it",
+      "multiple" : false,
+      "name" : "reason",
+      "required" : true,
+      "type" : "string"
+    }, {
+      "allowed" : [ ],
+      "meaning" : "What went wrong, in the user's own words, 20 to 500 characters",
+      "multiple" : false,
+      "name" : "description",
+      "required" : true,
+      "type" : "string"
+    } ],
+    "preconditions" : [ {
+      "hint" : "Money has already been received against this invoice, so it cannot be cancelled",
+      "id" : "invoice_has_no_payment",
+      "text" : "No money may have been received against the invoice"
+    }, {
+      "hint" : "This invoice has already been cancelled, credited or written off",
+      "id" : "invoice_not_settled",
+      "text" : "The invoice must not already be cancelled, credited or written off"
+    } ],
+    "read_only" : false,
+    "version" : "ff1044ccc7ba652193186d893ada06b9f9242ca8bb34177a3522434aaf0da413"
+  }, {
+    "blast_radius" : "single",
+    "description" : "Proposes crediting a fee charge that was wrong but has already been paid, holding the money on the family's account so it reduces their next bill rather than being handed back. It credits nothing on its own: a School Admin must approve it. Not for a wrong charge nobody has paid yet - use fee.cancellation.raise. Not for a correct debt the school will never collect - use fee.writeoff.propose. Not for removing only a late fee - use fee.latefee.waive.",
+    "disambiguate_from" : [ "fee.cancellation.raise", "fee.latefee.waive", "fee.writeoff.propose" ],
+    "effect" : {
+      "confirmation_template" : "Propose crediting {amount} on {invoice_label} to the family account because: {reason}. Nothing is credited until a School Admin approves.",
+      "creates" : "one credit proposal awaiting approval",
+      "facts" : [ "credit_id" ],
+      "notifies" : "the School Admin who approves credits",
+      "pending_template" : "Propose crediting the charge to the family account.",
+      "reply_template" : "Credit {credit_id} proposed for {amount} on {invoice_label}. It now waits for approval."
+    },
+    "id" : "fee.credit.raise",
+    "module" : "fee",
+    "params" : [ {
+      "allowed" : [ ],
+      "label" : "invoice_label",
+      "meaning" : "The paid invoice that carried the wrong charge",
+      "multiple" : false,
+      "name" : "invoice_id",
+      "required" : true,
+      "resolver" : "invoice",
+      "type" : "integer"
+    }, {
+      "allowed" : [ ],
+      "meaning" : "How much to credit, all of what was paid or part of it, exactly as the user stated",
+      "multiple" : false,
+      "name" : "amount",
+      "required" : true,
+      "type" : "decimal"
+    }, {
+      "allowed" : [ "wrong_amount_charged", "charged_to_wrong_student", "duplicate_charge", "concession_not_applied", "charge_should_not_have_been_raised", "other" ],
+      "meaning" : "Why the charge was wrong, as the user stated it",
+      "multiple" : false,
+      "name" : "reason",
+      "required" : true,
+      "type" : "string"
+    }, {
+      "allowed" : [ ],
+      "meaning" : "What went wrong, in the user's own words, 20 to 500 characters",
+      "multiple" : false,
+      "name" : "description",
+      "required" : true,
+      "type" : "string"
+    } ],
+    "preconditions" : [ {
+      "hint" : "Nothing has been paid against this invoice yet, so there is nothing to credit",
+      "id" : "invoice_has_payment",
+      "text" : "Money must have been received against the invoice"
+    }, {
+      "hint" : "That is more than was paid against this invoice",
+      "id" : "amount_within_received",
+      "text" : "The amount must not be more than was received against the invoice"
+    }, {
+      "hint" : "This invoice has already been cancelled, credited or written off",
+      "id" : "invoice_not_settled",
+      "text" : "The invoice must not already be cancelled, credited or written off"
+    } ],
+    "read_only" : false,
+    "version" : "1a730c787c569541cf1c760403f33e4a935adc1c4f2c1c4fd009ee5a8a0e863a"
+  }, {
+    "blast_radius" : "single",
+    "description" : "Waives a late fee that has already been charged to a family, removing the fine from their invoice while both the fine and its waiver stay on record. One fine at a time, each with its own reason. Not for cancelling or crediting the fee charge itself - use fee.cancellation.raise or fee.credit.raise. Not for writing off an unpaid debt - use fee.writeoff.propose.",
+    "disambiguate_from" : [ "fee.cancellation.raise", "fee.credit.raise", "fee.writeoff.propose" ],
+    "effect" : {
+      "confirmation_template" : "Waive {late_fee_label} because: {waiver_reason}. The fine and its waiver both stay on record.",
+      "facts" : [ ],
+      "pending_template" : "Waive the late fee.",
+      "reply_template" : "Waived {late_fee_label}."
+    },
+    "id" : "fee.latefee.waive",
+    "module" : "fee",
+    "params" : [ {
+      "allowed" : [ ],
+      "label" : "late_fee_label",
+      "meaning" : "The late fee to waive, found from the student, the invoice, or the amount and date",
+      "multiple" : false,
+      "name" : "late_fee_id",
+      "required" : true,
+      "resolver" : "late_fee",
+      "type" : "integer"
+    }, {
+      "allowed" : [ ],
+      "meaning" : "Why the fine is waived, in the user's own words",
+      "multiple" : false,
+      "name" : "waiver_reason",
+      "required" : true,
+      "type" : "string"
+    } ],
+    "preconditions" : [ {
+      "hint" : "This late fee has already been paid, so it cannot be waived",
+      "id" : "late_fee_unpaid",
+      "text" : "The late fee must not have been paid"
+    } ],
+    "read_only" : false,
+    "version" : "8c4c975cb7d1c28476c786548d5a3585d0b138f92be4dc97b9d4e66a9454cd7d"
+  }, {
+    "blast_radius" : "none",
+    "description" : "Shows who has not paid their fees and how much each family still owes, with how many days each debt is overdue and the total outstanding, for the whole school, one class, one section or one student. It only lists; it contacts nobody. Not for chasing the families on the list - use fee.reminder.send.",
+    "disambiguate_from" : [ "fee.reminder.send" ],
+    "effect" : {
+      "facts" : [ "scope_name", "students", "total_outstanding" ],
+      "reply_template" : "Overdue fees for {scope_name}: {students}, {total_outstanding} outstanding."
+    },
+    "id" : "fee.overdue.list",
+    "module" : "fee",
+    "params" : [ {
+      "allowed" : [ "school_wide", "class", "section", "student" ],
+      "meaning" : "What the list covers: the whole school, one class, one section or one student",
+      "multiple" : false,
+      "name" : "scope",
+      "required" : true,
+      "type" : "string"
+    }, {
+      "allowed" : [ ],
+      "label" : "class_name",
+      "meaning" : "The class, when the list covers a whole class, e.g. Class 5",
+      "multiple" : false,
+      "name" : "class_id",
+      "required" : false,
+      "resolver" : "class",
+      "type" : "integer"
+    }, {
+      "allowed" : [ ],
+      "label" : "section_name",
+      "meaning" : "The section, when the list covers one section, e.g. Class 5 Blue",
+      "multiple" : false,
+      "name" : "section_id",
+      "required" : false,
+      "resolver" : "section",
+      "type" : "integer"
+    }, {
+      "allowed" : [ ],
+      "label" : "student_name",
+      "meaning" : "The student, when the list covers one student",
+      "multiple" : false,
+      "name" : "student_id",
+      "required" : false,
+      "resolver" : "student",
+      "type" : "integer"
+    }, {
+      "allowed" : [ "1_to_30_days", "31_to_60_days", "61_to_90_days", "over_90_days" ],
+      "meaning" : "Only debts overdue for this long, when the user narrows by age",
+      "multiple" : false,
+      "name" : "age_band",
+      "required" : false,
+      "type" : "string"
+    }, {
+      "allowed" : [ ],
+      "meaning" : "Hide debts below this amount, only when the user states one",
+      "multiple" : false,
+      "name" : "minimum_amount",
+      "required" : false,
+      "type" : "decimal"
+    } ],
+    "preconditions" : [ ],
+    "read_only" : true,
+    "version" : "1436db8c9a641625949a4fea9730d2648fcd9b6094d9b3a48be9ae6ed5baae8d"
+  }, {
+    "blast_radius" : "single",
+    "description" : "Records money a family has paid against one fee invoice, in cash at the office or through a bank challan, and issues the numbered receipt. Use this when a payment has actually been received. Not for online payments, which record themselves. Not for fixing a payment that was recorded wrongly - use fee.payment.correction.raise.",
+    "disambiguate_from" : [ ],
+    "effect" : {
+      "confirmation_template" : "Record {amount_received} received {route} on {payment_date} against {invoice_label}.",
+      "creates" : "one payment and one numbered receipt",
+      "facts" : [ "receipt_number" ],
+      "notifies" : "the guardian, who is sent the receipt",
+      "pending_template" : "Record the payment against the invoice.",
+      "reply_template" : "Recorded {amount_received} against {invoice_label}. Receipt {receipt_number}."
+    },
+    "id" : "fee.payment.record",
+    "module" : "fee",
+    "params" : [ {
+      "allowed" : [ ],
+      "label" : "invoice_label",
+      "meaning" : "The invoice the money is for",
+      "multiple" : false,
+      "name" : "invoice_id",
+      "required" : true,
+      "resolver" : "invoice",
+      "type" : "integer"
+    }, {
+      "allowed" : [ "cash", "bank_challan" ],
+      "meaning" : "How the money arrived",
+      "multiple" : false,
+      "name" : "route",
+      "required" : true,
+      "type" : "string"
+    }, {
+      "allowed" : [ ],
+      "meaning" : "Exactly the amount received, never rounded and never assumed to be the balance",
+      "multiple" : false,
+      "name" : "amount_received",
+      "required" : true,
+      "type" : "decimal"
+    }, {
+      "allowed" : [ ],
+      "meaning" : "The day the money was received, not the day it is entered",
+      "multiple" : false,
+      "name" : "payment_date",
+      "required" : true,
+      "type" : "date"
+    }, {
+      "allowed" : [ ],
+      "meaning" : "The date stamped on the bank's copy of a challan",
+      "multiple" : false,
+      "name" : "bank_stamp_date",
+      "required" : false,
+      "type" : "date"
+    }, {
+      "allowed" : [ ],
+      "meaning" : "A short note printed on the receipt",
+      "multiple" : false,
+      "name" : "remarks",
+      "required" : false,
+      "type" : "string"
+    } ],
+    "preconditions" : [ {
+      "hint" : "This invoice has nothing left to pay",
+      "id" : "invoice_is_open",
+      "text" : "The invoice must be issued and not yet fully paid"
+    }, {
+      "hint" : "That is more than is outstanding on this invoice",
+      "id" : "amount_within_balance",
+      "text" : "The amount must not be more than is outstanding on the invoice"
+    } ],
+    "read_only" : false,
+    "reverses" : "fee.payment.correction.raise",
+    "version" : "29b9eec5c7cbcc7b1148e8273e21e7b66023ad758223d35276d1bc1b25391fe5"
+  }, {
+    "blast_radius" : "group",
+    "description" : "Sends a fee reminder by WhatsApp, SMS or email to the guardians of every student in a section who has overdue fees, each message carrying that family's own amount and due date. Use this for chasing overdue payments. Not for seeing who owes money without contacting anyone - use fee.overdue.list.",
+    "disambiguate_from" : [ "fee.overdue.list" ],
+    "effect" : {
+      "confirmation_template" : "Send a fee reminder to {guardians} in {section_name} by {channel}, covering {total_outstanding} outstanding.",
+      "creates" : "one reminder log entry per guardian reached",
+      "facts" : [ "guardians", "total_outstanding" ],
+      "notifies" : "the guardians of students with overdue fees in the section",
+      "pending_template" : "Send a fee reminder to the families with overdue fees.",
+      "reply_template" : "Sent a fee reminder to {guardians} in {section_name} by {channel}."
+    },
+    "id" : "fee.reminder.send",
+    "module" : "fee",
+    "params" : [ {
+      "allowed" : [ ],
+      "label" : "section_name",
+      "meaning" : "The section whose families with overdue fees are reminded, e.g. Class 5 Blue",
+      "multiple" : false,
+      "name" : "section_id",
+      "required" : true,
+      "resolver" : "section",
+      "type" : "integer"
+    }, {
+      "allowed" : [ "whatsapp", "sms", "email" ],
+      "default_value" : "whatsapp",
+      "meaning" : "How the reminder is delivered",
+      "multiple" : false,
+      "name" : "channel",
+      "required" : true,
+      "type" : "string"
+    } ],
+    "preconditions" : [ {
+      "hint" : "Nobody in this section has overdue fees right now",
+      "id" : "section_has_defaulters",
+      "text" : "The section must have at least one unpaid invoice past its due date"
+    }, {
+      "hint" : "No guardian with overdue fees in this section can be reached by that channel",
+      "id" : "channel_reaches_defaulters",
+      "text" : "At least one guardian with overdue fees in the section must have a contact for the chosen channel"
+    } ],
+    "read_only" : false,
+    "version" : "bb4c3f72ba2a4de82a744c0cb8b768d60dd90b1a2e0d3a81c7c068755ce8d938"
+  }, {
+    "blast_radius" : "single",
+    "description" : "Proposes writing off a correctly charged fee debt that the school will never collect, for example because the family cannot be traced or cannot pay, with an account of what was done to recover it. It writes off nothing on its own: the Principal must approve it. Not for a charge raised in error - use fee.cancellation.raise, or fee.credit.raise if it was paid. Not for removing only a late fee - use fee.latefee.waive.",
+    "disambiguate_from" : [ "fee.cancellation.raise", "fee.credit.raise", "fee.latefee.waive" ],
+    "effect" : {
+      "confirmation_template" : "Propose writing off {amount} on {invoice_label} because: {reason}. Nothing is written off until the Principal approves.",
+      "creates" : "one write-off proposal awaiting the Principal's approval",
+      "facts" : [ "writeoff_id" ],
+      "notifies" : "the Principal",
+      "pending_template" : "Propose writing off the debt.",
+      "reply_template" : "Write-off {writeoff_id} proposed for {amount} on {invoice_label}. It now waits for the Principal."
+    },
+    "id" : "fee.writeoff.propose",
+    "module" : "fee",
+    "params" : [ {
+      "allowed" : [ ],
+      "label" : "invoice_label",
+      "meaning" : "The invoice carrying the debt",
+      "multiple" : false,
+      "name" : "invoice_id",
+      "required" : true,
+      "resolver" : "invoice",
+      "type" : "integer"
+    }, {
+      "allowed" : [ ],
+      "meaning" : "How much to write off, the outstanding balance or part of it, exactly as the user stated",
+      "multiple" : false,
+      "name" : "amount",
+      "required" : true,
+      "type" : "decimal"
+    }, {
+      "allowed" : [ "family_untraceable", "student_left_without_settling", "family_unable_to_pay", "cost_of_recovery_exceeds_debt", "legal_or_humanitarian_decision", "other" ],
+      "meaning" : "Why the debt cannot be collected, as the user stated it",
+      "multiple" : false,
+      "name" : "reason",
+      "required" : true,
+      "type" : "string"
+    }, {
+      "allowed" : [ ],
+      "meaning" : "What was actually done to recover the money, in the user's own words, 20 to 1000 characters",
+      "multiple" : false,
+      "name" : "recovery_attempted",
+      "required" : true,
+      "type" : "string"
+    } ],
+    "preconditions" : [ {
+      "hint" : "Nothing is outstanding on this invoice",
+      "id" : "invoice_has_outstanding_balance",
+      "text" : "The invoice must have an outstanding balance"
+    }, {
+      "hint" : "That is more than is outstanding on this invoice",
+      "id" : "amount_within_balance",
+      "text" : "The amount must not be more than is outstanding on the invoice"
+    }, {
+      "hint" : "This invoice has already been cancelled, credited or written off",
+      "id" : "invoice_not_settled",
+      "text" : "The invoice must not already be cancelled, credited or written off"
+    } ],
+    "read_only" : false,
+    "version" : "fb44d7813e4c25647406c1adc45e0cf4fb27b2803045dc164173887d2d6eb637"
+  } ]
+}
