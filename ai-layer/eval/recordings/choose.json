@@ -8,21 +8,22 @@
     "intent_1": {
      "type": "choice",
      "choice": "fee.credit.raise",
-     "confidence": 0.96,
+     "confidence": 0.99,
      "probabilities": {
-      "none": 0.03,
+      "fee.cancellation.raise": 0.0,
+      "fee.credit.raise": 0.99,
       "fee.latefee.waive": 0.0,
-      "fee.writeoff.propose": 0.0,
-      "fee.credit.raise": 0.97,
-      "fee.cancellation.raise": 0.0
+      "none": 0.01,
+      "fee.payment.record": 0.0,
+      "fee.writeoff.propose": 0.0
      }
     }
    },
    "usage": {
-    "input_tokens": 1582,
-    "output_tokens": 74
+    "input_tokens": 1864,
+    "output_tokens": 83
    },
-   "seconds": 0.446
+   "seconds": 0.388
   },
   "7 green walon ko WhatsApp par baqaya yaad karwao": {
    "model": "jev-1.13.0",
@@ -30,24 +31,25 @@
     "intent_1": {
      "type": "choice",
      "choice": "fee.reminder.send",
-     "confidence": 1.0,
+     "confidence": 0.99,
      "probabilities": {
-      "fee.reminder.send": 1.0,
-      "fee.cancellation.raise": 0.0,
-      "fee.overdue.list": 0.0,
-      "none": 0.0,
+      "fee.payment.record": 0.0,
       "fee.latefee.waive": 0.0,
       "fee.credit.raise": 0.0,
+      "fee.reminder.send": 0.99,
       "dashboard.main.read": 0.0,
-      "fee.writeoff.propose": 0.0
+      "none": 0.01,
+      "fee.writeoff.propose": 0.0,
+      "fee.cancellation.raise": 0.0,
+      "fee.overdue.list": 0.0
      }
     }
    },
    "usage": {
-    "input_tokens": 2236,
-    "output_tokens": 105
+    "input_tokens": 2510,
+    "output_tokens": 114
    },
-   "seconds": 0.411
+   "seconds": 0.438
   },
   "Ahmed Raza ka kitna baqaya hai": {
    "model": "jev-1.13.0",
@@ -82,23 +84,21 @@
      "choice": "fee.credit.raise",
      "confidence": 0.99,
      "probabilities": {
-      "fee.reminder.send": 0.0,
-      "fee.writeoff.propose": 0.0,
-      "none": 0.0,
-      "fee.credit.raise": 1.0,
+      "none": 0.01,
       "dashboard.main.read": 0.0,
+      "fee.writeoff.propose": 0.0,
+      "fee.credit.raise": 0.99,
       "fee.latefee.waive": 0.0,
       "fee.cancellation.raise": 0.0,
-      "fee.overdue.list": 0.0,
       "fee.payment.record": 0.0
      }
     }
    },
    "usage": {
-    "input_tokens": 2510,
-    "output_tokens": 113
+    "input_tokens": 1959,
+    "output_tokens": 92
    },
-   "seconds": 0.43
+   "seconds": 0.42
   },
   "Ali's parents paid the duplicate invoice too, credit it against next month": {
    "model": "jev-1.13.0",
@@ -106,22 +106,24 @@
     "intent_1": {
      "type": "choice",
      "choice": "fee.credit.raise",
-     "confidence": 0.98,
+     "confidence": 0.99,
      "probabilities": {
-      "fee.latefee.waive": 0.0,
+      "none": 0.01,
+      "fee.overdue.list": 0.0,
       "fee.writeoff.propose": 0.0,
+      "fee.latefee.waive": 0.0,
       "fee.cancellation.raise": 0.0,
       "fee.credit.raise": 0.99,
-      "none": 0.01,
+      "fee.reminder.send": 0.0,
       "fee.payment.record": 0.0
      }
     }
    },
    "usage": {
-    "input_tokens": 1858,
-    "output_tokens": 83
+    "input_tokens": 2407,
+    "output_tokens": 104
    },
-   "seconds": 0.418
+   "seconds": 0.355
   },
   "Ayesha ki September ki fees 5000 cash mili hai, record kar do": {
    "model": "jev-1.13.0",
@@ -131,41 +133,22 @@
      "choice": "fee.payment.record",
      "confidence": 1.0,
      "probabilities": {
-      "fee.payment.record": 1.0,
       "none": 0.0,
-      "fee.credit.raise": 0.0,
-      "fee.writeoff.propose": 0.0,
-      "fee.overdue.list": 0.0,
+      "fee.payment.record": 1.0,
       "fee.cancellation.raise": 0.0,
+      "fee.overdue.list": 0.0,
+      "fee.reminder.send": 0.0,
+      "fee.writeoff.propose": 0.0,
       "fee.latefee.waive": 0.0,
-      "fee.reminder.send": 0.0
+      "fee.credit.raise": 0.0
      }
     }
    },
    "usage": {
-    "input_tokens": 2413,
+    "input_tokens": 2415,
     "output_tokens": 104
    },
-   "seconds": 0.414
-  },
-  "Bilal ke abbu 9000 naqad de gaye hain, entry kar do": {
-   "model": "jev-1.13.0",
-   "answers": {
-    "intent_1": {
-     "type": "choice",
-     "choice": "fee.payment.record",
-     "confidence": 0.97,
-     "probabilities": {
-      "none": 0.01,
-      "fee.payment.record": 0.99
-     }
-    }
-   },
-   "usage": {
-    "input_tokens": 744,
-    "output_tokens": 37
-   },
-   "seconds": 1.245
+   "seconds": 0.393
   },
   "Bilal's father paid 9,000 cash for October, record it": {
    "model": "jev-1.13.0",
@@ -173,18 +156,22 @@
     "intent_1": {
      "type": "choice",
      "choice": "fee.payment.record",
-     "confidence": 0.98,
+     "confidence": 1.0,
      "probabilities": {
-      "none": 0.01,
-      "fee.payment.record": 0.99
+      "fee.credit.raise": 0.0,
+      "fee.cancellation.raise": 0.0,
+      "fee.writeoff.propose": 0.0,
+      "none": 0.0,
+      "fee.payment.record": 1.0,
+      "fee.latefee.waive": 0.0
      }
     }
    },
    "usage": {
-    "input_tokens": 748,
-    "output_tokens": 37
+    "input_tokens": 1864,
+    "output_tokens": 83
    },
-   "seconds": 0.365
+   "seconds": 0.423
   },
   "Danish ke October ke bill se jurmana hata do, bank band tha": {
    "model": "jev-1.13.0",
@@ -194,22 +181,20 @@
      "choice": "fee.latefee.waive",
      "confidence": 1.0,
      "probabilities": {
-      "fee.cancellation.raise": 0.0,
-      "fee.latefee.waive": 1.0,
-      "fee.reminder.send": 0.0,
-      "fee.payment.record": 0.0,
-      "none": 0.0,
-      "fee.writeoff.propose": 0.0,
       "fee.credit.raise": 0.0,
-      "fee.overdue.list": 0.0
+      "fee.writeoff.propose": 0.0,
+      "fee.payment.record": 0.0,
+      "fee.cancellation.raise": 0.0,
+      "none": 0.0,
+      "fee.latefee.waive": 1.0
      }
     }
    },
    "usage": {
-    "input_tokens": 2411,
-    "output_tokens": 108
+    "input_tokens": 1862,
+    "output_tokens": 87
    },
-   "seconds": 0.431
+   "seconds": 0.424
   },
   "Fatima ki late fee maaf kar dein": {
    "model": "jev-1.13.0",
@@ -269,19 +254,20 @@
      "choice": "none",
      "confidence": 1.0,
      "probabilities": {
-      "fee.writeoff.propose": 0.0,
       "fee.cancellation.raise": 0.0,
-      "none": 1.0,
       "fee.credit.raise": 0.0,
-      "fee.latefee.waive": 0.0
+      "none": 1.0,
+      "fee.latefee.waive": 0.0,
+      "fee.writeoff.propose": 0.0,
+      "fee.payment.record": 0.0
      }
     }
    },
    "usage": {
-    "input_tokens": 1568,
-    "output_tokens": 72
+    "input_tokens": 1848,
+    "output_tokens": 81
    },
-   "seconds": 0.392
+   "seconds": 0.458
   },
   "Grade 4 ke liye fee structure bana do — tuition 5000 mahana": {
    "model": "jev-1.13.0",
@@ -316,22 +302,22 @@
      "choice": "none",
      "confidence": 0.99,
      "probabilities": {
-      "fee.latefee.waive": 0.0,
-      "none": 1.0,
-      "fee.writeoff.propose": 0.0,
-      "fee.reminder.send": 0.0,
-      "fee.overdue.list": 0.0,
-      "fee.credit.raise": 0.0,
       "fee.cancellation.raise": 0.0,
-      "dashboard.main.read": 0.0
+      "dashboard.main.read": 0.0,
+      "fee.latefee.waive": 0.0,
+      "fee.credit.raise": 0.0,
+      "fee.writeoff.propose": 0.0,
+      "none": 1.0,
+      "fee.reminder.send": 0.0,
+      "fee.overdue.list": 0.0
      }
     }
    },
    "usage": {
-    "input_tokens": 2238,
+    "input_tokens": 2232,
     "output_tokens": 102
    },
-   "seconds": 0.412
+   "seconds": 0.443
   },
   "Grade 9 ke jin ki fees due hai unhe msg kar do": {
    "model": "jev-1.13.0",
@@ -341,21 +327,22 @@
      "choice": "fee.reminder.send",
      "confidence": 0.99,
      "probabilities": {
-      "fee.reminder.send": 0.99,
-      "none": 0.01,
+      "fee.writeoff.propose": 0.0,
+      "fee.cancellation.raise": 0.0,
       "fee.latefee.waive": 0.0,
       "fee.credit.raise": 0.0,
-      "fee.overdue.list": 0.0,
-      "fee.cancellation.raise": 0.0,
-      "fee.writeoff.propose": 0.0
+      "dashboard.main.read": 0.0,
+      "none": 0.01,
+      "fee.reminder.send": 0.99,
+      "fee.overdue.list": 0.0
      }
     }
    },
    "usage": {
-    "input_tokens": 2127,
-    "output_tokens": 96
+    "input_tokens": 2230,
+    "output_tokens": 105
    },
-   "seconds": 0.455
+   "seconds": 0.405
   },
   "Hamza ka duplicate bill nikal do": {
    "model": "jev-1.13.0",
@@ -363,24 +350,21 @@
     "intent_1": {
      "type": "choice",
      "choice": "none",
-     "confidence": 0.99,
+     "confidence": 1.0,
      "probabilities": {
-      "fee.cancellation.raise": 0.0,
-      "fee.credit.raise": 0.0,
-      "dashboard.main.read": 0.0,
-      "fee.overdue.list": 0.0,
-      "fee.latefee.waive": 0.0,
       "fee.writeoff.propose": 0.0,
-      "none": 1.0,
-      "fee.reminder.send": 0.0
+      "fee.credit.raise": 0.0,
+      "fee.cancellation.raise": 0.0,
+      "fee.latefee.waive": 0.0,
+      "none": 1.0
      }
     }
    },
    "usage": {
-    "input_tokens": 2222,
-    "output_tokens": 102
+    "input_tokens": 1568,
+    "output_tokens": 72
    },
-   "seconds": 0.429
+   "seconds": 0.409
   },
   "Hina Tariq ki fees bank challan se aa gayi hai": {
    "model": "jev-1.13.0",
@@ -388,25 +372,18 @@
     "intent_1": {
      "type": "choice",
      "choice": "fee.payment.record",
-     "confidence": 1.0,
+     "confidence": 0.44,
      "probabilities": {
-      "fee.cancellation.raise": 0.0,
-      "fee.latefee.waive": 0.0,
-      "fee.reminder.send": 0.0,
-      "dashboard.main.read": 0.0,
-      "none": 0.0,
-      "fee.payment.record": 1.0,
-      "fee.writeoff.propose": 0.0,
-      "fee.credit.raise": 0.0,
-      "fee.overdue.list": 0.0
+      "none": 0.28,
+      "fee.payment.record": 0.72
      }
     }
    },
    "usage": {
-    "input_tokens": 2508,
-    "output_tokens": 113
+    "input_tokens": 742,
+    "output_tokens": 37
    },
-   "seconds": 0.548
+   "seconds": 0.378
   },
   "Khan family bahar chali gayi, rabta nahi ho raha, baqaya write off karwao": {
    "model": "jev-1.13.0",
@@ -414,60 +391,50 @@
     "intent_1": {
      "type": "choice",
      "choice": "fee.writeoff.propose",
-     "confidence": 0.93,
+     "confidence": 0.97,
      "probabilities": {
-      "fee.overdue.list": 0.0,
-      "none": 0.06,
-      "fee.writeoff.propose": 0.94,
-      "fee.cancellation.raise": 0.0,
+      "fee.latefee.waive": 0.0,
+      "fee.writeoff.propose": 0.97,
       "dashboard.main.read": 0.0,
-      "fee.credit.raise": 0.0,
+      "fee.payment.record": 0.0,
+      "fee.cancellation.raise": 0.0,
+      "fee.overdue.list": 0.0,
+      "none": 0.03,
       "fee.reminder.send": 0.0,
-      "fee.latefee.waive": 0.0
+      "fee.credit.raise": 0.0
      }
     }
    },
    "usage": {
-    "input_tokens": 2241,
-    "output_tokens": 107
+    "input_tokens": 2516,
+    "output_tokens": 116
    },
-   "seconds": 0.464
+   "seconds": 0.448
   },
   "Maryam se lab fee ghalat li gayi thi, paisay unke khate mein rakh do": {
    "model": "jev-1.13.0",
    "answers": {
     "intent_1": {
      "type": "choice",
-     "choice": "fee.cancellation.raise",
-     "confidence": 0.42,
-     "probabilities": {
-      "fee.payment.record": 0.0,
-      "fee.cancellation.raise": 0.52,
-      "none": 0.05,
-      "fee.writeoff.propose": 0.0,
-      "fee.latefee.waive": 0.0,
-      "fee.credit.raise": 0.43
-     }
-    },
-    "intent_2": {
-     "type": "choice",
      "choice": "fee.credit.raise",
-     "confidence": 0.92,
+     "confidence": 0.85,
      "probabilities": {
-      "fee.payment.record": 0.0,
-      "fee.cancellation.raise": 0.04,
-      "none": 0.03,
+      "fee.reminder.send": 0.0,
       "fee.writeoff.propose": 0.0,
+      "none": 0.05,
+      "fee.credit.raise": 0.87,
       "fee.latefee.waive": 0.0,
-      "fee.credit.raise": 0.93
+      "fee.overdue.list": 0.0,
+      "fee.cancellation.raise": 0.08,
+      "fee.payment.record": 0.0
      }
     }
    },
    "usage": {
-    "input_tokens": 3432,
-    "output_tokens": 166
+    "input_tokens": 2413,
+    "output_tokens": 104
    },
-   "seconds": 0.381
+   "seconds": 0.414
   },
   "Qureshi family ka 500 ka late charge maaf karo": {
    "model": "jev-1.13.0",
@@ -524,21 +491,21 @@
     "intent_1": {
      "type": "choice",
      "choice": "fee.cancellation.raise",
-     "confidence": 0.94,
+     "confidence": 0.91,
      "probabilities": {
-      "fee.cancellation.raise": 0.95,
-      "fee.credit.raise": 0.01,
-      "none": 0.04,
+      "fee.writeoff.propose": 0.0,
+      "none": 0.07,
       "fee.latefee.waive": 0.0,
-      "fee.writeoff.propose": 0.0
+      "fee.credit.raise": 0.0,
+      "fee.cancellation.raise": 0.93
      }
     }
    },
    "usage": {
-    "input_tokens": 1568,
+    "input_tokens": 1578,
     "output_tokens": 77
    },
-   "seconds": 0.381
+   "seconds": 0.368
   },
   "Usman ke challan ki stamp wali copy mil gayi, 12000": {
    "model": "jev-1.13.0",
@@ -546,18 +513,18 @@
     "intent_1": {
      "type": "choice",
      "choice": "fee.payment.record",
-     "confidence": 0.97,
+     "confidence": 0.55,
      "probabilities": {
-      "none": 0.01,
-      "fee.payment.record": 0.99
+      "none": 0.23,
+      "fee.payment.record": 0.77
      }
     }
    },
    "usage": {
-    "input_tokens": 752,
+    "input_tokens": 758,
     "output_tokens": 37
    },
-   "seconds": 0.403
+   "seconds": 0.415
   },
   "WhatsApp pe sab ko yaad dila do": {
    "model": "jev-1.13.0",
@@ -585,21 +552,21 @@
     "intent_1": {
      "type": "choice",
      "choice": "fee.cancellation.raise",
-     "confidence": 0.99,
+     "confidence": 1.0,
      "probabilities": {
+      "none": 0.0,
+      "fee.cancellation.raise": 1.0,
       "fee.writeoff.propose": 0.0,
-      "fee.cancellation.raise": 0.99,
-      "fee.latefee.waive": 0.0,
       "fee.credit.raise": 0.0,
-      "none": 0.01
+      "fee.latefee.waive": 0.0
      }
     }
    },
    "usage": {
-    "input_tokens": 1582,
+    "input_tokens": 1584,
     "output_tokens": 77
    },
-   "seconds": 0.447
+   "seconds": 0.384
   },
   "Zain left in July but still got a September bill, get rid of it": {
    "model": "jev-1.13.0",
@@ -607,21 +574,22 @@
     "intent_1": {
      "type": "choice",
      "choice": "fee.cancellation.raise",
-     "confidence": 0.98,
+     "confidence": 0.97,
      "probabilities": {
-      "fee.credit.raise": 0.0,
-      "fee.writeoff.propose": 0.01,
       "fee.latefee.waive": 0.0,
-      "none": 0.01,
-      "fee.cancellation.raise": 0.98
+      "none": 0.03,
+      "fee.writeoff.propose": 0.0,
+      "fee.cancellation.raise": 0.97,
+      "fee.credit.raise": 0.0,
+      "dashboard.main.read": 0.0
      }
     }
    },
    "usage": {
-    "input_tokens": 1576,
-    "output_tokens": 77
+    "input_tokens": 1685,
+    "output_tokens": 86
    },
-   "seconds": 0.537
+   "seconds": 0.407
   },
   "a parent just paid at the counter, enter the receipt": {
    "model": "jev-1.13.0",
@@ -629,18 +597,24 @@
     "intent_1": {
      "type": "choice",
      "choice": "fee.payment.record",
-     "confidence": 0.99,
+     "confidence": 1.0,
      "probabilities": {
-      "none": 0.01,
-      "fee.payment.record": 0.99
+      "none": 0.0,
+      "fee.latefee.waive": 0.0,
+      "fee.writeoff.propose": 0.0,
+      "fee.cancellation.raise": 0.0,
+      "fee.payment.record": 1.0,
+      "fee.reminder.send": 0.0,
+      "fee.credit.raise": 0.0,
+      "fee.overdue.list": 0.0
      }
     }
    },
    "usage": {
-    "input_tokens": 738,
-    "output_tokens": 37
+    "input_tokens": 2401,
+    "output_tokens": 104
    },
-   "seconds": 0.401
+   "seconds": 0.399
   },
   "aadhi fees jama hui hai, 3000 record karo": {
    "model": "jev-1.13.0",
@@ -648,24 +622,24 @@
     "intent_1": {
      "type": "choice",
      "choice": "fee.payment.record",
-     "confidence": 0.99,
+     "confidence": 0.98,
      "probabilities": {
-      "fee.overdue.list": 0.0,
-      "fee.cancellation.raise": 0.0,
-      "fee.writeoff.propose": 0.0,
-      "fee.reminder.send": 0.0,
       "fee.credit.raise": 0.0,
-      "none": 0.0,
-      "fee.payment.record": 1.0,
-      "fee.latefee.waive": 0.0
+      "none": 0.01,
+      "fee.payment.record": 0.99,
+      "fee.overdue.list": 0.0,
+      "fee.latefee.waive": 0.0,
+      "fee.writeoff.propose": 0.0,
+      "fee.cancellation.raise": 0.0,
+      "fee.reminder.send": 0.0
      }
     }
    },
    "usage": {
-    "input_tokens": 2403,
+    "input_tokens": 2407,
     "output_tokens": 104
    },
-   "seconds": 0.469
+   "seconds": 0.381
   },
   "aaj ka collection kitna hua?": {
    "model": "jev-1.13.0",
@@ -676,21 +650,19 @@
      "confidence": 1.0,
      "probabilities": {
       "none": 0.0,
-      "fee.writeoff.propose": 0.0,
-      "fee.reminder.send": 0.0,
-      "dashboard.main.read": 1.0,
-      "fee.cancellation.raise": 0.0,
       "fee.latefee.waive": 0.0,
-      "fee.overdue.list": 0.0,
-      "fee.credit.raise": 0.0
+      "dashboard.main.read": 1.0,
+      "fee.writeoff.propose": 0.0,
+      "fee.credit.raise": 0.0,
+      "fee.cancellation.raise": 0.0
      }
     }
    },
    "usage": {
-    "input_tokens": 2218,
-    "output_tokens": 104
+    "input_tokens": 1671,
+    "output_tokens": 83
    },
-   "seconds": 1.045
+   "seconds": 2.378
   },
   "aaj kitne paisay aaye": {
    "model": "jev-1.13.0",
@@ -700,23 +672,23 @@
      "choice": "dashboard.main.read",
      "confidence": 1.0,
      "probabilities": {
-      "fee.writeoff.propose": 0.0,
-      "fee.credit.raise": 0.0,
-      "fee.latefee.waive": 0.0,
-      "fee.cancellation.raise": 0.0,
+      "fee.reminder.send": 0.0,
       "dashboard.main.read": 1.0,
+      "fee.writeoff.propose": 0.0,
       "none": 0.0,
       "fee.payment.record": 0.0,
-      "fee.reminder.send": 0.0,
-      "fee.overdue.list": 0.0
+      "fee.latefee.waive": 0.0,
+      "fee.overdue.list": 0.0,
+      "fee.cancellation.raise": 0.0,
+      "fee.credit.raise": 0.0
      }
     }
    },
    "usage": {
-    "input_tokens": 2498,
+    "input_tokens": 2500,
     "output_tokens": 113
    },
-   "seconds": 0.391
+   "seconds": 0.389
   },
   "approve the Grade 4 fee structure": {
    "model": "jev-1.13.0",
@@ -791,21 +763,65 @@
     "intent_1": {
      "type": "choice",
      "choice": "none",
-     "confidence": 0.67,
+     "confidence": 0.53,
      "probabilities": {
+      "fee.credit.raise": 0.36,
       "fee.latefee.waive": 0.0,
-      "fee.writeoff.propose": 0.0,
-      "fee.credit.raise": 0.26,
-      "fee.cancellation.raise": 0.0,
-      "none": 0.74
+      "fee.cancellation.raise": 0.01,
+      "none": 0.63,
+      "fee.writeoff.propose": 0.0
      }
     }
    },
    "usage": {
-    "input_tokens": 1568,
+    "input_tokens": 1570,
     "output_tokens": 72
    },
-   "seconds": 0.429
+   "seconds": 0.459
+  },
+  "assalam o alaikum": {
+   "model": "jev-1.13.0",
+   "answers": {
+    "intent_1": {
+     "type": "choice",
+     "choice": "none",
+     "confidence": 1.0,
+     "probabilities": {
+      "fee.credit.raise": 0.0,
+      "fee.writeoff.propose": 0.0,
+      "fee.cancellation.raise": 0.0,
+      "none": 1.0,
+      "fee.latefee.waive": 0.0
+     }
+    }
+   },
+   "usage": {
+    "input_tokens": 1566,
+    "output_tokens": 72
+   },
+   "seconds": 0.432
+  },
+  "authorise the school-wide September run": {
+   "model": "jev-1.13.0",
+   "answers": {
+    "intent_1": {
+     "type": "choice",
+     "choice": "none",
+     "confidence": 0.99,
+     "probabilities": {
+      "fee.writeoff.propose": 0.0,
+      "fee.latefee.waive": 0.0,
+      "none": 1.0,
+      "fee.cancellation.raise": 0.0,
+      "fee.credit.raise": 0.0
+     }
+    }
+   },
+   "usage": {
+    "input_tokens": 1570,
+    "output_tokens": 72
+   },
+   "seconds": 0.438
   },
   "bacha bina fees diye chala gaya, ab kuch nahi hoga": {
    "model": "jev-1.13.0",
@@ -813,22 +829,23 @@
     "intent_1": {
      "type": "choice",
      "choice": "fee.writeoff.propose",
-     "confidence": 0.72,
+     "confidence": 0.69,
      "probabilities": {
-      "none": 0.21,
-      "fee.writeoff.propose": 0.77,
-      "fee.latefee.waive": 0.0,
+      "fee.overdue.list": 0.0,
+      "fee.writeoff.propose": 0.74,
+      "fee.reminder.send": 0.0,
       "fee.credit.raise": 0.0,
-      "fee.payment.record": 0.0,
-      "fee.cancellation.raise": 0.02
+      "none": 0.26,
+      "fee.cancellation.raise": 0.0,
+      "fee.latefee.waive": 0.0
      }
     }
    },
    "usage": {
-    "input_tokens": 1864,
-    "output_tokens": 86
+    "input_tokens": 2131,
+    "output_tokens": 98
    },
-   "seconds": 0.366
+   "seconds": 0.401
   },
   "bank se stamped copy aayi hai, challan CH-2026-0417": {
    "model": "jev-1.13.0",
@@ -836,24 +853,18 @@
     "intent_1": {
      "type": "choice",
      "choice": "fee.payment.record",
-     "confidence": 1.0,
+     "confidence": 0.05,
      "probabilities": {
-      "fee.writeoff.propose": 0.0,
-      "fee.overdue.list": 0.0,
-      "fee.latefee.waive": 0.0,
-      "fee.reminder.send": 0.0,
-      "fee.payment.record": 1.0,
-      "fee.credit.raise": 0.0,
-      "fee.cancellation.raise": 0.0,
-      "none": 0.0
+      "fee.payment.record": 0.52,
+      "none": 0.48
      }
     }
    },
    "usage": {
-    "input_tokens": 2431,
-    "output_tokens": 104
+    "input_tokens": 762,
+    "output_tokens": 37
    },
-   "seconds": 0.419
+   "seconds": 0.409
   },
   "bill ghalat tha magar ada ho gaya, ab kya karein, credit bana do": {
    "model": "jev-1.13.0",
@@ -861,35 +872,22 @@
     "intent_1": {
      "type": "choice",
      "choice": "fee.credit.raise",
-     "confidence": 0.84,
+     "confidence": 0.98,
      "probabilities": {
       "fee.latefee.waive": 0.0,
-      "none": 0.12,
-      "fee.writeoff.propose": 0.0,
-      "fee.payment.record": 0.01,
-      "fee.credit.raise": 0.87,
-      "fee.cancellation.raise": 0.0
-     }
-    },
-    "intent_2": {
-     "type": "choice",
-     "choice": "fee.credit.raise",
-     "confidence": 0.96,
-     "probabilities": {
-      "fee.latefee.waive": 0.0,
-      "none": 0.03,
-      "fee.writeoff.propose": 0.0,
       "fee.payment.record": 0.0,
-      "fee.cancellation.raise": 0.0,
-      "fee.credit.raise": 0.97
+      "fee.writeoff.propose": 0.0,
+      "fee.credit.raise": 0.99,
+      "none": 0.01,
+      "fee.cancellation.raise": 0.0
      }
     }
    },
    "usage": {
-    "input_tokens": 3438,
-    "output_tokens": 163
+    "input_tokens": 1862,
+    "output_tokens": 83
    },
-   "seconds": 0.475
+   "seconds": 0.442
   },
   "branch ka total baqaya kitna hai abhi": {
    "model": "jev-1.13.0",
@@ -897,25 +895,25 @@
     "intent_1": {
      "type": "choice",
      "choice": "dashboard.main.read",
-     "confidence": 0.93,
+     "confidence": 0.97,
      "probabilities": {
-      "fee.latefee.waive": 0.0,
-      "none": 0.0,
       "fee.payment.record": 0.0,
-      "fee.overdue.list": 0.06,
       "fee.cancellation.raise": 0.0,
       "fee.writeoff.propose": 0.0,
+      "fee.latefee.waive": 0.0,
+      "dashboard.main.read": 0.97,
+      "none": 0.0,
       "fee.credit.raise": 0.0,
       "fee.reminder.send": 0.0,
-      "dashboard.main.read": 0.94
+      "fee.overdue.list": 0.03
      }
     }
    },
    "usage": {
-    "input_tokens": 2503,
+    "input_tokens": 2504,
     "output_tokens": 113
    },
-   "seconds": 0.379
+   "seconds": 0.405
   },
   "build a late fee policy — 200 after 7 days, 500 after 30, capped at 1,000": {
    "model": "jev-1.13.0",
@@ -926,21 +924,21 @@
      "confidence": 1.0,
      "probabilities": {
       "none": 1.0,
-      "fee.latefee.waive": 0.0,
-      "fee.writeoff.propose": 0.0,
-      "fee.cancellation.raise": 0.0,
       "fee.payment.record": 0.0,
+      "fee.latefee.waive": 0.0,
+      "fee.cancellation.raise": 0.0,
+      "fee.overdue.list": 0.0,
       "fee.reminder.send": 0.0,
-      "fee.credit.raise": 0.0,
-      "fee.overdue.list": 0.0
+      "fee.writeoff.propose": 0.0,
+      "fee.credit.raise": 0.0
      }
     }
    },
    "usage": {
-    "input_tokens": 2453,
+    "input_tokens": 2445,
     "output_tokens": 102
    },
-   "seconds": 0.419
+   "seconds": 0.399
   },
   "can you waive this month's late fee for Fatima": {
    "model": "jev-1.13.0",
@@ -973,21 +971,21 @@
     "intent_1": {
      "type": "choice",
      "choice": "fee.cancellation.raise",
-     "confidence": 0.91,
+     "confidence": 0.95,
      "probabilities": {
-      "fee.cancellation.raise": 0.93,
-      "fee.credit.raise": 0.0,
+      "none": 0.04,
+      "fee.cancellation.raise": 0.96,
       "fee.latefee.waive": 0.0,
-      "none": 0.07,
+      "fee.credit.raise": 0.0,
       "fee.writeoff.propose": 0.0
      }
     }
    },
    "usage": {
-    "input_tokens": 1562,
+    "input_tokens": 1560,
     "output_tokens": 77
    },
-   "seconds": 0.399
+   "seconds": 0.444
   },
   "cancellation wapas bhej do, wajah saaf nahi hai": {
    "model": "jev-1.13.0",
@@ -995,13 +993,13 @@
     "intent_1": {
      "type": "choice",
      "choice": "none",
-     "confidence": 0.89,
+     "confidence": 0.86,
      "probabilities": {
-      "fee.cancellation.raise": 0.08,
-      "none": 0.92,
-      "fee.latefee.waive": 0.0,
+      "fee.credit.raise": 0.0,
+      "fee.cancellation.raise": 0.11,
       "fee.writeoff.propose": 0.0,
-      "fee.credit.raise": 0.0
+      "fee.latefee.waive": 0.0,
+      "none": 0.89
      }
     }
    },
@@ -1009,28 +1007,29 @@
     "input_tokens": 1574,
     "output_tokens": 72
    },
-   "seconds": 0.402
+   "seconds": 0.529
   },
   "cash kitna para hai?": {
    "model": "jev-1.13.0",
    "answers": {
     "intent_1": {
      "type": "choice",
-     "choice": "none",
-     "confidence": 0.97,
+     "choice": "dashboard.main.read",
+     "confidence": 0.81,
      "probabilities": {
-      "none": 0.98,
-      "fee.payment.record": 0.0,
-      "fee.overdue.list": 0.02,
-      "fee.reminder.send": 0.0
+      "fee.reminder.send": 0.0,
+      "none": 0.15,
+      "dashboard.main.read": 0.85,
+      "fee.overdue.list": 0.0,
+      "fee.payment.record": 0.0
      }
     }
    },
    "usage": {
-    "input_tokens": 1285,
-    "output_tokens": 56
+    "input_tokens": 1382,
+    "output_tokens": 67
    },
-   "seconds": 0.975
+   "seconds": 1.198
   },
   "charge galat tha, credit karo": {
    "model": "jev-1.13.0",
@@ -1038,19 +1037,20 @@
     "intent_1": {
      "type": "choice",
      "choice": "fee.credit.raise",
-     "confidence": 0.48,
+     "confidence": 0.54,
      "probabilities": {
-      "fee.credit.raise": 0.59,
-      "fee.cancellation.raise": 0.13,
-      "none": 0.28,
+      "fee.payment.record": 0.0,
+      "none": 0.19,
+      "fee.cancellation.raise": 0.18,
+      "fee.latefee.waive": 0.0,
       "fee.writeoff.propose": 0.0,
-      "fee.latefee.waive": 0.0
+      "fee.credit.raise": 0.63
      }
     }
    },
    "usage": {
-    "input_tokens": 1571,
-    "output_tokens": 74
+    "input_tokens": 1846,
+    "output_tokens": 83
    },
    "seconds": 0.416
   },
@@ -1060,21 +1060,22 @@
     "intent_1": {
      "type": "choice",
      "choice": "fee.cancellation.raise",
-     "confidence": 0.59,
+     "confidence": 0.67,
      "probabilities": {
       "fee.writeoff.propose": 0.0,
-      "fee.latefee.waive": 0.0,
-      "fee.cancellation.raise": 0.67,
-      "fee.credit.raise": 0.03,
-      "none": 0.3
+      "none": 0.23,
+      "fee.payment.record": 0.0,
+      "fee.credit.raise": 0.04,
+      "fee.cancellation.raise": 0.73,
+      "fee.latefee.waive": 0.0
      }
     }
    },
    "usage": {
-    "input_tokens": 1566,
-    "output_tokens": 77
+    "input_tokens": 1846,
+    "output_tokens": 86
    },
-   "seconds": 0.419
+   "seconds": 0.418
   },
   "chase the defaulters in Grade 9 Red by WhatsApp": {
    "model": "jev-1.13.0",
@@ -1084,17 +1085,17 @@
      "choice": "fee.reminder.send",
      "confidence": 0.99,
      "probabilities": {
-      "none": 0.0,
       "fee.overdue.list": 0.0,
-      "fee.reminder.send": 1.0
+      "fee.reminder.send": 1.0,
+      "none": 0.0
      }
     }
    },
    "usage": {
-    "input_tokens": 1023,
+    "input_tokens": 1019,
     "output_tokens": 50
    },
-   "seconds": 0.413
+   "seconds": 0.388
   },
   "class 5 blue ke parents ko fees ka message bhej do": {
    "model": "jev-1.13.0",
@@ -1102,23 +1103,23 @@
     "intent_1": {
      "type": "choice",
      "choice": "fee.reminder.send",
-     "confidence": 0.96,
+     "confidence": 0.97,
      "probabilities": {
-      "fee.cancellation.raise": 0.0,
       "fee.writeoff.propose": 0.0,
-      "none": 0.04,
-      "fee.latefee.waive": 0.0,
       "fee.credit.raise": 0.0,
-      "fee.reminder.send": 0.96,
-      "fee.overdue.list": 0.0
+      "fee.latefee.waive": 0.0,
+      "fee.cancellation.raise": 0.0,
+      "fee.reminder.send": 0.97,
+      "fee.overdue.list": 0.0,
+      "none": 0.03
      }
     }
    },
    "usage": {
-    "input_tokens": 2129,
+    "input_tokens": 2127,
     "output_tokens": 96
    },
-   "seconds": 0.374
+   "seconds": 0.387
   },
   "class 5 blue mein kis kis ki fees baqi hai?": {
    "model": "jev-1.13.0",
@@ -1128,22 +1129,22 @@
      "choice": "fee.overdue.list",
      "confidence": 1.0,
      "probabilities": {
-      "fee.reminder.send": 0.0,
-      "dashboard.main.read": 0.0,
-      "fee.writeoff.propose": 0.0,
-      "fee.cancellation.raise": 0.0,
-      "fee.overdue.list": 1.0,
-      "none": 0.0,
       "fee.latefee.waive": 0.0,
-      "fee.credit.raise": 0.0
+      "fee.cancellation.raise": 0.0,
+      "fee.credit.raise": 0.0,
+      "dashboard.main.read": 0.0,
+      "fee.reminder.send": 0.0,
+      "fee.overdue.list": 1.0,
+      "fee.writeoff.propose": 0.0,
+      "none": 0.0
      }
     }
    },
    "usage": {
-    "input_tokens": 2231,
+    "input_tokens": 2230,
     "output_tokens": 106
    },
-   "seconds": 0.402
+   "seconds": 0.362
   },
   "classify this absence as excused — the student was on approved leave": {
    "model": "jev-1.13.0",
@@ -1153,19 +1154,19 @@
      "choice": "none",
      "confidence": 1.0,
      "probabilities": {
-      "none": 1.0,
       "fee.latefee.waive": 0.0,
-      "fee.cancellation.raise": 0.0,
       "fee.credit.raise": 0.0,
+      "none": 1.0,
+      "fee.cancellation.raise": 0.0,
       "fee.writeoff.propose": 0.0
      }
     }
    },
    "usage": {
-    "input_tokens": 1587,
+    "input_tokens": 1582,
     "output_tokens": 72
    },
-   "seconds": 0.371
+   "seconds": 0.472
   },
   "collection ki report mukhtasar mein batao": {
    "model": "jev-1.13.0",
@@ -1196,35 +1197,22 @@
     "intent_1": {
      "type": "choice",
      "choice": "fee.credit.raise",
-     "confidence": 0.55,
+     "confidence": 0.87,
      "probabilities": {
-      "fee.credit.raise": 0.63,
-      "fee.payment.record": 0.0,
-      "fee.latefee.waive": 0.03,
+      "dashboard.main.read": 0.0,
+      "fee.credit.raise": 0.9,
       "fee.writeoff.propose": 0.0,
-      "none": 0.33,
-      "fee.cancellation.raise": 0.01
-     }
-    },
-    "intent_2": {
-     "type": "choice",
-     "choice": "none",
-     "confidence": 0.49,
-     "probabilities": {
-      "fee.credit.raise": 0.42,
-      "fee.latefee.waive": 0.0,
-      "fee.writeoff.propose": 0.0,
-      "fee.payment.record": 0.0,
-      "none": 0.58,
-      "fee.cancellation.raise": 0.0
+      "fee.cancellation.raise": 0.0,
+      "none": 0.1,
+      "fee.latefee.waive": 0.0
      }
     }
    },
    "usage": {
-    "input_tokens": 3432,
-    "output_tokens": 161
+    "input_tokens": 1687,
+    "output_tokens": 83
    },
-   "seconds": 0.403
+   "seconds": 0.401
   },
   "counter par 4500 wasool hue, raseed bana do": {
    "model": "jev-1.13.0",
@@ -1232,37 +1220,42 @@
     "intent_1": {
      "type": "choice",
      "choice": "fee.payment.record",
-     "confidence": 0.93,
+     "confidence": 1.0,
      "probabilities": {
-      "fee.payment.record": 0.96,
-      "none": 0.04
+      "fee.latefee.waive": 0.0,
+      "fee.cancellation.raise": 0.0,
+      "dashboard.main.read": 0.0,
+      "none": 0.0,
+      "fee.writeoff.propose": 0.0,
+      "fee.payment.record": 1.0,
+      "fee.credit.raise": 0.0
      }
     }
    },
    "usage": {
-    "input_tokens": 748,
-    "output_tokens": 37
+    "input_tokens": 1961,
+    "output_tokens": 92
    },
-   "seconds": 0.402
+   "seconds": 0.493
   },
   "counter pe paisay jama hue hain": {
    "model": "jev-1.13.0",
    "answers": {
     "intent_1": {
      "type": "choice",
-     "choice": "fee.payment.record",
-     "confidence": 0.79,
+     "choice": "none",
+     "confidence": 0.2,
      "probabilities": {
-      "none": 0.11,
-      "fee.payment.record": 0.89
+      "fee.payment.record": 0.4,
+      "none": 0.6
      }
     }
    },
    "usage": {
-    "input_tokens": 734,
-    "output_tokens": 37
+    "input_tokens": 732,
+    "output_tokens": 35
    },
-   "seconds": 0.361
+   "seconds": 0.441
   },
   "credit 1,500 of what they paid — only part of the charge was wrong": {
    "model": "jev-1.13.0",
@@ -1270,22 +1263,22 @@
     "intent_1": {
      "type": "choice",
      "choice": "fee.credit.raise",
-     "confidence": 0.98,
+     "confidence": 1.0,
      "probabilities": {
-      "fee.credit.raise": 0.99,
       "fee.payment.record": 0.0,
-      "fee.cancellation.raise": 0.0,
-      "none": 0.01,
       "fee.writeoff.propose": 0.0,
-      "fee.latefee.waive": 0.0
+      "none": 0.0,
+      "fee.latefee.waive": 0.0,
+      "fee.credit.raise": 1.0,
+      "fee.cancellation.raise": 0.0
      }
     }
    },
    "usage": {
-    "input_tokens": 1868,
+    "input_tokens": 1870,
     "output_tokens": 83
    },
-   "seconds": 0.413
+   "seconds": 1.124
   },
   "credit approve kar do": {
    "model": "jev-1.13.0",
@@ -1314,22 +1307,22 @@
    "answers": {
     "intent_1": {
      "type": "choice",
-     "choice": "none",
-     "confidence": 0.93,
+     "choice": "fee.credit.raise",
+     "confidence": 0.7,
      "probabilities": {
-      "fee.writeoff.propose": 0.0,
-      "fee.latefee.waive": 0.0,
-      "fee.cancellation.raise": 0.0,
-      "fee.credit.raise": 0.05,
-      "none": 0.95
+      "fee.cancellation.raise": 0.02,
+      "none": 0.21,
+      "fee.credit.raise": 0.76,
+      "fee.latefee.waive": 0.01,
+      "fee.writeoff.propose": 0.0
      }
     }
    },
    "usage": {
-    "input_tokens": 1562,
-    "output_tokens": 72
+    "input_tokens": 1560,
+    "output_tokens": 74
    },
-   "seconds": 0.417
+   "seconds": 0.549
   },
   "das hazaar se zyada wale nadehindagan kaun hain": {
    "model": "jev-1.13.0",
@@ -1337,20 +1330,20 @@
     "intent_1": {
      "type": "choice",
      "choice": "fee.overdue.list",
-     "confidence": 1.0,
+     "confidence": 0.99,
      "probabilities": {
-      "dashboard.main.read": 0.0,
       "fee.overdue.list": 1.0,
-      "none": 0.0,
-      "fee.reminder.send": 0.0
+      "dashboard.main.read": 0.0,
+      "fee.reminder.send": 0.0,
+      "none": 0.0
      }
     }
    },
    "usage": {
-    "input_tokens": 1124,
+    "input_tokens": 1128,
     "output_tokens": 60
    },
-   "seconds": 0.406
+   "seconds": 0.441
   },
   "dashboard dikhao": {
    "model": "jev-1.13.0",
@@ -1381,11 +1374,11 @@
      "choice": "none",
      "confidence": 0.99,
      "probabilities": {
-      "none": 0.99,
-      "fee.latefee.waive": 0.01,
+      "fee.cancellation.raise": 0.0,
+      "none": 1.0,
       "fee.writeoff.propose": 0.0,
-      "fee.credit.raise": 0.0,
-      "fee.cancellation.raise": 0.0
+      "fee.latefee.waive": 0.0,
+      "fee.credit.raise": 0.0
      }
     }
    },
@@ -1393,7 +1386,7 @@
     "input_tokens": 1580,
     "output_tokens": 72
    },
-   "seconds": 0.433
+   "seconds": 0.476
   },
   "defaulters ko email bhejna hai": {
    "model": "jev-1.13.0",
@@ -1421,22 +1414,22 @@
     "intent_1": {
      "type": "choice",
      "choice": "fee.credit.raise",
-     "confidence": 0.33,
+     "confidence": 0.93,
      "probabilities": {
-      "fee.payment.record": 0.14,
-      "fee.credit.raise": 0.44,
-      "fee.cancellation.raise": 0.03,
+      "none": 0.05,
       "fee.latefee.waive": 0.0,
-      "none": 0.39,
-      "fee.writeoff.propose": 0.0
+      "fee.payment.record": 0.0,
+      "fee.writeoff.propose": 0.0,
+      "fee.cancellation.raise": 0.01,
+      "fee.credit.raise": 0.94
      }
     }
    },
    "usage": {
-    "input_tokens": 1856,
+    "input_tokens": 1858,
     "output_tokens": 83
    },
-   "seconds": 0.397
+   "seconds": 0.434
   },
   "do mahine se purane defaulters dikhao": {
    "model": "jev-1.13.0",
@@ -1444,20 +1437,20 @@
     "intent_1": {
      "type": "choice",
      "choice": "fee.overdue.list",
-     "confidence": 0.99,
+     "confidence": 0.89,
      "probabilities": {
-      "fee.overdue.list": 0.99,
-      "none": 0.01,
+      "fee.overdue.list": 0.92,
+      "none": 0.08,
       "dashboard.main.read": 0.0,
       "fee.reminder.send": 0.0
      }
     }
    },
    "usage": {
-    "input_tokens": 1120,
+    "input_tokens": 1110,
     "output_tokens": 60
    },
-   "seconds": 0.36
+   "seconds": 0.451
   },
   "do saal purana baqaya hai, maaf karne ki tajweez bhejo": {
    "model": "jev-1.13.0",
@@ -1465,24 +1458,24 @@
     "intent_1": {
      "type": "choice",
      "choice": "fee.writeoff.propose",
-     "confidence": 0.97,
+     "confidence": 0.9,
      "probabilities": {
-      "fee.overdue.list": 0.0,
-      "fee.cancellation.raise": 0.0,
-      "none": 0.02,
       "dashboard.main.read": 0.0,
-      "fee.writeoff.propose": 0.98,
+      "fee.latefee.waive": 0.02,
       "fee.reminder.send": 0.0,
-      "fee.latefee.waive": 0.0,
+      "none": 0.05,
+      "fee.writeoff.propose": 0.92,
+      "fee.cancellation.raise": 0.01,
+      "fee.overdue.list": 0.0,
       "fee.credit.raise": 0.0
      }
     }
    },
    "usage": {
-    "input_tokens": 2230,
+    "input_tokens": 2240,
     "output_tokens": 107
    },
-   "seconds": 0.382
+   "seconds": 0.407
   },
   "drop the late payment penalty on invoice INV/LHR/26-27/000045": {
    "model": "jev-1.13.0",
@@ -1490,24 +1483,22 @@
     "intent_1": {
      "type": "choice",
      "choice": "fee.latefee.waive",
-     "confidence": 0.99,
+     "confidence": 1.0,
      "probabilities": {
-      "fee.latefee.waive": 1.0,
-      "none": 0.0,
-      "fee.writeoff.propose": 0.0,
-      "fee.reminder.send": 0.0,
-      "fee.payment.record": 0.0,
-      "fee.credit.raise": 0.0,
       "fee.cancellation.raise": 0.0,
-      "fee.overdue.list": 0.0
+      "none": 0.0,
+      "fee.credit.raise": 0.0,
+      "fee.writeoff.propose": 0.0,
+      "fee.latefee.waive": 1.0,
+      "fee.payment.record": 0.0
      }
     }
    },
    "usage": {
-    "input_tokens": 2427,
-    "output_tokens": 108
+    "input_tokens": 1880,
+    "output_tokens": 87
    },
-   "seconds": 0.429
+   "seconds": 0.378
   },
   "duplicate invoice ban gaya hai, cancel karo": {
    "model": "jev-1.13.0",
@@ -1515,22 +1506,22 @@
     "intent_1": {
      "type": "choice",
      "choice": "fee.cancellation.raise",
-     "confidence": 0.98,
+     "confidence": 0.97,
      "probabilities": {
-      "fee.writeoff.propose": 0.0,
-      "none": 0.01,
-      "fee.cancellation.raise": 0.99,
       "fee.payment.record": 0.0,
+      "fee.writeoff.propose": 0.0,
+      "none": 0.02,
+      "fee.latefee.waive": 0.0,
       "fee.credit.raise": 0.0,
-      "fee.latefee.waive": 0.0
+      "fee.cancellation.raise": 0.98
      }
     }
    },
    "usage": {
-    "input_tokens": 1840,
+    "input_tokens": 1848,
     "output_tokens": 86
    },
-   "seconds": 0.394
+   "seconds": 0.408
   },
   "ek family ka jurmana maaf kar do": {
    "model": "jev-1.13.0",
@@ -1562,21 +1553,21 @@
     "intent_1": {
      "type": "choice",
      "choice": "fee.cancellation.raise",
-     "confidence": 0.78,
+     "confidence": 0.9,
      "probabilities": {
-      "fee.credit.raise": 0.06,
-      "fee.writeoff.propose": 0.0,
-      "none": 0.12,
+      "none": 0.06,
       "fee.latefee.waive": 0.0,
-      "fee.cancellation.raise": 0.82
+      "fee.credit.raise": 0.01,
+      "fee.cancellation.raise": 0.93,
+      "fee.writeoff.propose": 0.0
      }
     }
    },
    "usage": {
-    "input_tokens": 1562,
+    "input_tokens": 1568,
     "output_tokens": 77
    },
-   "seconds": 0.451
+   "seconds": 0.367
   },
   "email the guardians in section 3 Yellow about their pending dues": {
    "model": "jev-1.13.0",
@@ -1606,16 +1597,18 @@
      "choice": "fee.payment.record",
      "confidence": 1.0,
      "probabilities": {
+      "none": 0.0,
+      "fee.reminder.send": 0.0,
       "fee.payment.record": 1.0,
-      "none": 0.0
+      "fee.overdue.list": 0.0
      }
     }
    },
    "usage": {
-    "input_tokens": 742,
-    "output_tokens": 37
+    "input_tokens": 1289,
+    "output_tokens": 58
    },
-   "seconds": 0.361
+   "seconds": 0.4
   },
   "family ka koi pata nahi, ghar khali hai, ye raqam chhor do": {
    "model": "jev-1.13.0",
@@ -1623,24 +1616,23 @@
     "intent_1": {
      "type": "choice",
      "choice": "fee.writeoff.propose",
-     "confidence": 0.96,
+     "confidence": 0.8,
      "probabilities": {
-      "fee.cancellation.raise": 0.0,
-      "fee.writeoff.propose": 0.96,
       "fee.credit.raise": 0.0,
-      "none": 0.03,
-      "dashboard.main.read": 0.0,
-      "fee.latefee.waive": 0.01,
-      "fee.overdue.list": 0.0,
-      "fee.reminder.send": 0.0
+      "fee.latefee.waive": 0.1,
+      "fee.reminder.send": 0.0,
+      "fee.writeoff.propose": 0.83,
+      "none": 0.06,
+      "fee.cancellation.raise": 0.01,
+      "fee.overdue.list": 0.0
      }
     }
    },
    "usage": {
-    "input_tokens": 2243,
-    "output_tokens": 107
+    "input_tokens": 2129,
+    "output_tokens": 98
    },
-   "seconds": 0.389
+   "seconds": 0.385
   },
   "family ne aadhi fees di hai — 2000": {
    "model": "jev-1.13.0",
@@ -1648,25 +1640,24 @@
     "intent_1": {
      "type": "choice",
      "choice": "fee.payment.record",
-     "confidence": 0.97,
+     "confidence": 0.72,
      "probabilities": {
-      "fee.latefee.waive": 0.0,
-      "none": 0.02,
-      "fee.payment.record": 0.98,
-      "fee.overdue.list": 0.0,
-      "fee.cancellation.raise": 0.0,
-      "fee.writeoff.propose": 0.0,
       "fee.credit.raise": 0.0,
+      "fee.writeoff.propose": 0.0,
+      "fee.cancellation.raise": 0.0,
+      "fee.overdue.list": 0.0,
+      "fee.payment.record": 0.76,
       "fee.reminder.send": 0.0,
-      "dashboard.main.read": 0.0
+      "none": 0.24,
+      "fee.latefee.waive": 0.0
      }
     }
    },
    "usage": {
-    "input_tokens": 2514,
-    "output_tokens": 113
+    "input_tokens": 2409,
+    "output_tokens": 104
    },
-   "seconds": 0.384
+   "seconds": 0.36
   },
   "family ne jo zyada diya wo account mein credit karo": {
    "model": "jev-1.13.0",
@@ -1678,46 +1669,47 @@
      "probabilities": {
       "fee.reminder.send": 0.0,
       "fee.writeoff.propose": 0.0,
-      "fee.credit.raise": 0.91,
+      "none": 0.09,
+      "fee.credit.raise": 0.9,
+      "dashboard.main.read": 0.0,
       "fee.overdue.list": 0.0,
-      "fee.payment.record": 0.03,
+      "fee.payment.record": 0.01,
       "fee.latefee.waive": 0.0,
-      "none": 0.06,
       "fee.cancellation.raise": 0.0
      }
     }
    },
    "usage": {
-    "input_tokens": 2403,
-    "output_tokens": 104
+    "input_tokens": 2506,
+    "output_tokens": 113
    },
-   "seconds": 0.439
+   "seconds": 0.501
   },
   "family ne paisa de diya hai, phir bhi charge galat tha": {
    "model": "jev-1.13.0",
    "answers": {
     "intent_1": {
      "type": "choice",
-     "choice": "none",
-     "confidence": 0.77,
+     "choice": "fee.credit.raise",
+     "confidence": 0.94,
      "probabilities": {
+      "fee.cancellation.raise": 0.0,
       "fee.latefee.waive": 0.0,
-      "fee.cancellation.raise": 0.03,
       "fee.reminder.send": 0.0,
       "dashboard.main.read": 0.0,
-      "none": 0.79,
       "fee.writeoff.propose": 0.0,
-      "fee.payment.record": 0.01,
-      "fee.credit.raise": 0.09,
-      "fee.overdue.list": 0.08
+      "fee.payment.record": 0.0,
+      "none": 0.05,
+      "fee.credit.raise": 0.95,
+      "fee.overdue.list": 0.0
      }
     }
    },
    "usage": {
-    "input_tokens": 2506,
-    "output_tokens": 111
+    "input_tokens": 2516,
+    "output_tokens": 113
    },
-   "seconds": 0.372
+   "seconds": 0.522
   },
   "family ne paisa de diya hai, wo wapas karo": {
    "model": "jev-1.13.0",
@@ -1725,105 +1717,77 @@
     "intent_1": {
      "type": "choice",
      "choice": "none",
-     "confidence": 0.62,
+     "confidence": 0.51,
      "probabilities": {
-      "fee.reminder.send": 0.0,
+      "fee.latefee.waive": 0.0,
       "fee.writeoff.propose": 0.0,
-      "none": 0.66,
-      "fee.credit.raise": 0.34,
       "dashboard.main.read": 0.0,
       "fee.payment.record": 0.0,
-      "fee.latefee.waive": 0.0,
+      "none": 0.5700000000000001,
+      "fee.overdue.list": 0.0,
       "fee.cancellation.raise": 0.0,
-      "fee.overdue.list": 0.0
+      "fee.reminder.send": 0.0,
+      "fee.credit.raise": 0.43
      }
     }
    },
    "usage": {
-    "input_tokens": 2496,
+    "input_tokens": 2502,
     "output_tokens": 111
    },
-   "seconds": 0.426
+   "seconds": 0.485
   },
   "family wapas aa gayi hai aur paisa de rahi hai, write off reverse karo": {
    "model": "jev-1.13.0",
    "answers": {
     "intent_1": {
      "type": "choice",
-     "choice": "fee.payment.record",
-     "confidence": 0.96,
-     "probabilities": {
-      "fee.latefee.waive": 0.0,
-      "fee.reminder.send": 0.0,
-      "fee.cancellation.raise": 0.0,
-      "fee.overdue.list": 0.0,
-      "none": 0.03,
-      "fee.credit.raise": 0.0,
-      "fee.writeoff.propose": 0.0,
-      "fee.payment.record": 0.97
-     }
-    },
-    "intent_2": {
-     "type": "choice",
      "choice": "none",
-     "confidence": 0.87,
+     "confidence": 0.6,
      "probabilities": {
-      "fee.latefee.waive": 0.0,
-      "fee.reminder.send": 0.0,
-      "fee.cancellation.raise": 0.01,
-      "fee.credit.raise": 0.0,
-      "none": 0.89,
-      "fee.writeoff.propose": 0.04,
+      "fee.credit.raise": 0.02,
+      "none": 0.65,
+      "fee.payment.record": 0.3,
       "fee.overdue.list": 0.0,
-      "fee.payment.record": 0.06
+      "fee.latefee.waive": 0.0,
+      "dashboard.main.read": 0.0,
+      "fee.writeoff.propose": 0.03,
+      "fee.cancellation.raise": 0.0,
+      "fee.reminder.send": 0.0
      }
     }
    },
    "usage": {
-    "input_tokens": 4528,
-    "output_tokens": 203
+    "input_tokens": 2510,
+    "output_tokens": 111
    },
-   "seconds": 0.383
+   "seconds": 0.474
   },
   "family's phone is off and the address is empty, we give up on the outstanding amount": {
    "model": "jev-1.13.0",
    "answers": {
     "intent_1": {
      "type": "choice",
-     "choice": "none",
-     "confidence": 0.78,
-     "probabilities": {
-      "fee.writeoff.propose": 0.18,
-      "fee.cancellation.raise": 0.0,
-      "fee.credit.raise": 0.0,
-      "none": 0.81,
-      "dashboard.main.read": 0.0,
-      "fee.latefee.waive": 0.0,
-      "fee.overdue.list": 0.0,
-      "fee.reminder.send": 0.01
-     }
-    },
-    "intent_2": {
-     "type": "choice",
      "choice": "fee.writeoff.propose",
-     "confidence": 0.86,
+     "confidence": 0.94,
      "probabilities": {
-      "fee.cancellation.raise": 0.0,
-      "fee.writeoff.propose": 0.88,
+      "fee.writeoff.propose": 0.95,
       "fee.credit.raise": 0.0,
-      "none": 0.12,
-      "dashboard.main.read": 0.0,
       "fee.latefee.waive": 0.0,
-      "fee.overdue.list": 0.0,
-      "fee.reminder.send": 0.0
+      "fee.cancellation.raise": 0.0,
+      "fee.payment.record": 0.0,
+      "none": 0.04,
+      "dashboard.main.read": 0.0,
+      "fee.reminder.send": 0.01,
+      "fee.overdue.list": 0.0
      }
     }
    },
    "usage": {
-    "input_tokens": 4184,
-    "output_tokens": 206
+    "input_tokens": 2518,
+    "output_tokens": 116
    },
-   "seconds": 0.414
+   "seconds": 0.415
   },
   "fees ka dashboard kholo": {
    "model": "jev-1.13.0",
@@ -1857,24 +1821,24 @@
     "intent_1": {
      "type": "choice",
      "choice": "fee.reminder.send",
-     "confidence": 1.0,
+     "confidence": 0.99,
      "probabilities": {
-      "fee.payment.record": 0.0,
-      "fee.cancellation.raise": 0.0,
       "fee.writeoff.propose": 0.0,
-      "fee.latefee.waive": 0.0,
-      "none": 0.0,
+      "none": 0.01,
+      "fee.cancellation.raise": 0.0,
+      "fee.reminder.send": 0.99,
       "fee.credit.raise": 0.0,
-      "fee.reminder.send": 1.0,
-      "fee.overdue.list": 0.0
+      "fee.payment.record": 0.0,
+      "fee.overdue.list": 0.0,
+      "fee.latefee.waive": 0.0
      }
     }
    },
    "usage": {
-    "input_tokens": 2387,
+    "input_tokens": 2391,
     "output_tokens": 105
    },
-   "seconds": 0.427
+   "seconds": 0.389
   },
   "fees ki payment record karo": {
    "model": "jev-1.13.0",
@@ -1884,22 +1848,22 @@
      "choice": "fee.payment.record",
      "confidence": 1.0,
      "probabilities": {
-      "none": 0.0,
-      "fee.reminder.send": 0.0,
-      "fee.overdue.list": 0.0,
+      "fee.payment.record": 1.0,
       "fee.cancellation.raise": 0.0,
       "fee.latefee.waive": 0.0,
       "fee.credit.raise": 0.0,
       "fee.writeoff.propose": 0.0,
-      "fee.payment.record": 1.0
+      "none": 0.0,
+      "fee.reminder.send": 0.0,
+      "fee.overdue.list": 0.0
      }
     }
    },
    "usage": {
-    "input_tokens": 2391,
+    "input_tokens": 2389,
     "output_tokens": 104
    },
-   "seconds": 0.368
+   "seconds": 0.367
   },
   "fees sahi thi lekin wasooli na-mumkin hai": {
    "model": "jev-1.13.0",
@@ -1907,24 +1871,25 @@
     "intent_1": {
      "type": "choice",
      "choice": "fee.writeoff.propose",
-     "confidence": 0.66,
+     "confidence": 0.94,
      "probabilities": {
-      "fee.latefee.waive": 0.0,
-      "none": 0.28,
-      "fee.overdue.list": 0.01,
-      "fee.cancellation.raise": 0.0,
-      "fee.writeoff.propose": 0.71,
-      "fee.credit.raise": 0.0,
+      "fee.writeoff.propose": 0.95,
       "fee.reminder.send": 0.0,
+      "fee.latefee.waive": 0.0,
+      "fee.credit.raise": 0.0,
+      "fee.overdue.list": 0.0,
+      "none": 0.05,
+      "fee.payment.record": 0.0,
+      "fee.cancellation.raise": 0.0,
       "dashboard.main.read": 0.0
      }
     }
    },
    "usage": {
-    "input_tokens": 2218,
-    "output_tokens": 107
+    "input_tokens": 2508,
+    "output_tokens": 116
    },
-   "seconds": 0.435
+   "seconds": 1.107
   },
   "forgive the fine on this invoice, there was a death in the family": {
    "model": "jev-1.13.0",
@@ -1934,20 +1899,20 @@
      "choice": "fee.latefee.waive",
      "confidence": 1.0,
      "probabilities": {
+      "none": 0.0,
+      "fee.latefee.waive": 1.0,
       "fee.writeoff.propose": 0.0,
       "fee.payment.record": 0.0,
       "fee.cancellation.raise": 0.0,
-      "none": 0.0,
-      "fee.latefee.waive": 1.0,
       "fee.credit.raise": 0.0
      }
     }
    },
    "usage": {
-    "input_tokens": 1844,
+    "input_tokens": 1862,
     "output_tokens": 87
    },
-   "seconds": 0.404
+   "seconds": 0.438
   },
   "galat bill bana diya, wapas lo": {
    "model": "jev-1.13.0",
@@ -1955,22 +1920,21 @@
     "intent_1": {
      "type": "choice",
      "choice": "fee.cancellation.raise",
-     "confidence": 0.61,
+     "confidence": 0.87,
      "probabilities": {
+      "fee.cancellation.raise": 0.9,
+      "none": 0.1,
       "fee.writeoff.propose": 0.0,
-      "fee.cancellation.raise": 0.67,
-      "none": 0.3,
-      "fee.credit.raise": 0.03,
-      "fee.payment.record": 0.0,
-      "fee.latefee.waive": 0.0
+      "fee.latefee.waive": 0.0,
+      "fee.credit.raise": 0.0
      }
     }
    },
    "usage": {
-    "input_tokens": 1848,
-    "output_tokens": 86
+    "input_tokens": 1572,
+    "output_tokens": 77
    },
-   "seconds": 0.359
+   "seconds": 0.446
   },
   "galti se transport charge lag gaya, paisay nahi diye, khatam karo": {
    "model": "jev-1.13.0",
@@ -1978,19 +1942,22 @@
     "intent_1": {
      "type": "choice",
      "choice": "fee.cancellation.raise",
-     "confidence": 0.6,
+     "confidence": 1.0,
      "probabilities": {
-      "fee.credit.raise": 0.06,
+      "fee.payment.record": 0.0,
       "fee.latefee.waive": 0.0,
+      "fee.credit.raise": 0.0,
+      "none": 0.0,
+      "fee.reminder.send": 0.0,
       "fee.writeoff.propose": 0.0,
-      "none": 0.26,
-      "fee.cancellation.raise": 0.68
+      "fee.cancellation.raise": 1.0,
+      "fee.overdue.list": 0.0
      }
     }
    },
    "usage": {
-    "input_tokens": 1566,
-    "output_tokens": 77
+    "input_tokens": 2407,
+    "output_tokens": 107
    },
    "seconds": 0.449
   },
@@ -2000,24 +1967,23 @@
     "intent_1": {
      "type": "choice",
      "choice": "fee.credit.raise",
-     "confidence": 0.78,
+     "confidence": 0.99,
      "probabilities": {
-      "fee.payment.record": 0.0,
+      "fee.credit.raise": 1.0,
       "fee.writeoff.propose": 0.0,
-      "fee.credit.raise": 0.81,
-      "fee.overdue.list": 0.0,
-      "fee.latefee.waive": 0.0,
-      "none": 0.07,
-      "fee.cancellation.raise": 0.12,
-      "fee.reminder.send": 0.0
+      "fee.payment.record": 0.0,
+      "dashboard.main.read": 0.0,
+      "fee.cancellation.raise": 0.0,
+      "none": 0.0,
+      "fee.latefee.waive": 0.0
      }
     }
    },
    "usage": {
-    "input_tokens": 2402,
-    "output_tokens": 104
+    "input_tokens": 1967,
+    "output_tokens": 92
    },
-   "seconds": 0.446
+   "seconds": 0.396
   },
   "ghalat mahine ka bill bana hai, cancellation bhejo": {
    "model": "jev-1.13.0",
@@ -2025,33 +1991,21 @@
     "intent_1": {
      "type": "choice",
      "choice": "fee.cancellation.raise",
-     "confidence": 0.93,
-     "probabilities": {
-      "fee.latefee.waive": 0.0,
-      "fee.writeoff.propose": 0.0,
-      "fee.credit.raise": 0.01,
-      "none": 0.05,
-      "fee.cancellation.raise": 0.94
-     }
-    },
-    "intent_2": {
-     "type": "choice",
-     "choice": "fee.cancellation.raise",
      "confidence": 0.99,
      "probabilities": {
-      "fee.latefee.waive": 0.0,
-      "fee.writeoff.propose": 0.0,
       "fee.credit.raise": 0.0,
       "none": 0.01,
-      "fee.cancellation.raise": 0.99
+      "fee.writeoff.propose": 0.0,
+      "fee.cancellation.raise": 0.99,
+      "fee.latefee.waive": 0.0
      }
     }
    },
    "usage": {
-    "input_tokens": 2872,
-    "output_tokens": 151
+    "input_tokens": 1578,
+    "output_tokens": 77
    },
-   "seconds": 0.467
+   "seconds": 0.402
   },
   "ghar mein fotgi hui thi, jurmana na lagaen": {
    "model": "jev-1.13.0",
@@ -2059,23 +2013,23 @@
     "intent_1": {
      "type": "choice",
      "choice": "fee.latefee.waive",
-     "confidence": 0.99,
+     "confidence": 0.98,
      "probabilities": {
-      "fee.reminder.send": 0.0,
-      "fee.latefee.waive": 0.99,
-      "none": 0.01,
-      "fee.writeoff.propose": 0.0,
-      "fee.cancellation.raise": 0.0,
       "fee.overdue.list": 0.0,
-      "fee.credit.raise": 0.0
+      "fee.cancellation.raise": 0.0,
+      "fee.latefee.waive": 0.98,
+      "fee.writeoff.propose": 0.0,
+      "fee.reminder.send": 0.0,
+      "fee.credit.raise": 0.0,
+      "none": 0.02
      }
     }
    },
    "usage": {
-    "input_tokens": 2125,
+    "input_tokens": 2129,
     "output_tokens": 99
    },
-   "seconds": 0.439
+   "seconds": 0.378
   },
   "give me the defaulters list for the whole school": {
    "model": "jev-1.13.0",
@@ -2096,10 +2050,10 @@
     }
    },
    "usage": {
-    "input_tokens": 2125,
+    "input_tokens": 2123,
     "output_tokens": 97
    },
-   "seconds": 0.378
+   "seconds": 0.373
   },
   "give me today's figures": {
    "model": "jev-1.13.0",
@@ -2107,7 +2061,7 @@
     "intent_1": {
      "type": "choice",
      "choice": "dashboard.main.read",
-     "confidence": 0.98,
+     "confidence": 0.99,
      "probabilities": {
       "none": 0.01,
       "dashboard.main.read": 0.99
@@ -2118,27 +2072,7 @@
     "input_tokens": 551,
     "output_tokens": 37
    },
-   "seconds": 0.385
-  },
-  "hello": {
-   "model": "jev-1.13.0",
-   "answers": {
-    "intent_1": {
-     "type": "choice",
-     "choice": "none",
-     "confidence": 0.98,
-     "probabilities": {
-      "fee.reminder.send": 0.01,
-      "fee.overdue.list": 0.0,
-      "none": 0.99
-     }
-    }
-   },
-   "usage": {
-    "input_tokens": 995,
-    "output_tokens": 47
-   },
-   "seconds": 0.367
+   "seconds": 0.355
   },
   "hold the extra amount they paid on the account instead of refunding": {
    "model": "jev-1.13.0",
@@ -2148,12 +2082,12 @@
      "choice": "fee.credit.raise",
      "confidence": 0.98,
      "probabilities": {
-      "fee.latefee.waive": 0.0,
-      "fee.writeoff.propose": 0.0,
-      "fee.cancellation.raise": 0.0,
       "fee.credit.raise": 0.98,
+      "fee.cancellation.raise": 0.0,
       "none": 0.02,
-      "fee.payment.record": 0.0
+      "fee.payment.record": 0.0,
+      "fee.writeoff.propose": 0.0,
+      "fee.latefee.waive": 0.0
      }
     }
    },
@@ -2161,7 +2095,7 @@
     "input_tokens": 1858,
     "output_tokens": 83
    },
-   "seconds": 0.407
+   "seconds": 0.428
   },
   "how is the school doing today": {
    "model": "jev-1.13.0",
@@ -2185,6 +2119,26 @@
    },
    "seconds": 1.006
   },
+  "how many card requests are pending": {
+   "model": "jev-1.13.0",
+   "answers": {
+    "intent_1": {
+     "type": "choice",
+     "choice": "none",
+     "confidence": 0.99,
+     "probabilities": {
+      "fee.reminder.send": 0.0,
+      "none": 1.0,
+      "fee.overdue.list": 0.0
+     }
+    }
+   },
+   "usage": {
+    "input_tokens": 1003,
+    "output_tokens": 47
+   },
+   "seconds": 1.303
+  },
   "how much does Ahmed Raza still owe": {
    "model": "jev-1.13.0",
    "answers": {
@@ -2193,22 +2147,22 @@
      "choice": "fee.overdue.list",
      "confidence": 1.0,
      "probabilities": {
+      "fee.cancellation.raise": 0.0,
       "fee.writeoff.propose": 0.0,
-      "fee.reminder.send": 0.0,
+      "dashboard.main.read": 0.0,
       "fee.latefee.waive": 0.0,
+      "fee.reminder.send": 0.0,
       "fee.credit.raise": 0.0,
       "none": 0.0,
-      "fee.overdue.list": 1.0,
-      "fee.cancellation.raise": 0.0,
-      "dashboard.main.read": 0.0
+      "fee.overdue.list": 1.0
      }
     }
    },
    "usage": {
-    "input_tokens": 2222,
+    "input_tokens": 2226,
     "output_tokens": 106
    },
-   "seconds": 0.41
+   "seconds": 0.545
   },
   "how much fee did we collect today": {
    "model": "jev-1.13.0",
@@ -2219,22 +2173,22 @@
      "confidence": 1.0,
      "probabilities": {
       "fee.payment.record": 0.0,
+      "fee.overdue.list": 0.0,
       "fee.writeoff.propose": 0.0,
-      "dashboard.main.read": 1.0,
-      "none": 0.0,
       "fee.latefee.waive": 0.0,
       "fee.cancellation.raise": 0.0,
+      "fee.reminder.send": 0.0,
       "fee.credit.raise": 0.0,
-      "fee.overdue.list": 0.0,
-      "fee.reminder.send": 0.0
+      "dashboard.main.read": 1.0,
+      "none": 0.0
      }
     }
    },
    "usage": {
-    "input_tokens": 2496,
+    "input_tokens": 2498,
     "output_tokens": 113
    },
-   "seconds": 0.447
+   "seconds": 0.403
   },
   "in sab ko reminder bhej do": {
    "model": "jev-1.13.0",
@@ -2242,19 +2196,19 @@
     "intent_1": {
      "type": "choice",
      "choice": "fee.reminder.send",
-     "confidence": 0.41,
+     "confidence": 0.85,
      "probabilities": {
-      "none": 0.39,
-      "fee.reminder.send": 0.61,
-      "fee.overdue.list": 0.0
+      "fee.overdue.list": 0.0,
+      "fee.reminder.send": 0.9,
+      "none": 0.1
      }
     }
    },
    "usage": {
-    "input_tokens": 999,
+    "input_tokens": 1001,
     "output_tokens": 50
    },
-   "seconds": 0.386
+   "seconds": 0.37
   },
   "invoice credit kar do": {
    "model": "jev-1.13.0",
@@ -2285,39 +2239,24 @@
     "intent_1": {
      "type": "choice",
      "choice": "fee.cancellation.raise",
-     "confidence": 0.78,
+     "confidence": 0.94,
      "probabilities": {
-      "none": 0.17,
-      "fee.payment.record": 0.0,
-      "fee.cancellation.raise": 0.8,
+      "fee.reminder.send": 0.0,
+      "fee.latefee.waive": 0.0,
+      "fee.writeoff.propose": 0.0,
       "fee.overdue.list": 0.0,
-      "fee.reminder.send": 0.0,
-      "fee.writeoff.propose": 0.0,
-      "fee.latefee.waive": 0.0,
-      "fee.credit.raise": 0.03
-     }
-    },
-    "intent_2": {
-     "type": "choice",
-     "choice": "none",
-     "confidence": 0.53,
-     "probabilities": {
-      "none": 0.59,
-      "fee.payment.record": 0.01,
-      "fee.cancellation.raise": 0.01,
-      "fee.overdue.list": 0.39,
-      "fee.reminder.send": 0.0,
-      "fee.writeoff.propose": 0.0,
-      "fee.latefee.waive": 0.0,
-      "fee.credit.raise": 0.0
+      "none": 0.05,
+      "fee.cancellation.raise": 0.95,
+      "fee.credit.raise": 0.0,
+      "fee.payment.record": 0.0
      }
     }
    },
    "usage": {
-    "input_tokens": 4532,
-    "output_tokens": 206
+    "input_tokens": 2415,
+    "output_tokens": 107
    },
-   "seconds": 0.511
+   "seconds": 0.439
   },
   "is branch mein kaun kaun assign hai?": {
    "model": "jev-1.13.0",
@@ -2325,20 +2264,20 @@
     "intent_1": {
      "type": "choice",
      "choice": "none",
-     "confidence": 0.99,
+     "confidence": 0.95,
      "probabilities": {
-      "fee.reminder.send": 0.0,
-      "dashboard.main.read": 0.01,
-      "fee.overdue.list": 0.0,
-      "none": 0.99
+      "dashboard.main.read": 0.02,
+      "none": 0.96,
+      "fee.overdue.list": 0.02,
+      "fee.reminder.send": 0.0
      }
     }
    },
    "usage": {
-    "input_tokens": 1107,
+    "input_tokens": 1105,
     "output_tokens": 56
    },
-   "seconds": 0.357
+   "seconds": 0.467
   },
   "is family ka jurmana maaf kar do": {
    "model": "jev-1.13.0",
@@ -2346,15 +2285,15 @@
     "intent_1": {
      "type": "choice",
      "choice": "fee.latefee.waive",
-     "confidence": 0.99,
+     "confidence": 0.98,
      "probabilities": {
-      "fee.reminder.send": 0.0,
-      "fee.credit.raise": 0.0,
       "none": 0.01,
       "fee.writeoff.propose": 0.0,
-      "fee.latefee.waive": 0.99,
+      "fee.reminder.send": 0.0,
       "fee.overdue.list": 0.0,
-      "fee.cancellation.raise": 0.0
+      "fee.cancellation.raise": 0.0,
+      "fee.credit.raise": 0.0,
+      "fee.latefee.waive": 0.99
      }
     }
    },
@@ -2362,7 +2301,7 @@
     "input_tokens": 2117,
     "output_tokens": 99
    },
-   "seconds": 0.387
+   "seconds": 1.013
   },
   "is family ka tax certificate jaari karo": {
    "model": "jev-1.13.0",
@@ -2417,23 +2356,22 @@
      "choice": "dashboard.main.read",
      "confidence": 1.0,
      "probabilities": {
-      "none": 0.0,
-      "fee.payment.record": 0.0,
       "fee.writeoff.propose": 0.0,
-      "fee.latefee.waive": 0.0,
       "dashboard.main.read": 1.0,
-      "fee.cancellation.raise": 0.0,
+      "fee.credit.raise": 0.0,
+      "none": 0.0,
+      "fee.latefee.waive": 0.0,
       "fee.overdue.list": 0.0,
-      "fee.reminder.send": 0.0,
-      "fee.credit.raise": 0.0
+      "fee.cancellation.raise": 0.0,
+      "fee.reminder.send": 0.0
      }
     }
    },
    "usage": {
-    "input_tokens": 2502,
-    "output_tokens": 113
+    "input_tokens": 2222,
+    "output_tokens": 104
    },
-   "seconds": 0.381
+   "seconds": 0.362
   },
   "is umeedwar ko rad kar do, wajah likh dein": {
    "model": "jev-1.13.0",
@@ -2465,23 +2403,23 @@
      "choice": "fee.reminder.send",
      "confidence": 1.0,
      "probabilities": {
-      "none": 0.0,
+      "fee.payment.record": 0.0,
       "fee.latefee.waive": 0.0,
+      "fee.credit.raise": 0.0,
+      "none": 0.0,
+      "fee.reminder.send": 1.0,
+      "dashboard.main.read": 0.0,
       "fee.writeoff.propose": 0.0,
       "fee.cancellation.raise": 0.0,
-      "dashboard.main.read": 0.0,
-      "fee.payment.record": 0.0,
-      "fee.reminder.send": 1.0,
-      "fee.credit.raise": 0.0,
       "fee.overdue.list": 0.0
      }
     }
    },
    "usage": {
-    "input_tokens": 2509,
+    "input_tokens": 2508,
     "output_tokens": 114
    },
-   "seconds": 0.412
+   "seconds": 0.403
   },
   "jin ka fee overdue hai unhe chase karna hai, list do": {
    "model": "jev-1.13.0",
@@ -2489,25 +2427,25 @@
     "intent_1": {
      "type": "choice",
      "choice": "fee.overdue.list",
-     "confidence": 0.99,
+     "confidence": 1.0,
      "probabilities": {
       "fee.payment.record": 0.0,
       "none": 0.0,
-      "dashboard.main.read": 0.0,
-      "fee.credit.raise": 0.0,
-      "fee.writeoff.propose": 0.0,
-      "fee.overdue.list": 1.0,
-      "fee.reminder.send": 0.0,
       "fee.latefee.waive": 0.0,
-      "fee.cancellation.raise": 0.0
+      "fee.overdue.list": 1.0,
+      "fee.cancellation.raise": 0.0,
+      "fee.writeoff.propose": 0.0,
+      "fee.credit.raise": 0.0,
+      "fee.reminder.send": 0.0,
+      "dashboard.main.read": 0.0
      }
     }
    },
    "usage": {
-    "input_tokens": 2508,
+    "input_tokens": 2506,
     "output_tokens": 115
    },
-   "seconds": 0.466
+   "seconds": 0.399
   },
   "jin ki fees baqaya hai unko reminder bhej do": {
    "model": "jev-1.13.0",
@@ -2543,15 +2481,15 @@
      "choice": "fee.overdue.list",
      "confidence": 1.0,
      "probabilities": {
-      "dashboard.main.read": 0.0,
+      "none": 0.0,
+      "fee.reminder.send": 0.0,
+      "fee.overdue.list": 1.0,
       "fee.cancellation.raise": 0.0,
+      "fee.latefee.waive": 0.0,
       "fee.credit.raise": 0.0,
       "fee.writeoff.propose": 0.0,
-      "fee.overdue.list": 1.0,
-      "fee.payment.record": 0.0,
-      "none": 0.0,
-      "fee.latefee.waive": 0.0,
-      "fee.reminder.send": 0.0
+      "dashboard.main.read": 0.0,
+      "fee.payment.record": 0.0
      }
     }
    },
@@ -2559,7 +2497,29 @@
     "input_tokens": 2508,
     "output_tokens": 115
    },
-   "seconds": 0.369
+   "seconds": 0.389
+  },
+  "jurmana galti se laga hai, wapas lo": {
+   "model": "jev-1.13.0",
+   "answers": {
+    "intent_1": {
+     "type": "choice",
+     "choice": "fee.latefee.waive",
+     "confidence": 0.93,
+     "probabilities": {
+      "fee.credit.raise": 0.0,
+      "fee.cancellation.raise": 0.04,
+      "fee.writeoff.propose": 0.0,
+      "fee.latefee.waive": 0.95,
+      "none": 0.01
+     }
+    }
+   },
+   "usage": {
+    "input_tokens": 1572,
+    "output_tokens": 78
+   },
+   "seconds": 1.12
   },
   "jurmana jama ho chuka hai, wapas karo": {
    "model": "jev-1.13.0",
@@ -2567,24 +2527,21 @@
     "intent_1": {
      "type": "choice",
      "choice": "none",
-     "confidence": 0.51,
+     "confidence": 0.73,
      "probabilities": {
-      "fee.payment.record": 0.0,
-      "fee.cancellation.raise": 0.0,
-      "fee.latefee.waive": 0.01,
-      "fee.credit.raise": 0.4,
       "fee.writeoff.propose": 0.0,
-      "none": 0.59,
-      "fee.overdue.list": 0.0,
-      "fee.reminder.send": 0.0
+      "fee.credit.raise": 0.2,
+      "fee.latefee.waive": 0.01,
+      "none": 0.79,
+      "fee.cancellation.raise": 0.0
      }
     }
    },
    "usage": {
-    "input_tokens": 2401,
-    "output_tokens": 102
+    "input_tokens": 1570,
+    "output_tokens": 72
    },
-   "seconds": 0.419
+   "seconds": 0.454
   },
   "kis kis ne fees nahi di?": {
    "model": "jev-1.13.0",
@@ -2594,23 +2551,23 @@
      "choice": "fee.overdue.list",
      "confidence": 1.0,
      "probabilities": {
-      "fee.overdue.list": 1.0,
-      "fee.credit.raise": 0.0,
-      "fee.cancellation.raise": 0.0,
-      "dashboard.main.read": 0.0,
-      "fee.reminder.send": 0.0,
-      "fee.latefee.waive": 0.0,
-      "fee.payment.record": 0.0,
       "none": 0.0,
-      "fee.writeoff.propose": 0.0
+      "dashboard.main.read": 0.0,
+      "fee.writeoff.propose": 0.0,
+      "fee.payment.record": 0.0,
+      "fee.latefee.waive": 0.0,
+      "fee.cancellation.raise": 0.0,
+      "fee.overdue.list": 1.0,
+      "fee.reminder.send": 0.0,
+      "fee.credit.raise": 0.0
      }
     }
    },
    "usage": {
-    "input_tokens": 2504,
+    "input_tokens": 2500,
     "output_tokens": 115
    },
-   "seconds": 0.415
+   "seconds": 0.444
   },
   "kis ne fees nahi di?": {
    "model": "jev-1.13.0",
@@ -2638,30 +2595,50 @@
    },
    "seconds": 0.375
   },
+  "kitne students enrolled hain?": {
+   "model": "jev-1.13.0",
+   "answers": {
+    "intent_1": {
+     "type": "choice",
+     "choice": "none",
+     "confidence": 0.99,
+     "probabilities": {
+      "fee.overdue.list": 0.01,
+      "fee.reminder.send": 0.0,
+      "none": 0.99
+     }
+    }
+   },
+   "usage": {
+    "input_tokens": 1000,
+    "output_tokens": 47
+   },
+   "seconds": 1.283
+  },
   "late fee hata do, unka bank band tha": {
    "model": "jev-1.13.0",
    "answers": {
     "intent_1": {
      "type": "choice",
      "choice": "fee.latefee.waive",
-     "confidence": 0.99,
+     "confidence": 1.0,
      "probabilities": {
-      "fee.reminder.send": 0.0,
-      "fee.credit.raise": 0.0,
-      "fee.latefee.waive": 1.0,
-      "fee.writeoff.propose": 0.0,
-      "fee.cancellation.raise": 0.0,
       "none": 0.0,
       "fee.payment.record": 0.0,
-      "fee.overdue.list": 0.0
+      "fee.writeoff.propose": 0.0,
+      "fee.reminder.send": 0.0,
+      "fee.latefee.waive": 1.0,
+      "fee.cancellation.raise": 0.0,
+      "fee.overdue.list": 0.0,
+      "fee.credit.raise": 0.0
      }
     }
    },
    "usage": {
-    "input_tokens": 2402,
+    "input_tokens": 2401,
     "output_tokens": 108
    },
-   "seconds": 0.35
+   "seconds": 0.416
   },
   "late fee maaf kar do": {
    "model": "jev-1.13.0",
@@ -2718,20 +2695,25 @@
     "intent_1": {
      "type": "choice",
      "choice": "fee.overdue.list",
-     "confidence": 0.92,
+     "confidence": 1.0,
      "probabilities": {
-      "fee.overdue.list": 0.94,
-      "none": 0.06,
+      "fee.overdue.list": 1.0,
+      "fee.credit.raise": 0.0,
+      "fee.cancellation.raise": 0.0,
+      "fee.reminder.send": 0.0,
       "dashboard.main.read": 0.0,
-      "fee.reminder.send": 0.0
+      "fee.latefee.waive": 0.0,
+      "fee.payment.record": 0.0,
+      "none": 0.0,
+      "fee.writeoff.propose": 0.0
      }
     }
    },
    "usage": {
-    "input_tokens": 1114,
-    "output_tokens": 60
+    "input_tokens": 2504,
+    "output_tokens": 115
    },
-   "seconds": 0.371
+   "seconds": 0.604
   },
   "log a partial payment of 3000 against invoice INV/LHR/26-27/000031": {
    "model": "jev-1.13.0",
@@ -2764,18 +2746,18 @@
     "intent_1": {
      "type": "choice",
      "choice": "dashboard.main.read",
-     "confidence": 0.4,
+     "confidence": 0.44,
      "probabilities": {
-      "none": 0.3,
-      "dashboard.main.read": 0.7
+      "none": 0.28,
+      "dashboard.main.read": 0.72
      }
     }
    },
    "usage": {
-    "input_tokens": 557,
+    "input_tokens": 555,
     "output_tokens": 37
    },
-   "seconds": 0.43
+   "seconds": 0.422
   },
   "mark the September invoice for Hina Tariq as paid, 6500 by bank challan": {
    "model": "jev-1.13.0",
@@ -2785,12 +2767,12 @@
      "choice": "fee.payment.record",
      "confidence": 1.0,
      "probabilities": {
-      "none": 0.0,
-      "fee.writeoff.propose": 0.0,
       "fee.payment.record": 1.0,
+      "fee.writeoff.propose": 0.0,
       "fee.latefee.waive": 0.0,
+      "fee.credit.raise": 0.0,
       "fee.cancellation.raise": 0.0,
-      "fee.credit.raise": 0.0
+      "none": 0.0
      }
     }
    },
@@ -2798,7 +2780,7 @@
     "input_tokens": 1874,
     "output_tokens": 83
    },
-   "seconds": 0.415
+   "seconds": 1.051
   },
   "message the over-90-day defaulters": {
    "model": "jev-1.13.0",
@@ -2806,19 +2788,24 @@
     "intent_1": {
      "type": "choice",
      "choice": "fee.reminder.send",
-     "confidence": 0.77,
+     "confidence": 0.98,
      "probabilities": {
-      "none": 0.14,
-      "fee.reminder.send": 0.85,
+      "fee.writeoff.propose": 0.0,
+      "fee.reminder.send": 0.98,
+      "fee.latefee.waive": 0.0,
+      "fee.credit.raise": 0.0,
+      "dashboard.main.read": 0.0,
+      "fee.cancellation.raise": 0.0,
+      "none": 0.01,
       "fee.overdue.list": 0.01
      }
     }
    },
    "usage": {
-    "input_tokens": 1026,
-    "output_tokens": 50
+    "input_tokens": 2232,
+    "output_tokens": 105
    },
-   "seconds": 0.381
+   "seconds": 0.391
   },
   "mujhe aaj ki summary dikhao": {
    "model": "jev-1.13.0",
@@ -2826,20 +2813,20 @@
     "intent_1": {
      "type": "choice",
      "choice": "dashboard.main.read",
-     "confidence": 0.95,
+     "confidence": 0.98,
      "probabilities": {
-      "dashboard.main.read": 0.97,
-      "none": 0.03,
+      "dashboard.main.read": 0.99,
       "fee.overdue.list": 0.0,
-      "fee.reminder.send": 0.0
+      "fee.reminder.send": 0.0,
+      "none": 0.01
      }
     }
    },
    "usage": {
-    "input_tokens": 1100,
+    "input_tokens": 1104,
     "output_tokens": 58
    },
-   "seconds": 0.42
+   "seconds": 0.404
   },
   "nayi payment record karo": {
    "model": "jev-1.13.0",
@@ -2847,18 +2834,18 @@
     "intent_1": {
      "type": "choice",
      "choice": "fee.payment.record",
-     "confidence": 0.98,
+     "confidence": 0.97,
      "probabilities": {
-      "fee.payment.record": 0.99,
-      "none": 0.01
+      "none": 0.01,
+      "fee.payment.record": 0.99
      }
     }
    },
    "usage": {
-    "input_tokens": 724,
+    "input_tokens": 726,
     "output_tokens": 37
    },
-   "seconds": 0.39
+   "seconds": 0.385
   },
   "nudge the parents who still owe for September": {
    "model": "jev-1.13.0",
@@ -2892,24 +2879,23 @@
     "intent_1": {
      "type": "choice",
      "choice": "none",
-     "confidence": 0.75,
+     "confidence": 0.87,
      "probabilities": {
-      "fee.overdue.list": 0.2,
+      "dashboard.main.read": 0.06,
+      "none": 0.9,
+      "fee.payment.record": 0.04,
       "fee.cancellation.raise": 0.0,
-      "none": 0.79,
-      "fee.payment.record": 0.0,
-      "fee.writeoff.propose": 0.0,
-      "fee.reminder.send": 0.01,
       "fee.latefee.waive": 0.0,
+      "fee.writeoff.propose": 0.0,
       "fee.credit.raise": 0.0
      }
     }
    },
    "usage": {
-    "input_tokens": 2398,
-    "output_tokens": 102
+    "input_tokens": 1949,
+    "output_tokens": 90
    },
-   "seconds": 0.398
+   "seconds": 0.44
   },
   "paisa mila hai, record kar do": {
    "model": "jev-1.13.0",
@@ -2919,16 +2905,16 @@
      "choice": "fee.payment.record",
      "confidence": 0.99,
      "probabilities": {
-      "fee.payment.record": 0.99,
-      "none": 0.01
+      "none": 0.01,
+      "fee.payment.record": 0.99
      }
     }
    },
    "usage": {
-    "input_tokens": 726,
+    "input_tokens": 736,
     "output_tokens": 37
    },
-   "seconds": 0.439
+   "seconds": 0.416
   },
   "paisa record kar do": {
    "model": "jev-1.13.0",
@@ -2955,22 +2941,22 @@
     "intent_1": {
      "type": "choice",
      "choice": "fee.payment.record",
-     "confidence": 1.0,
+     "confidence": 0.92,
      "probabilities": {
-      "none": 0.0,
-      "fee.writeoff.propose": 0.0,
+      "fee.cancellation.raise": 0.0,
       "fee.credit.raise": 0.0,
       "fee.latefee.waive": 0.0,
-      "fee.cancellation.raise": 0.0,
-      "fee.payment.record": 1.0
+      "fee.payment.record": 0.93,
+      "fee.writeoff.propose": 0.0,
+      "none": 0.07
      }
     }
    },
    "usage": {
-    "input_tokens": 1854,
+    "input_tokens": 1852,
     "output_tokens": 83
    },
-   "seconds": 0.388
+   "seconds": 0.397
   },
   "parents ko batao ke fees late ho gayi hai": {
    "model": "jev-1.13.0",
@@ -2978,43 +2964,48 @@
     "intent_1": {
      "type": "choice",
      "choice": "fee.reminder.send",
-     "confidence": 0.99,
+     "confidence": 0.98,
      "probabilities": {
-      "none": 0.01,
-      "fee.latefee.waive": 0.0,
       "fee.writeoff.propose": 0.0,
-      "fee.cancellation.raise": 0.0,
       "dashboard.main.read": 0.0,
-      "fee.reminder.send": 0.99,
       "fee.credit.raise": 0.0,
-      "fee.overdue.list": 0.0
+      "fee.overdue.list": 0.0,
+      "fee.latefee.waive": 0.0,
+      "none": 0.02,
+      "fee.cancellation.raise": 0.0,
+      "fee.reminder.send": 0.98
      }
     }
    },
    "usage": {
-    "input_tokens": 2218,
+    "input_tokens": 2222,
     "output_tokens": 105
    },
-   "seconds": 0.521
+   "seconds": 0.424
   },
-  "plan badal do, December wali qist January mein kar do": {
+  "policy wapas bhej do, jurmana bohat zyada hai": {
    "model": "jev-1.13.0",
    "answers": {
     "intent_1": {
      "type": "choice",
      "choice": "none",
-     "confidence": 1.0,
+     "confidence": 0.58,
      "probabilities": {
-      "none": 1.0,
-      "fee.payment.record": 0.0
+      "fee.credit.raise": 0.0,
+      "fee.latefee.waive": 0.34,
+      "fee.cancellation.raise": 0.01,
+      "fee.overdue.list": 0.0,
+      "none": 0.65,
+      "fee.reminder.send": 0.0,
+      "fee.writeoff.propose": 0.0
      }
     }
    },
    "usage": {
-    "input_tokens": 741,
-    "output_tokens": 35
+    "input_tokens": 2133,
+    "output_tokens": 93
    },
-   "seconds": 0.387
+   "seconds": 0.418
   },
   "poora batch reverse kar do, galat period ka bill ban gaya tha": {
    "model": "jev-1.13.0",
@@ -3022,21 +3013,21 @@
     "intent_1": {
      "type": "choice",
      "choice": "fee.cancellation.raise",
-     "confidence": 0.89,
+     "confidence": 0.91,
      "probabilities": {
-      "fee.credit.raise": 0.0,
-      "fee.cancellation.raise": 0.92,
-      "none": 0.08,
       "fee.writeoff.propose": 0.0,
-      "fee.latefee.waive": 0.0
+      "none": 0.07,
+      "fee.latefee.waive": 0.0,
+      "fee.credit.raise": 0.0,
+      "fee.cancellation.raise": 0.93
      }
     }
    },
    "usage": {
-    "input_tokens": 1581,
+    "input_tokens": 1580,
     "output_tokens": 77
    },
-   "seconds": 0.474
+   "seconds": 0.413
   },
   "poore school ka outstanding batao": {
    "model": "jev-1.13.0",
@@ -3094,14 +3085,14 @@
     "intent_1": {
      "type": "choice",
      "choice": "none",
-     "confidence": 0.85,
+     "confidence": 0.82,
      "probabilities": {
-      "fee.latefee.waive": 0.0,
       "fee.writeoff.propose": 0.0,
       "fee.cancellation.raise": 0.0,
+      "none": 0.86,
       "fee.credit.raise": 0.0,
-      "none": 0.88,
-      "fee.payment.record": 0.12
+      "fee.payment.record": 0.14,
+      "fee.latefee.waive": 0.0
      }
     }
    },
@@ -3109,7 +3100,7 @@
     "input_tokens": 1854,
     "output_tokens": 81
    },
-   "seconds": 0.385
+   "seconds": 1.093
   },
   "propose a write-off for Rehan's unpaid fees from 2024": {
    "model": "jev-1.13.0",
@@ -3117,23 +3108,23 @@
     "intent_1": {
      "type": "choice",
      "choice": "fee.writeoff.propose",
-     "confidence": 0.8,
+     "confidence": 1.0,
      "probabilities": {
-      "fee.writeoff.propose": 0.83,
+      "fee.latefee.waive": 0.0,
       "fee.reminder.send": 0.0,
-      "fee.latefee.waive": 0.01,
-      "fee.cancellation.raise": 0.05,
       "fee.credit.raise": 0.0,
-      "none": 0.11,
-      "fee.overdue.list": 0.0
+      "fee.cancellation.raise": 0.0,
+      "fee.overdue.list": 0.0,
+      "fee.writeoff.propose": 1.0,
+      "none": 0.0
      }
     }
    },
    "usage": {
-    "input_tokens": 2139,
+    "input_tokens": 2137,
     "output_tokens": 98
    },
-   "seconds": 0.428
+   "seconds": 0.404
   },
   "propose cancelling the whole batch we raised for the wrong period": {
    "model": "jev-1.13.0",
@@ -3143,19 +3134,19 @@
      "choice": "fee.cancellation.raise",
      "confidence": 0.99,
      "probabilities": {
-      "fee.credit.raise": 0.0,
-      "fee.latefee.waive": 0.0,
-      "fee.writeoff.propose": 0.0,
       "none": 0.01,
-      "fee.cancellation.raise": 0.99
+      "fee.latefee.waive": 0.0,
+      "fee.credit.raise": 0.0,
+      "fee.cancellation.raise": 0.99,
+      "fee.writeoff.propose": 0.0
      }
     }
    },
    "usage": {
-    "input_tokens": 1576,
+    "input_tokens": 1578,
     "output_tokens": 77
    },
-   "seconds": 0.374
+   "seconds": 0.473
   },
   "propose writing off this debt, the family is untraceable": {
    "model": "jev-1.13.0",
@@ -3165,21 +3156,21 @@
      "choice": "fee.writeoff.propose",
      "confidence": 1.0,
      "probabilities": {
-      "fee.credit.raise": 0.0,
+      "fee.writeoff.propose": 1.0,
+      "fee.reminder.send": 0.0,
+      "none": 0.0,
       "fee.cancellation.raise": 0.0,
       "fee.latefee.waive": 0.0,
-      "fee.writeoff.propose": 1.0,
-      "fee.overdue.list": 0.0,
-      "fee.reminder.send": 0.0,
-      "none": 0.0
+      "fee.credit.raise": 0.0,
+      "fee.overdue.list": 0.0
      }
     }
    },
    "usage": {
-    "input_tokens": 2135,
+    "input_tokens": 2131,
     "output_tokens": 98
    },
-   "seconds": 0.417
+   "seconds": 0.382
   },
   "put up the pickup barcode at the main gate, rotating daily": {
    "model": "jev-1.13.0",
@@ -3195,10 +3186,10 @@
     }
    },
    "usage": {
-    "input_tokens": 569,
+    "input_tokens": 567,
     "output_tokens": 35
    },
-   "seconds": 0.425
+   "seconds": 0.441
   },
   "raise a cancellation for this invoice — it was billed to the wrong student": {
    "model": "jev-1.13.0",
@@ -3206,22 +3197,22 @@
     "intent_1": {
      "type": "choice",
      "choice": "fee.cancellation.raise",
-     "confidence": 0.93,
+     "confidence": 1.0,
      "probabilities": {
-      "fee.latefee.waive": 0.0,
-      "fee.cancellation.raise": 0.95,
-      "none": 0.05,
+      "fee.cancellation.raise": 1.0,
+      "none": 0.0,
       "fee.writeoff.propose": 0.0,
       "fee.credit.raise": 0.0,
+      "fee.latefee.waive": 0.0,
       "fee.payment.record": 0.0
      }
     }
    },
    "usage": {
-    "input_tokens": 1836,
+    "input_tokens": 1858,
     "output_tokens": 86
    },
-   "seconds": 0.423
+   "seconds": 0.404
   },
   "raise a credit for the lab fee Maryam paid that she shouldn't have been charged": {
    "model": "jev-1.13.0",
@@ -3254,48 +3245,48 @@
     "intent_1": {
      "type": "choice",
      "choice": "fee.credit.raise",
-     "confidence": 0.97,
+     "confidence": 1.0,
      "probabilities": {
-      "fee.reminder.send": 0.0,
-      "fee.credit.raise": 0.98,
+      "fee.overdue.list": 0.0,
       "fee.writeoff.propose": 0.0,
+      "none": 0.0,
       "fee.payment.record": 0.0,
       "fee.latefee.waive": 0.0,
-      "none": 0.02,
+      "fee.reminder.send": 0.0,
       "fee.cancellation.raise": 0.0,
-      "fee.overdue.list": 0.0
+      "fee.credit.raise": 1.0
      }
     }
    },
    "usage": {
-    "input_tokens": 2406,
+    "input_tokens": 2407,
     "output_tokens": 104
    },
-   "seconds": 0.399
+   "seconds": 0.386
   },
   "raise a refund for the Khan family, they've left and hold 2,000 credit": {
    "model": "jev-1.13.0",
    "answers": {
     "intent_1": {
      "type": "choice",
-     "choice": "none",
-     "confidence": 0.78,
+     "choice": "fee.credit.raise",
+     "confidence": 0.51,
      "probabilities": {
-      "fee.overdue.list": 0.0,
-      "fee.credit.raise": 0.16,
+      "fee.credit.raise": 0.59,
+      "none": 0.18,
+      "fee.reminder.send": 0.0,
+      "fee.writeoff.propose": 0.11,
       "fee.latefee.waive": 0.0,
-      "fee.cancellation.raise": 0.01,
-      "none": 0.81,
-      "fee.writeoff.propose": 0.01,
-      "fee.reminder.send": 0.0
+      "fee.cancellation.raise": 0.12,
+      "fee.overdue.list": 0.0
      }
     }
    },
    "usage": {
-    "input_tokens": 2143,
-    "output_tokens": 93
+    "input_tokens": 2141,
+    "output_tokens": 95
    },
-   "seconds": 0.453
+   "seconds": 0.431
   },
   "record 5000 cash received against Ayesha's September invoice today": {
    "model": "jev-1.13.0",
@@ -3305,20 +3296,20 @@
      "choice": "fee.payment.record",
      "confidence": 1.0,
      "probabilities": {
-      "fee.latefee.waive": 0.0,
-      "none": 0.0,
-      "fee.cancellation.raise": 0.0,
+      "fee.payment.record": 1.0,
       "fee.credit.raise": 0.0,
       "fee.writeoff.propose": 0.0,
-      "fee.payment.record": 1.0
+      "fee.cancellation.raise": 0.0,
+      "fee.latefee.waive": 0.0,
+      "none": 0.0
      }
     }
    },
    "usage": {
-    "input_tokens": 1862,
+    "input_tokens": 1864,
     "output_tokens": 83
    },
-   "seconds": 0.392
+   "seconds": 0.382
   },
   "record a plan request for this family, they've asked to pay in three parts": {
    "model": "jev-1.13.0",
@@ -3370,41 +3361,21 @@
     "intent_1": {
      "type": "choice",
      "choice": "none",
-     "confidence": 0.78,
+     "confidence": 0.94,
      "probabilities": {
-      "fee.payment.record": 0.17,
+      "fee.latefee.waive": 0.0,
+      "none": 0.96,
       "fee.writeoff.propose": 0.0,
-      "none": 0.8099999999999999,
       "fee.cancellation.raise": 0.0,
-      "fee.credit.raise": 0.02,
-      "fee.latefee.waive": 0.0
+      "fee.credit.raise": 0.04
      }
     }
    },
    "usage": {
-    "input_tokens": 1842,
-    "output_tokens": 81
+    "input_tokens": 1576,
+    "output_tokens": 72
    },
-   "seconds": 0.384
-  },
-  "refund wapas bhej do": {
-   "model": "jev-1.13.0",
-   "answers": {
-    "intent_1": {
-     "type": "choice",
-     "choice": "none",
-     "confidence": 0.99,
-     "probabilities": {
-      "none": 1.0,
-      "fee.payment.record": 0.0
-     }
-    }
-   },
-   "usage": {
-    "input_tokens": 724,
-    "output_tokens": 35
-   },
-   "seconds": 0.431
+   "seconds": 1.044
   },
   "remind the Class 5 Blue parents that their fees are overdue": {
    "model": "jev-1.13.0",
@@ -3414,21 +3385,21 @@
      "choice": "fee.reminder.send",
      "confidence": 1.0,
      "probabilities": {
-      "fee.overdue.list": 0.0,
       "fee.cancellation.raise": 0.0,
-      "fee.reminder.send": 1.0,
       "fee.writeoff.propose": 0.0,
-      "fee.latefee.waive": 0.0,
       "none": 0.0,
-      "fee.credit.raise": 0.0
+      "fee.latefee.waive": 0.0,
+      "fee.credit.raise": 0.0,
+      "fee.overdue.list": 0.0,
+      "fee.reminder.send": 1.0
      }
     }
    },
    "usage": {
-    "input_tokens": 2133,
+    "input_tokens": 2129,
     "output_tokens": 96
    },
-   "seconds": 0.354
+   "seconds": 0.415
   },
   "remove the late fine from Danish's October invoice, the bank was closed": {
    "model": "jev-1.13.0",
@@ -3436,22 +3407,22 @@
     "intent_1": {
      "type": "choice",
      "choice": "fee.latefee.waive",
-     "confidence": 0.99,
+     "confidence": 1.0,
      "probabilities": {
-      "fee.latefee.waive": 1.0,
-      "fee.writeoff.propose": 0.0,
-      "fee.payment.record": 0.0,
+      "fee.cancellation.raise": 0.0,
       "fee.credit.raise": 0.0,
-      "none": 0.0,
-      "fee.cancellation.raise": 0.0
+      "fee.latefee.waive": 1.0,
+      "fee.payment.record": 0.0,
+      "fee.writeoff.propose": 0.0,
+      "none": 0.0
      }
     }
    },
    "usage": {
-    "input_tokens": 1864,
+    "input_tokens": 1860,
     "output_tokens": 87
    },
-   "seconds": 0.411
+   "seconds": 1.072
   },
   "request cancellation of the duplicate invoice for Hamza": {
    "model": "jev-1.13.0",
@@ -3462,18 +3433,19 @@
      "confidence": 0.99,
      "probabilities": {
       "fee.writeoff.propose": 0.0,
-      "none": 0.01,
+      "fee.latefee.waive": 0.0,
       "fee.cancellation.raise": 0.99,
-      "fee.credit.raise": 0.0,
-      "fee.latefee.waive": 0.0
+      "fee.payment.record": 0.0,
+      "none": 0.01,
+      "fee.credit.raise": 0.0
      }
     }
    },
    "usage": {
-    "input_tokens": 1572,
-    "output_tokens": 77
+    "input_tokens": 1846,
+    "output_tokens": 86
    },
-   "seconds": 0.532
+   "seconds": 0.414
   },
   "return this configuration, the threshold is wrong": {
    "model": "jev-1.13.0",
@@ -3481,46 +3453,45 @@
     "intent_1": {
      "type": "choice",
      "choice": "none",
-     "confidence": 0.98,
+     "confidence": 0.99,
      "probabilities": {
-      "fee.latefee.waive": 0.0,
-      "fee.writeoff.propose": 0.0,
-      "fee.cancellation.raise": 0.01,
       "fee.credit.raise": 0.0,
-      "none": 0.99
+      "fee.cancellation.raise": 0.0,
+      "fee.payment.record": 0.0,
+      "none": 1.0,
+      "fee.writeoff.propose": 0.0,
+      "fee.latefee.waive": 0.0
      }
     }
    },
    "usage": {
-    "input_tokens": 1570,
-    "output_tokens": 72
+    "input_tokens": 1848,
+    "output_tokens": 81
    },
-   "seconds": 0.443
+   "seconds": 0.494
   },
   "return this correction, the charge is what's wrong not the payment": {
    "model": "jev-1.13.0",
    "answers": {
     "intent_1": {
      "type": "choice",
-     "choice": "fee.cancellation.raise",
-     "confidence": 0.59,
+     "choice": "fee.credit.raise",
+     "confidence": 0.62,
      "probabilities": {
-      "none": 0.17,
       "fee.writeoff.propose": 0.0,
+      "fee.cancellation.raise": 0.22,
+      "none": 0.09,
+      "fee.credit.raise": 0.6900000000000001,
       "fee.payment.record": 0.0,
-      "fee.latefee.waive": 0.0,
-      "fee.reminder.send": 0.0,
-      "fee.overdue.list": 0.0,
-      "fee.credit.raise": 0.18,
-      "fee.cancellation.raise": 0.65
+      "fee.latefee.waive": 0.0
      }
     }
    },
    "usage": {
-    "input_tokens": 2397,
-    "output_tokens": 107
+    "input_tokens": 1852,
+    "output_tokens": 83
    },
-   "seconds": 0.366
+   "seconds": 0.485
   },
   "return this credit — no money was received against that invoice": {
    "model": "jev-1.13.0",
@@ -3528,68 +3499,93 @@
     "intent_1": {
      "type": "choice",
      "choice": "none",
-     "confidence": 0.66,
+     "confidence": 0.74,
      "probabilities": {
-      "fee.credit.raise": 0.13,
-      "fee.payment.record": 0.0,
-      "none": 0.72,
-      "fee.writeoff.propose": 0.04,
+      "fee.credit.raise": 0.1,
       "fee.cancellation.raise": 0.11,
-      "fee.latefee.waive": 0.0
+      "fee.payment.record": 0.0,
+      "fee.writeoff.propose": 0.01,
+      "fee.latefee.waive": 0.0,
+      "none": 0.78
      }
     }
    },
    "usage": {
-    "input_tokens": 1852,
+    "input_tokens": 1854,
     "output_tokens": 81
    },
-   "seconds": 0.412
+   "seconds": 0.518
+  },
+  "return this structure — the exam fee should be per term not annual": {
+   "model": "jev-1.13.0",
+   "answers": {
+    "intent_1": {
+     "type": "choice",
+     "choice": "fee.cancellation.raise",
+     "confidence": 0.62,
+     "probabilities": {
+      "fee.latefee.waive": 0.0,
+      "fee.writeoff.propose": 0.0,
+      "fee.payment.record": 0.0,
+      "fee.cancellation.raise": 0.67,
+      "fee.overdue.list": 0.0,
+      "none": 0.32,
+      "fee.reminder.send": 0.0,
+      "fee.credit.raise": 0.01
+     }
+    }
+   },
+   "usage": {
+    "input_tokens": 2405,
+    "output_tokens": 107
+   },
+   "seconds": 0.436
   },
   "return this write-off proposal, we haven't tried hard enough to recover it": {
    "model": "jev-1.13.0",
    "answers": {
     "intent_1": {
      "type": "choice",
-     "choice": "fee.writeoff.propose",
-     "confidence": 0.9,
+     "choice": "none",
+     "confidence": 0.97,
      "probabilities": {
-      "fee.latefee.waive": 0.0,
-      "fee.writeoff.propose": 0.92,
-      "none": 0.08,
+      "fee.credit.raise": 0.0,
+      "fee.writeoff.propose": 0.02,
       "fee.cancellation.raise": 0.0,
-      "fee.credit.raise": 0.0
+      "none": 0.98,
+      "fee.latefee.waive": 0.0
      }
     }
    },
    "usage": {
-    "input_tokens": 1580,
-    "output_tokens": 77
+    "input_tokens": 1584,
+    "output_tokens": 72
    },
-   "seconds": 0.4
+   "seconds": 0.455
   },
   "saal bhar se 18000 mang rahe hain, ab nahi milenge": {
    "model": "jev-1.13.0",
    "answers": {
     "intent_1": {
      "type": "choice",
-     "choice": "none",
-     "confidence": 0.47,
+     "choice": "fee.writeoff.propose",
+     "confidence": 0.4,
      "probabilities": {
-      "fee.credit.raise": 0.0,
       "fee.latefee.waive": 0.0,
-      "fee.overdue.list": 0.0,
-      "none": 0.56,
-      "fee.cancellation.raise": 0.01,
-      "fee.writeoff.propose": 0.43,
-      "fee.reminder.send": 0.0
+      "fee.credit.raise": 0.0,
+      "fee.writeoff.propose": 0.48,
+      "fee.reminder.send": 0.28,
+      "fee.cancellation.raise": 0.0,
+      "none": 0.22,
+      "fee.overdue.list": 0.02
      }
     }
    },
    "usage": {
-    "input_tokens": 2140,
-    "output_tokens": 93
+    "input_tokens": 2143,
+    "output_tokens": 98
    },
-   "seconds": 0.433
+   "seconds": 0.434
   },
   "sab nadehindagan ko reminder chala do": {
    "model": "jev-1.13.0",
@@ -3619,19 +3615,19 @@
      "choice": "none",
      "confidence": 1.0,
      "probabilities": {
-      "fee.writeoff.propose": 0.0,
       "fee.latefee.waive": 0.0,
       "fee.credit.raise": 0.0,
+      "none": 1.0,
       "fee.cancellation.raise": 0.0,
-      "none": 1.0
+      "fee.writeoff.propose": 0.0
      }
     }
    },
    "usage": {
-    "input_tokens": 1572,
+    "input_tokens": 1568,
     "output_tokens": 72
    },
-   "seconds": 0.977
+   "seconds": 1.317
   },
   "school ki bus kitne baje aayegi?": {
    "model": "jev-1.13.0",
@@ -3642,18 +3638,18 @@
      "confidence": 1.0,
      "probabilities": {
       "fee.writeoff.propose": 0.0,
-      "fee.credit.raise": 0.0,
       "fee.latefee.waive": 0.0,
-      "none": 1.0,
-      "fee.cancellation.raise": 0.0
+      "fee.credit.raise": 0.0,
+      "fee.cancellation.raise": 0.0,
+      "none": 1.0
      }
     }
    },
    "usage": {
-    "input_tokens": 1571,
+    "input_tokens": 1570,
     "output_tokens": 72
    },
-   "seconds": 0.405
+   "seconds": 0.655
   },
   "section 3 yellow ke baqaya jaat dikha do": {
    "model": "jev-1.13.0",
@@ -3709,10 +3705,10 @@
      "choice": "none",
      "confidence": 0.97,
      "probabilities": {
-      "dashboard.main.read": 0.0,
-      "none": 0.98,
+      "fee.reminder.send": 0.02,
       "fee.overdue.list": 0.0,
-      "fee.reminder.send": 0.02
+      "none": 0.98,
+      "dashboard.main.read": 0.0
      }
     }
    },
@@ -3720,7 +3716,7 @@
     "input_tokens": 1112,
     "output_tokens": 56
    },
-   "seconds": 0.406
+   "seconds": 0.352
   },
   "send an SMS to every family in 7 Green who hasn't paid yet": {
    "model": "jev-1.13.0",
@@ -3728,25 +3724,24 @@
     "intent_1": {
      "type": "choice",
      "choice": "fee.reminder.send",
-     "confidence": 0.99,
+     "confidence": 1.0,
      "probabilities": {
-      "fee.payment.record": 0.0,
-      "fee.writeoff.propose": 0.0,
-      "dashboard.main.read": 0.0,
-      "fee.credit.raise": 0.0,
-      "fee.overdue.list": 0.0,
-      "fee.latefee.waive": 0.0,
       "none": 0.0,
+      "fee.latefee.waive": 0.0,
       "fee.cancellation.raise": 0.0,
-      "fee.reminder.send": 1.0
+      "fee.overdue.list": 0.0,
+      "fee.reminder.send": 1.0,
+      "fee.credit.raise": 0.0,
+      "fee.writeoff.propose": 0.0,
+      "dashboard.main.read": 0.0
      }
     }
    },
    "usage": {
-    "input_tokens": 2516,
-    "output_tokens": 114
+    "input_tokens": 2234,
+    "output_tokens": 105
    },
-   "seconds": 0.428
+   "seconds": 0.354
   },
   "show me everyone more than 60 days overdue": {
    "model": "jev-1.13.0",
@@ -3754,24 +3749,20 @@
     "intent_1": {
      "type": "choice",
      "choice": "fee.overdue.list",
-     "confidence": 1.0,
+     "confidence": 0.99,
      "probabilities": {
-      "none": 0.0,
-      "fee.writeoff.propose": 0.0,
+      "fee.overdue.list": 0.99,
       "dashboard.main.read": 0.0,
       "fee.reminder.send": 0.0,
-      "fee.cancellation.raise": 0.0,
-      "fee.overdue.list": 1.0,
-      "fee.latefee.waive": 0.0,
-      "fee.credit.raise": 0.0
+      "none": 0.01
      }
     }
    },
    "usage": {
-    "input_tokens": 2236,
-    "output_tokens": 106
+    "input_tokens": 1116,
+    "output_tokens": 60
    },
-   "seconds": 0.496
+   "seconds": 0.386
   },
   "show me the overdue list for Grade 4": {
    "model": "jev-1.13.0",
@@ -3782,21 +3773,21 @@
      "confidence": 1.0,
      "probabilities": {
       "fee.cancellation.raise": 0.0,
-      "fee.credit.raise": 0.0,
-      "fee.writeoff.propose": 0.0,
-      "fee.overdue.list": 1.0,
-      "dashboard.main.read": 0.0,
       "fee.latefee.waive": 0.0,
+      "fee.reminder.send": 0.0,
+      "dashboard.main.read": 0.0,
       "none": 0.0,
-      "fee.reminder.send": 0.0
+      "fee.writeoff.propose": 0.0,
+      "fee.credit.raise": 0.0,
+      "fee.overdue.list": 1.0
      }
     }
    },
    "usage": {
-    "input_tokens": 2230,
+    "input_tokens": 2226,
     "output_tokens": 106
    },
-   "seconds": 0.405
+   "seconds": 0.41
   },
   "show the dashboard numbers for my branch": {
    "model": "jev-1.13.0",
@@ -3820,7 +3811,102 @@
    },
    "seconds": 0.416
   },
-  "shukriya": {
+  "sibling discount nahi laga tha aur poori fees jama ho gayi": {
+   "model": "jev-1.13.0",
+   "answers": {
+    "intent_1": {
+     "type": "choice",
+     "choice": "fee.credit.raise",
+     "confidence": 0.98,
+     "probabilities": {
+      "fee.reminder.send": 0.0,
+      "fee.credit.raise": 0.99,
+      "fee.latefee.waive": 0.0,
+      "fee.writeoff.propose": 0.0,
+      "fee.payment.record": 0.0,
+      "none": 0.01,
+      "fee.cancellation.raise": 0.0,
+      "fee.overdue.list": 0.0
+     }
+    }
+   },
+   "usage": {
+    "input_tokens": 2411,
+    "output_tokens": 104
+   },
+   "seconds": 0.362
+  },
+  "sirf penalty hatani hai, asal fees wahi rahe": {
+   "model": "jev-1.13.0",
+   "answers": {
+    "intent_1": {
+     "type": "choice",
+     "choice": "fee.latefee.waive",
+     "confidence": 1.0,
+     "probabilities": {
+      "fee.cancellation.raise": 0.0,
+      "fee.overdue.list": 0.0,
+      "fee.payment.record": 0.0,
+      "none": 0.0,
+      "fee.credit.raise": 0.0,
+      "fee.latefee.waive": 1.0,
+      "fee.reminder.send": 0.0,
+      "fee.writeoff.propose": 0.0
+     }
+    }
+   },
+   "usage": {
+    "input_tokens": 2399,
+    "output_tokens": 108
+   },
+   "seconds": 0.436
+  },
+  "subah ke numbers do": {
+   "model": "jev-1.13.0",
+   "answers": {
+    "intent_1": {
+     "type": "choice",
+     "choice": "none",
+     "confidence": 1.0,
+     "probabilities": {
+      "none": 1.0,
+      "fee.payment.record": 0.0
+     }
+    }
+   },
+   "usage": {
+    "input_tokens": 728,
+    "output_tokens": 35
+   },
+   "seconds": 1.262
+  },
+  "teen mahine se zyada purana baqaya kitna hai?": {
+   "model": "jev-1.13.0",
+   "answers": {
+    "intent_1": {
+     "type": "choice",
+     "choice": "fee.overdue.list",
+     "confidence": 0.99,
+     "probabilities": {
+      "fee.cancellation.raise": 0.0,
+      "none": 0.01,
+      "fee.writeoff.propose": 0.0,
+      "dashboard.main.read": 0.01,
+      "fee.reminder.send": 0.0,
+      "fee.credit.raise": 0.0,
+      "fee.payment.record": 0.0,
+      "fee.overdue.list": 0.98,
+      "fee.latefee.waive": 0.0
+     }
+    }
+   },
+   "usage": {
+    "input_tokens": 2507,
+    "output_tokens": 115
+   },
+   "seconds": 0.408
+  },
+  "teen qisten bana do — 2000 har mahine, October se": {
    "model": "jev-1.13.0",
    "answers": {
     "intent_1": {
@@ -3834,104 +3920,10 @@
     }
    },
    "usage": {
-    "input_tokens": 553,
+    "input_tokens": 577,
     "output_tokens": 35
    },
-   "seconds": 0.372
-  },
-  "sibling discount nahi laga tha aur poori fees jama ho gayi": {
-   "model": "jev-1.13.0",
-   "answers": {
-    "intent_1": {
-     "type": "choice",
-     "choice": "fee.credit.raise",
-     "confidence": 0.73,
-     "probabilities": {
-      "fee.writeoff.propose": 0.0,
-      "fee.cancellation.raise": 0.0,
-      "none": 0.21,
-      "fee.payment.record": 0.02,
-      "fee.overdue.list": 0.0,
-      "fee.reminder.send": 0.0,
-      "fee.credit.raise": 0.77,
-      "fee.latefee.waive": 0.0
-     }
-    }
-   },
-   "usage": {
-    "input_tokens": 2405,
-    "output_tokens": 104
-   },
-   "seconds": 0.436
-  },
-  "sirf penalty hatani hai, asal fees wahi rahe": {
-   "model": "jev-1.13.0",
-   "answers": {
-    "intent_1": {
-     "type": "choice",
-     "choice": "fee.latefee.waive",
-     "confidence": 0.99,
-     "probabilities": {
-      "fee.reminder.send": 0.0,
-      "fee.writeoff.propose": 0.0,
-      "fee.cancellation.raise": 0.0,
-      "fee.credit.raise": 0.0,
-      "none": 0.01,
-      "fee.overdue.list": 0.0,
-      "fee.latefee.waive": 0.99
-     }
-    }
-   },
-   "usage": {
-    "input_tokens": 2126,
-    "output_tokens": 99
-   },
-   "seconds": 0.434
-  },
-  "teen mahine se zyada purana baqaya kitna hai?": {
-   "model": "jev-1.13.0",
-   "answers": {
-    "intent_1": {
-     "type": "choice",
-     "choice": "fee.overdue.list",
-     "confidence": 0.94,
-     "probabilities": {
-      "fee.overdue.list": 0.95,
-      "none": 0.05,
-      "fee.payment.record": 0.0,
-      "fee.latefee.waive": 0.0,
-      "fee.reminder.send": 0.0,
-      "fee.writeoff.propose": 0.0,
-      "fee.credit.raise": 0.0,
-      "fee.cancellation.raise": 0.0,
-      "dashboard.main.read": 0.0
-     }
-    }
-   },
-   "usage": {
-    "input_tokens": 2504,
-    "output_tokens": 115
-   },
-   "seconds": 0.396
-  },
-  "teen qisten bana do — 2000 har mahine, October se": {
-   "model": "jev-1.13.0",
-   "answers": {
-    "intent_1": {
-     "type": "choice",
-     "choice": "none",
-     "confidence": 1.0,
-     "probabilities": {
-      "fee.payment.record": 0.0,
-      "none": 1.0
-     }
-    }
-   },
-   "usage": {
-    "input_tokens": 758,
-    "output_tokens": 35
-   },
-   "seconds": 0.452
+   "seconds": 1.131
   },
   "text all families with unpaid invoices in class 2 blue": {
    "model": "jev-1.13.0",
@@ -3941,22 +3933,41 @@
      "choice": "fee.reminder.send",
      "confidence": 1.0,
      "probabilities": {
-      "fee.reminder.send": 1.0,
       "fee.latefee.waive": 0.0,
-      "fee.cancellation.raise": 0.0,
-      "fee.credit.raise": 0.0,
       "none": 0.0,
       "fee.writeoff.propose": 0.0,
+      "fee.reminder.send": 1.0,
       "fee.overdue.list": 0.0,
-      "fee.payment.record": 0.0
+      "fee.credit.raise": 0.0,
+      "fee.cancellation.raise": 0.0,
+      "dashboard.main.read": 0.0
      }
     }
    },
    "usage": {
-    "input_tokens": 2411,
+    "input_tokens": 2236,
     "output_tokens": 105
    },
-   "seconds": 0.405
+   "seconds": 0.403
+  },
+  "thanks, that's all for now": {
+   "model": "jev-1.13.0",
+   "answers": {
+    "intent_1": {
+     "type": "choice",
+     "choice": "none",
+     "confidence": 1.0,
+     "probabilities": {
+      "dashboard.main.read": 0.0,
+      "none": 1.0
+     }
+    }
+   },
+   "usage": {
+    "input_tokens": 555,
+    "output_tokens": 35
+   },
+   "seconds": 0.433
   },
   "the Khan family moved abroad and can't be reached, propose writing off their dues": {
    "model": "jev-1.13.0",
@@ -3964,42 +3975,42 @@
     "intent_1": {
      "type": "choice",
      "choice": "fee.writeoff.propose",
-     "confidence": 0.99,
+     "confidence": 1.0,
      "probabilities": {
       "fee.overdue.list": 0.0,
-      "fee.cancellation.raise": 0.0,
-      "fee.credit.raise": 0.0,
+      "fee.latefee.waive": 0.0,
       "fee.writeoff.propose": 1.0,
       "none": 0.0,
+      "fee.credit.raise": 0.0,
       "fee.reminder.send": 0.0,
-      "fee.latefee.waive": 0.0
+      "fee.cancellation.raise": 0.0
      }
     }
    },
    "usage": {
-    "input_tokens": 2129,
+    "input_tokens": 2135,
     "output_tokens": 98
    },
-   "seconds": 0.484
+   "seconds": 0.439
   },
   "the bank stamped challan came back for Usman, 12,000 received on Monday": {
    "model": "jev-1.13.0",
    "answers": {
     "intent_1": {
      "type": "choice",
-     "choice": "fee.payment.record",
-     "confidence": 0.99,
+     "choice": "none",
+     "confidence": 0.81,
      "probabilities": {
-      "none": 0.0,
-      "fee.payment.record": 1.0
+      "fee.payment.record": 0.1,
+      "none": 0.9
      }
     }
    },
    "usage": {
-    "input_tokens": 762,
-    "output_tokens": 37
+    "input_tokens": 770,
+    "output_tokens": 35
    },
-   "seconds": 0.462
+   "seconds": 0.363
   },
   "the debt is real but uncollectable, send it to the principal for write-off": {
    "model": "jev-1.13.0",
@@ -4009,21 +4020,21 @@
      "choice": "fee.writeoff.propose",
      "confidence": 0.99,
      "probabilities": {
-      "none": 0.01,
-      "fee.writeoff.propose": 0.99,
+      "fee.credit.raise": 0.0,
       "fee.reminder.send": 0.0,
+      "fee.writeoff.propose": 0.99,
+      "fee.cancellation.raise": 0.0,
       "fee.overdue.list": 0.0,
       "fee.latefee.waive": 0.0,
-      "fee.cancellation.raise": 0.0,
-      "fee.credit.raise": 0.0
+      "none": 0.01
      }
     }
    },
    "usage": {
-    "input_tokens": 2131,
+    "input_tokens": 2135,
     "output_tokens": 98
    },
-   "seconds": 0.437
+   "seconds": 0.548
   },
   "the family has appealed — record it": {
    "model": "jev-1.13.0",
@@ -4031,22 +4042,22 @@
     "intent_1": {
      "type": "choice",
      "choice": "none",
-     "confidence": 0.76,
+     "confidence": 0.9,
      "probabilities": {
-      "fee.writeoff.propose": 0.02,
-      "none": 0.79,
-      "fee.cancellation.raise": 0.08,
-      "fee.credit.raise": 0.07,
-      "fee.latefee.waive": 0.03,
-      "fee.payment.record": 0.01
+      "none": 0.91,
+      "fee.latefee.waive": 0.01,
+      "fee.credit.raise": 0.04,
+      "fee.payment.record": 0.02,
+      "fee.cancellation.raise": 0.02,
+      "fee.writeoff.propose": 0.0
      }
     }
    },
    "usage": {
-    "input_tokens": 1844,
+    "input_tokens": 1846,
     "output_tokens": 81
    },
-   "seconds": 0.478
+   "seconds": 0.475
   },
   "the family paid a charge that was wrong, put the money on their account": {
    "model": "jev-1.13.0",
@@ -4054,24 +4065,25 @@
     "intent_1": {
      "type": "choice",
      "choice": "fee.credit.raise",
-     "confidence": 0.87,
+     "confidence": 0.99,
      "probabilities": {
-      "fee.overdue.list": 0.0,
-      "fee.credit.raise": 0.9,
-      "fee.cancellation.raise": 0.05,
-      "fee.reminder.send": 0.0,
-      "fee.latefee.waive": 0.0,
+      "fee.credit.raise": 0.99,
+      "dashboard.main.read": 0.0,
       "fee.payment.record": 0.0,
-      "none": 0.05,
+      "none": 0.01,
+      "fee.cancellation.raise": 0.0,
+      "fee.reminder.send": 0.0,
+      "fee.overdue.list": 0.0,
+      "fee.latefee.waive": 0.0,
       "fee.writeoff.propose": 0.0
      }
     }
    },
    "usage": {
-    "input_tokens": 2409,
-    "output_tokens": 104
+    "input_tokens": 2514,
+    "output_tokens": 113
    },
-   "seconds": 0.552
+   "seconds": 0.414
   },
   "the invoice has the wrong billing period and is unpaid, raise a cancellation": {
    "model": "jev-1.13.0",
@@ -4079,35 +4091,22 @@
     "intent_1": {
      "type": "choice",
      "choice": "fee.cancellation.raise",
-     "confidence": 0.75,
+     "confidence": 1.0,
      "probabilities": {
-      "fee.latefee.waive": 0.0,
-      "fee.cancellation.raise": 0.79,
-      "none": 0.21,
       "fee.writeoff.propose": 0.0,
-      "fee.credit.raise": 0.0,
-      "fee.payment.record": 0.0
-     }
-    },
-    "intent_2": {
-     "type": "choice",
-     "choice": "fee.cancellation.raise",
-     "confidence": 0.95,
-     "probabilities": {
       "fee.latefee.waive": 0.0,
-      "fee.cancellation.raise": 0.96,
-      "none": 0.03,
+      "none": 0.0,
+      "fee.cancellation.raise": 1.0,
       "fee.credit.raise": 0.0,
-      "fee.writeoff.propose": 0.01,
       "fee.payment.record": 0.0
      }
     }
    },
    "usage": {
-    "input_tokens": 3422,
-    "output_tokens": 169
+    "input_tokens": 1860,
+    "output_tokens": 86
    },
-   "seconds": 0.46
+   "seconds": 0.413
   },
   "the late fee was added even though they paid on the due date, take it off": {
    "model": "jev-1.13.0",
@@ -4118,21 +4117,21 @@
      "confidence": 1.0,
      "probabilities": {
       "fee.writeoff.propose": 0.0,
-      "fee.latefee.waive": 1.0,
-      "fee.overdue.list": 0.0,
       "fee.credit.raise": 0.0,
+      "fee.latefee.waive": 1.0,
       "fee.cancellation.raise": 0.0,
       "fee.payment.record": 0.0,
+      "none": 0.0,
       "fee.reminder.send": 0.0,
-      "none": 0.0
+      "fee.overdue.list": 0.0
      }
     }
    },
    "usage": {
-    "input_tokens": 2409,
+    "input_tokens": 2417,
     "output_tokens": 108
    },
-   "seconds": 0.447
+   "seconds": 0.418
   },
   "the sibling discount was missed and they paid full fee, credit the difference": {
    "model": "jev-1.13.0",
@@ -4140,21 +4139,24 @@
     "intent_1": {
      "type": "choice",
      "choice": "fee.credit.raise",
-     "confidence": 0.83,
+     "confidence": 0.99,
      "probabilities": {
-      "fee.latefee.waive": 0.0,
-      "none": 0.09,
+      "none": 0.01,
+      "fee.reminder.send": 0.0,
       "fee.writeoff.propose": 0.0,
-      "fee.credit.raise": 0.87,
-      "fee.cancellation.raise": 0.04
+      "fee.payment.record": 0.0,
+      "fee.cancellation.raise": 0.0,
+      "fee.latefee.waive": 0.0,
+      "fee.overdue.list": 0.0,
+      "fee.credit.raise": 0.99
      }
     }
    },
    "usage": {
-    "input_tokens": 1574,
-    "output_tokens": 74
+    "input_tokens": 2409,
+    "output_tokens": 104
    },
-   "seconds": 0.409
+   "seconds": 0.364
   },
   "they were overcharged by 2,000 and already paid, adjust it in the next bill": {
    "model": "jev-1.13.0",
@@ -4162,23 +4164,22 @@
     "intent_1": {
      "type": "choice",
      "choice": "fee.credit.raise",
-     "confidence": 0.93,
+     "confidence": 0.99,
      "probabilities": {
-      "fee.cancellation.raise": 0.03,
-      "fee.writeoff.propose": 0.0,
-      "fee.credit.raise": 0.94,
       "fee.latefee.waive": 0.0,
-      "fee.reminder.send": 0.0,
-      "fee.overdue.list": 0.0,
-      "none": 0.03
+      "fee.writeoff.propose": 0.0,
+      "fee.credit.raise": 0.99,
+      "fee.cancellation.raise": 0.0,
+      "none": 0.01,
+      "fee.payment.record": 0.0
      }
     }
    },
    "usage": {
-    "input_tokens": 2138,
-    "output_tokens": 95
+    "input_tokens": 1876,
+    "output_tokens": 83
    },
-   "seconds": 0.589
+   "seconds": 0.381
   },
   "this invoice went to the wrong student and nobody has paid it, cancel it": {
    "model": "jev-1.13.0",
@@ -4188,20 +4189,22 @@
      "choice": "fee.cancellation.raise",
      "confidence": 0.99,
      "probabilities": {
-      "none": 0.01,
-      "fee.latefee.waive": 0.0,
-      "fee.payment.record": 0.0,
+      "fee.reminder.send": 0.0,
       "fee.writeoff.propose": 0.0,
+      "none": 0.01,
       "fee.credit.raise": 0.0,
-      "fee.cancellation.raise": 0.99
+      "fee.latefee.waive": 0.0,
+      "fee.cancellation.raise": 0.99,
+      "fee.overdue.list": 0.0,
+      "fee.payment.record": 0.0
      }
     }
    },
    "usage": {
-    "input_tokens": 1852,
-    "output_tokens": 86
+    "input_tokens": 2414,
+    "output_tokens": 107
    },
-   "seconds": 0.362
+   "seconds": 0.418
   },
   "this old balance will never be paid, the father passed away and there is no income": {
    "model": "jev-1.13.0",
@@ -4209,22 +4212,23 @@
     "intent_1": {
      "type": "choice",
      "choice": "fee.writeoff.propose",
-     "confidence": 0.97,
+     "confidence": 0.99,
      "probabilities": {
+      "fee.reminder.send": 0.0,
+      "fee.overdue.list": 0.0,
       "fee.cancellation.raise": 0.0,
-      "dashboard.main.read": 0.0,
-      "fee.writeoff.propose": 0.98,
+      "none": 0.0,
       "fee.latefee.waive": 0.0,
-      "none": 0.02,
-      "fee.credit.raise": 0.0
+      "fee.credit.raise": 0.0,
+      "fee.writeoff.propose": 1.0
      }
     }
    },
    "usage": {
-    "input_tokens": 1687,
-    "output_tokens": 86
+    "input_tokens": 2145,
+    "output_tokens": 98
    },
-   "seconds": 0.453
+   "seconds": 0.387
   },
   "total outstanding for the branch right now": {
    "model": "jev-1.13.0",
@@ -4232,70 +4236,47 @@
     "intent_1": {
      "type": "choice",
      "choice": "dashboard.main.read",
-     "confidence": 0.91,
+     "confidence": 0.87,
      "probabilities": {
       "fee.reminder.send": 0.0,
-      "dashboard.main.read": 0.93,
-      "fee.overdue.list": 0.07,
-      "fee.payment.record": 0.0,
-      "none": 0.0,
-      "fee.latefee.waive": 0.0,
-      "fee.credit.raise": 0.0,
-      "fee.cancellation.raise": 0.0,
-      "fee.writeoff.propose": 0.0
+      "fee.overdue.list": 0.09,
+      "dashboard.main.read": 0.9,
+      "none": 0.01,
+      "fee.payment.record": 0.0
      }
     }
    },
    "usage": {
-    "input_tokens": 2500,
-    "output_tokens": 113
+    "input_tokens": 1386,
+    "output_tokens": 67
    },
-   "seconds": 0.376
+   "seconds": 0.391
   },
   "unhon ne waqt par diya tha phir bhi late fee lag gayi": {
    "model": "jev-1.13.0",
    "answers": {
     "intent_1": {
      "type": "choice",
-     "choice": "none",
-     "confidence": 0.88,
+     "choice": "fee.latefee.waive",
+     "confidence": 0.99,
      "probabilities": {
       "fee.payment.record": 0.0,
-      "none": 0.89,
-      "fee.latefee.waive": 0.02,
-      "fee.overdue.list": 0.01,
-      "fee.reminder.send": 0.0,
+      "dashboard.main.read": 0.0,
+      "fee.cancellation.raise": 0.0,
+      "fee.latefee.waive": 0.99,
+      "fee.credit.raise": 0.01,
       "fee.writeoff.propose": 0.0,
-      "fee.credit.raise": 0.07,
-      "fee.cancellation.raise": 0.01,
-      "dashboard.main.read": 0.0
+      "none": 0.0,
+      "fee.overdue.list": 0.0,
+      "fee.reminder.send": 0.0
      }
     }
    },
    "usage": {
     "input_tokens": 2512,
-    "output_tokens": 111
+    "output_tokens": 117
    },
-   "seconds": 0.437
-  },
-  "unko form ka link dobara bhejo, unko mila nahi": {
-   "model": "jev-1.13.0",
-   "answers": {
-    "intent_1": {
-     "type": "choice",
-     "choice": "none",
-     "confidence": 1.0,
-     "probabilities": {
-      "none": 1.0,
-      "fee.payment.record": 0.0
-     }
-    }
-   },
-   "usage": {
-    "input_tokens": 744,
-    "output_tokens": 35
-   },
-   "seconds": 0.405
+   "seconds": 0.368
   },
   "void the transport charge we added by mistake, the family hasn't paid it": {
    "model": "jev-1.13.0",
@@ -4303,24 +4284,24 @@
     "intent_1": {
      "type": "choice",
      "choice": "fee.cancellation.raise",
-     "confidence": 0.81,
+     "confidence": 0.99,
      "probabilities": {
-      "fee.reminder.send": 0.0,
-      "fee.credit.raise": 0.02,
-      "fee.cancellation.raise": 0.83,
-      "fee.writeoff.propose": 0.0,
+      "none": 0.0,
       "fee.payment.record": 0.0,
+      "fee.writeoff.propose": 0.0,
+      "fee.latefee.waive": 0.0,
       "fee.overdue.list": 0.0,
-      "fee.latefee.waive": 0.06,
-      "none": 0.09
+      "fee.credit.raise": 0.0,
+      "fee.reminder.send": 0.0,
+      "fee.cancellation.raise": 1.0
      }
     }
    },
    "usage": {
-    "input_tokens": 2403,
+    "input_tokens": 2417,
     "output_tokens": 107
    },
-   "seconds": 0.446
+   "seconds": 0.382
   },
   "waive the 200 late fee on the September invoice": {
    "model": "jev-1.13.0",
@@ -4330,22 +4311,23 @@
      "choice": "fee.latefee.waive",
      "confidence": 0.99,
      "probabilities": {
-      "none": 0.0,
-      "fee.latefee.waive": 1.0,
       "fee.writeoff.propose": 0.0,
+      "fee.latefee.waive": 0.99,
+      "fee.cancellation.raise": 0.0,
       "fee.reminder.send": 0.0,
+      "dashboard.main.read": 0.0,
+      "fee.credit.raise": 0.0,
       "fee.payment.record": 0.0,
       "fee.overdue.list": 0.0,
-      "fee.cancellation.raise": 0.0,
-      "fee.credit.raise": 0.0
+      "none": 0.01
      }
     }
    },
    "usage": {
-    "input_tokens": 2407,
-    "output_tokens": 108
+    "input_tokens": 2510,
+    "output_tokens": 117
    },
-   "seconds": 0.417
+   "seconds": 0.434
   },
   "waive the 500 rupee late charge for the Qureshi family": {
    "model": "jev-1.13.0",
@@ -4353,15 +4335,15 @@
     "intent_1": {
      "type": "choice",
      "choice": "fee.latefee.waive",
-     "confidence": 0.98,
+     "confidence": 0.99,
      "probabilities": {
-      "fee.overdue.list": 0.0,
-      "fee.cancellation.raise": 0.0,
-      "fee.credit.raise": 0.0,
-      "fee.writeoff.propose": 0.0,
-      "none": 0.02,
       "fee.reminder.send": 0.0,
-      "fee.latefee.waive": 0.98
+      "fee.writeoff.propose": 0.0,
+      "fee.latefee.waive": 0.99,
+      "none": 0.01,
+      "fee.cancellation.raise": 0.0,
+      "fee.overdue.list": 0.0,
+      "fee.credit.raise": 0.0
      }
     }
    },
@@ -4369,7 +4351,7 @@
     "input_tokens": 2137,
     "output_tokens": 99
    },
-   "seconds": 0.378
+   "seconds": 0.442
   },
   "waive the late fee on this invoice, the family had a genuine reason": {
    "model": "jev-1.13.0",
@@ -4377,25 +4359,24 @@
     "intent_1": {
      "type": "choice",
      "choice": "fee.latefee.waive",
-     "confidence": 0.99,
+     "confidence": 1.0,
      "probabilities": {
-      "fee.payment.record": 0.0,
-      "fee.cancellation.raise": 0.0,
+      "fee.overdue.list": 0.0,
+      "none": 0.0,
       "fee.writeoff.propose": 0.0,
-      "dashboard.main.read": 0.0,
-      "fee.latefee.waive": 0.99,
-      "none": 0.01,
+      "fee.cancellation.raise": 0.0,
+      "fee.payment.record": 0.0,
       "fee.credit.raise": 0.0,
       "fee.reminder.send": 0.0,
-      "fee.overdue.list": 0.0
+      "fee.latefee.waive": 1.0
      }
     }
    },
    "usage": {
-    "input_tokens": 2498,
-    "output_tokens": 117
+    "input_tokens": 2409,
+    "output_tokens": 108
    },
-   "seconds": 0.528
+   "seconds": 0.386
   },
   "walid ka intiqal ho gaya, ye purana baqaya kabhi ada nahi hoga": {
    "model": "jev-1.13.0",
@@ -4403,21 +4384,25 @@
     "intent_1": {
      "type": "choice",
      "choice": "fee.writeoff.propose",
-     "confidence": 0.91,
+     "confidence": 0.87,
      "probabilities": {
+      "none": 0.11,
+      "fee.reminder.send": 0.0,
+      "fee.overdue.list": 0.0,
+      "fee.cancellation.raise": 0.0,
       "fee.latefee.waive": 0.0,
       "fee.credit.raise": 0.0,
-      "none": 0.07,
-      "fee.cancellation.raise": 0.0,
-      "fee.writeoff.propose": 0.93
+      "fee.writeoff.propose": 0.89,
+      "dashboard.main.read": 0.0,
+      "fee.payment.record": 0.0
      }
     }
    },
    "usage": {
-    "input_tokens": 1589,
-    "output_tokens": 77
+    "input_tokens": 2512,
+    "output_tokens": 116
    },
-   "seconds": 0.408
+   "seconds": 0.396
   },
   "walid sahib ne October ki fees ada kar di": {
    "model": "jev-1.13.0",
@@ -4425,25 +4410,25 @@
     "intent_1": {
      "type": "choice",
      "choice": "fee.payment.record",
-     "confidence": 0.99,
+     "confidence": 0.66,
      "probabilities": {
-      "fee.overdue.list": 0.0,
-      "none": 0.01,
+      "none": 0.3,
+      "fee.latefee.waive": 0.0,
       "fee.writeoff.propose": 0.0,
       "fee.cancellation.raise": 0.0,
-      "fee.payment.record": 0.99,
       "dashboard.main.read": 0.0,
-      "fee.credit.raise": 0.0,
+      "fee.payment.record": 0.7,
       "fee.reminder.send": 0.0,
-      "fee.latefee.waive": 0.0
+      "fee.credit.raise": 0.0,
+      "fee.overdue.list": 0.0
      }
     }
    },
    "usage": {
-    "input_tokens": 2506,
+    "input_tokens": 2504,
     "output_tokens": 113
    },
-   "seconds": 0.395
+   "seconds": 0.453
   },
   "we billed Sara twice for August, the second one needs to go": {
    "model": "jev-1.13.0",
@@ -4451,21 +4436,24 @@
     "intent_1": {
      "type": "choice",
      "choice": "fee.cancellation.raise",
-     "confidence": 0.93,
+     "confidence": 0.97,
      "probabilities": {
+      "none": 0.02,
       "fee.latefee.waive": 0.0,
-      "none": 0.04,
       "fee.writeoff.propose": 0.0,
-      "fee.cancellation.raise": 0.95,
-      "fee.credit.raise": 0.01
+      "fee.cancellation.raise": 0.98,
+      "fee.payment.record": 0.0,
+      "fee.reminder.send": 0.0,
+      "fee.credit.raise": 0.0,
+      "fee.overdue.list": 0.0
      }
     }
    },
    "usage": {
-    "input_tokens": 1570,
-    "output_tokens": 77
+    "input_tokens": 2407,
+    "output_tokens": 107
    },
-   "seconds": 0.387
+   "seconds": 0.413
   },
   "we've tried for a year to recover 18,000 from this family, time to write it off": {
    "model": "jev-1.13.0",
@@ -4473,24 +4461,25 @@
     "intent_1": {
      "type": "choice",
      "choice": "fee.writeoff.propose",
-     "confidence": 0.99,
+     "confidence": 0.97,
      "probabilities": {
-      "fee.writeoff.propose": 0.99,
-      "fee.overdue.list": 0.0,
-      "fee.latefee.waive": 0.0,
-      "fee.reminder.send": 0.0,
+      "dashboard.main.read": 0.0,
+      "none": 0.03,
       "fee.payment.record": 0.0,
-      "fee.credit.raise": 0.0,
       "fee.cancellation.raise": 0.0,
-      "none": 0.01
+      "fee.overdue.list": 0.0,
+      "fee.reminder.send": 0.0,
+      "fee.writeoff.propose": 0.97,
+      "fee.latefee.waive": 0.0,
+      "fee.credit.raise": 0.0
      }
     }
    },
    "usage": {
-    "input_tokens": 2405,
-    "output_tokens": 107
+    "input_tokens": 2526,
+    "output_tokens": 116
    },
-   "seconds": 0.417
+   "seconds": 0.435
   },
   "what's the collection this month so far": {
    "model": "jev-1.13.0",
@@ -4500,22 +4489,20 @@
      "choice": "dashboard.main.read",
      "confidence": 1.0,
      "probabilities": {
-      "fee.cancellation.raise": 0.0,
-      "fee.overdue.list": 0.0,
-      "dashboard.main.read": 1.0,
+      "fee.writeoff.propose": 0.0,
       "fee.latefee.waive": 0.0,
+      "fee.cancellation.raise": 0.0,
+      "dashboard.main.read": 1.0,
       "fee.credit.raise": 0.0,
-      "none": 0.0,
-      "fee.reminder.send": 0.0,
-      "fee.writeoff.propose": 0.0
+      "none": 0.0
      }
     }
    },
    "usage": {
-    "input_tokens": 2225,
-    "output_tokens": 104
+    "input_tokens": 1671,
+    "output_tokens": 83
    },
-   "seconds": 0.425
+   "seconds": 0.356
   },
   "what's the total outstanding across the school": {
    "model": "jev-1.13.0",
@@ -4523,23 +4510,24 @@
     "intent_1": {
      "type": "choice",
      "choice": "fee.overdue.list",
-     "confidence": 0.9,
+     "confidence": 0.68,
      "probabilities": {
-      "none": 0.08,
-      "fee.writeoff.propose": 0.0,
+      "none": 0.01,
       "fee.latefee.waive": 0.0,
-      "fee.overdue.list": 0.92,
+      "fee.writeoff.propose": 0.0,
+      "dashboard.main.read": 0.27,
       "fee.reminder.send": 0.0,
       "fee.credit.raise": 0.0,
-      "fee.cancellation.raise": 0.0
+      "fee.cancellation.raise": 0.0,
+      "fee.overdue.list": 0.72
      }
     }
    },
    "usage": {
-    "input_tokens": 2123,
-    "output_tokens": 97
+    "input_tokens": 2224,
+    "output_tokens": 106
    },
-   "seconds": 0.407
+   "seconds": 0.395
   },
   "what's today's collection": {
    "model": "jev-1.13.0",
@@ -4549,12 +4537,11 @@
      "choice": "dashboard.main.read",
      "confidence": 1.0,
      "probabilities": {
-      "dashboard.main.read": 1.0,
       "fee.latefee.waive": 0.0,
+      "dashboard.main.read": 1.0,
       "fee.cancellation.raise": 0.0,
-      "none": 0.0,
       "fee.overdue.list": 0.0,
-      "fee.payment.record": 0.0,
+      "none": 0.0,
       "fee.credit.raise": 0.0,
       "fee.writeoff.propose": 0.0,
       "fee.reminder.send": 0.0
@@ -4562,10 +4549,10 @@
     }
    },
    "usage": {
-    "input_tokens": 2500,
-    "output_tokens": 113
+    "input_tokens": 2218,
+    "output_tokens": 104
    },
-   "seconds": 0.999
+   "seconds": 0.4
   },
   "which students have unpaid invoices over 10,000": {
    "model": "jev-1.13.0",
@@ -4575,40 +4562,22 @@
      "choice": "fee.overdue.list",
      "confidence": 1.0,
      "probabilities": {
-      "fee.overdue.list": 1.0,
-      "fee.credit.raise": 0.0,
-      "fee.latefee.waive": 0.0,
-      "fee.cancellation.raise": 0.0,
-      "none": 0.0,
       "fee.writeoff.propose": 0.0,
-      "fee.reminder.send": 0.0
+      "none": 0.0,
+      "fee.cancellation.raise": 0.0,
+      "dashboard.main.read": 0.0,
+      "fee.overdue.list": 1.0,
+      "fee.reminder.send": 0.0,
+      "fee.credit.raise": 0.0,
+      "fee.latefee.waive": 0.0
      }
     }
    },
    "usage": {
-    "input_tokens": 2133,
-    "output_tokens": 97
+    "input_tokens": 2236,
+    "output_tokens": 106
    },
-   "seconds": 0.434
-  },
-  "who did not get the emergency notice?": {
-   "model": "jev-1.13.0",
-   "answers": {
-    "intent_1": {
-     "type": "choice",
-     "choice": "none",
-     "confidence": 1.0,
-     "probabilities": {
-      "fee.payment.record": 0.0,
-      "none": 1.0
-     }
-    }
-   },
-   "usage": {
-    "input_tokens": 738,
-    "output_tokens": 35
-   },
-   "seconds": 0.412
+   "seconds": 0.387
   },
   "who hasn't paid fees in class 5 blue": {
    "model": "jev-1.13.0",
@@ -4618,22 +4587,23 @@
      "choice": "fee.overdue.list",
      "confidence": 1.0,
      "probabilities": {
+      "dashboard.main.read": 0.0,
       "none": 0.0,
       "fee.writeoff.propose": 0.0,
-      "dashboard.main.read": 0.0,
-      "fee.latefee.waive": 0.0,
-      "fee.cancellation.raise": 0.0,
+      "fee.reminder.send": 0.0,
       "fee.credit.raise": 0.0,
+      "fee.cancellation.raise": 0.0,
+      "fee.payment.record": 0.0,
       "fee.overdue.list": 1.0,
-      "fee.reminder.send": 0.0
+      "fee.latefee.waive": 0.0
      }
     }
    },
    "usage": {
-    "input_tokens": 2232,
-    "output_tokens": 106
+    "input_tokens": 2516,
+    "output_tokens": 115
    },
-   "seconds": 0.39
+   "seconds": 1.028
   },
   "withdraw this concession, the family's circumstances have improved": {
    "model": "jev-1.13.0",
@@ -4641,23 +4611,19 @@
     "intent_1": {
      "type": "choice",
      "choice": "none",
-     "confidence": 0.92,
+     "confidence": 1.0,
      "probabilities": {
-      "none": 0.93,
-      "fee.writeoff.propose": 0.0,
-      "fee.latefee.waive": 0.01,
+      "none": 1.0,
       "fee.reminder.send": 0.0,
-      "fee.overdue.list": 0.0,
-      "fee.credit.raise": 0.05,
-      "fee.cancellation.raise": 0.01
+      "fee.overdue.list": 0.0
      }
     }
    },
    "usage": {
-    "input_tokens": 2115,
-    "output_tokens": 93
+    "input_tokens": 1009,
+    "output_tokens": 47
    },
-   "seconds": 0.407
+   "seconds": 0.544
   },
   "write an email to the principal about the annual function": {
    "model": "jev-1.13.0",
@@ -4665,21 +4631,23 @@
     "intent_1": {
      "type": "choice",
      "choice": "none",
-     "confidence": 1.0,
+     "confidence": 0.99,
      "probabilities": {
-      "fee.credit.raise": 0.0,
-      "none": 1.0,
-      "fee.latefee.waive": 0.0,
       "fee.cancellation.raise": 0.0,
-      "fee.writeoff.propose": 0.0
+      "none": 1.0,
+      "fee.reminder.send": 0.0,
+      "fee.overdue.list": 0.0,
+      "fee.writeoff.propose": 0.0,
+      "fee.latefee.waive": 0.0,
+      "fee.credit.raise": 0.0
      }
     }
    },
    "usage": {
-    "input_tokens": 1574,
-    "output_tokens": 72
+    "input_tokens": 2123,
+    "output_tokens": 93
    },
-   "seconds": 0.401
+   "seconds": 0.559
   },
   "write off approve kar do": {
    "model": "jev-1.13.0",
@@ -4709,150 +4677,13 @@
     "intent_1": {
      "type": "choice",
      "choice": "fee.writeoff.propose",
-     "confidence": 0.35,
+     "confidence": 0.94,
      "probabilities": {
-      "none": 0.16,
-      "fee.credit.raise": 0.0,
-      "dashboard.main.read": 0.0,
-      "fee.writeoff.propose": 0.44,
-      "fee.overdue.list": 0.0,
-      "fee.cancellation.raise": 0.2,
-      "fee.latefee.waive": 0.2,
-      "fee.reminder.send": 0.0
-     }
-    }
-   },
-   "usage": {
-    "input_tokens": 2218,
-    "output_tokens": 107
-   },
-   "seconds": 0.401
-  },
-  "write off the remaining 4,200 — the family paid what they could": {
-   "model": "jev-1.13.0",
-   "answers": {
-    "intent_1": {
-     "type": "choice",
-     "choice": "fee.writeoff.propose",
-     "confidence": 0.77,
-     "probabilities": {
-      "fee.credit.raise": 0.0,
-      "fee.reminder.send": 0.0,
-      "fee.writeoff.propose": 0.81,
-      "none": 0.11,
-      "fee.overdue.list": 0.0,
-      "fee.cancellation.raise": 0.0,
-      "fee.latefee.waive": 0.08
-     }
-    }
-   },
-   "usage": {
-    "input_tokens": 2127,
-    "output_tokens": 98
-   },
-   "seconds": 0.396
-  },
-  "ye bacha to chhod chuka tha, phir bhi bill ban gaya": {
-   "model": "jev-1.13.0",
-   "answers": {
-    "intent_1": {
-     "type": "choice",
-     "choice": "none",
-     "confidence": 0.51,
-     "probabilities": {
-      "fee.writeoff.propose": 0.0,
-      "fee.latefee.waive": 0.0,
-      "none": 0.61,
-      "fee.cancellation.raise": 0.39,
-      "fee.credit.raise": 0.0
-     }
-    }
-   },
-   "usage": {
-    "input_tokens": 1580,
-    "output_tokens": 72
-   },
-   "seconds": 0.4
-  },
-  "ye baqaya wasool nahi hoga, write off ki tajweez do": {
-   "model": "jev-1.13.0",
-   "answers": {
-    "intent_1": {
-     "type": "choice",
-     "choice": "fee.writeoff.propose",
-     "confidence": 0.96,
-     "probabilities": {
-      "fee.writeoff.propose": 0.97,
+      "none": 0.05,
+      "fee.writeoff.propose": 0.95,
       "fee.latefee.waive": 0.0,
       "fee.cancellation.raise": 0.0,
-      "fee.credit.raise": 0.0,
-      "none": 0.03
-     }
-    }
-   },
-   "usage": {
-    "input_tokens": 1592,
-    "output_tokens": 77
-   },
-   "seconds": 0.412
-  },
-  "ye bill galat student ke naam bana hai, cancel karwana hai": {
-   "model": "jev-1.13.0",
-   "answers": {
-    "intent_1": {
-     "type": "choice",
-     "choice": "fee.cancellation.raise",
-     "confidence": 0.98,
-     "probabilities": {
-      "fee.writeoff.propose": 0.0,
-      "fee.latefee.waive": 0.0,
-      "none": 0.01,
-      "fee.cancellation.raise": 0.99,
       "fee.credit.raise": 0.0
-     }
-    }
-   },
-   "usage": {
-    "input_tokens": 1570,
-    "output_tokens": 77
-   },
-   "seconds": 0.439
-  },
-  "ye bill kam kar do": {
-   "model": "jev-1.13.0",
-   "answers": {
-    "intent_1": {
-     "type": "choice",
-     "choice": "none",
-     "confidence": 0.46,
-     "probabilities": {
-      "fee.cancellation.raise": 0.15,
-      "none": 0.57,
-      "fee.latefee.waive": 0.15,
-      "fee.writeoff.propose": 0.09,
-      "fee.credit.raise": 0.04
-     }
-    }
-   },
-   "usage": {
-    "input_tokens": 1560,
-    "output_tokens": 72
-   },
-   "seconds": 0.388
-  },
-  "ye cancellation hona chahiye": {
-   "model": "jev-1.13.0",
-   "answers": {
-    "intent_1": {
-     "type": "choice",
-     "choice": "fee.cancellation.raise",
-     "confidence": 0.57,
-     "probabilities": {
-      "fee.writeoff.propose": 0.0,
-      "none": 0.34,
-      "fee.latefee.waive": 0.0,
-      "fee.credit.raise": 0.0,
-      "fee.cancellation.raise": 0.66
      }
     }
    },
@@ -4860,7 +4691,172 @@
     "input_tokens": 1562,
     "output_tokens": 77
    },
-   "seconds": 0.403
+   "seconds": 0.458
+  },
+  "write off the remaining 4,200 — the family paid what they could": {
+   "model": "jev-1.13.0",
+   "answers": {
+    "intent_1": {
+     "type": "choice",
+     "choice": "fee.writeoff.propose",
+     "confidence": 0.99,
+     "probabilities": {
+      "fee.cancellation.raise": 0.0,
+      "fee.credit.raise": 0.0,
+      "fee.payment.record": 0.0,
+      "fee.overdue.list": 0.0,
+      "fee.writeoff.propose": 0.99,
+      "fee.latefee.waive": 0.0,
+      "none": 0.01,
+      "fee.reminder.send": 0.0
+     }
+    }
+   },
+   "usage": {
+    "input_tokens": 2417,
+    "output_tokens": 107
+   },
+   "seconds": 0.392
+  },
+  "ye bacha to chhod chuka tha, phir bhi bill ban gaya": {
+   "model": "jev-1.13.0",
+   "answers": {
+    "intent_1": {
+     "type": "choice",
+     "choice": "fee.cancellation.raise",
+     "confidence": 0.96,
+     "probabilities": {
+      "fee.latefee.waive": 0.0,
+      "fee.credit.raise": 0.0,
+      "fee.overdue.list": 0.0,
+      "none": 0.02,
+      "fee.cancellation.raise": 0.96,
+      "fee.reminder.send": 0.0,
+      "fee.writeoff.propose": 0.02
+     }
+    }
+   },
+   "usage": {
+    "input_tokens": 2135,
+    "output_tokens": 98
+   },
+   "seconds": 0.364
+  },
+  "ye baqaya wasool nahi hoga": {
+   "model": "jev-1.13.0",
+   "answers": {
+    "intent_1": {
+     "type": "choice",
+     "choice": "fee.writeoff.propose",
+     "confidence": 0.91,
+     "probabilities": {
+      "fee.writeoff.propose": 0.93,
+      "fee.reminder.send": 0.0,
+      "fee.latefee.waive": 0.0,
+      "fee.credit.raise": 0.0,
+      "dashboard.main.read": 0.0,
+      "none": 0.07,
+      "fee.cancellation.raise": 0.0,
+      "fee.overdue.list": 0.0
+     }
+    }
+   },
+   "usage": {
+    "input_tokens": 2228,
+    "output_tokens": 107
+   },
+   "seconds": 0.43
+  },
+  "ye baqaya wasool nahi hoga, write off ki tajweez do": {
+   "model": "jev-1.13.0",
+   "answers": {
+    "intent_1": {
+     "type": "choice",
+     "choice": "fee.writeoff.propose",
+     "confidence": 1.0,
+     "probabilities": {
+      "fee.writeoff.propose": 1.0,
+      "fee.latefee.waive": 0.0,
+      "fee.reminder.send": 0.0,
+      "fee.cancellation.raise": 0.0,
+      "dashboard.main.read": 0.0,
+      "fee.credit.raise": 0.0,
+      "fee.overdue.list": 0.0,
+      "none": 0.0
+     }
+    }
+   },
+   "usage": {
+    "input_tokens": 2236,
+    "output_tokens": 107
+   },
+   "seconds": 0.42
+  },
+  "ye bill galat student ke naam bana hai, cancel karwana hai": {
+   "model": "jev-1.13.0",
+   "answers": {
+    "intent_1": {
+     "type": "choice",
+     "choice": "fee.cancellation.raise",
+     "confidence": 0.96,
+     "probabilities": {
+      "fee.credit.raise": 0.0,
+      "fee.cancellation.raise": 0.97,
+      "none": 0.03,
+      "fee.writeoff.propose": 0.0,
+      "fee.latefee.waive": 0.0
+     }
+    }
+   },
+   "usage": {
+    "input_tokens": 1576,
+    "output_tokens": 77
+   },
+   "seconds": 0.43
+  },
+  "ye bill kam kar do": {
+   "model": "jev-1.13.0",
+   "answers": {
+    "intent_1": {
+     "type": "choice",
+     "choice": "none",
+     "confidence": 0.63,
+     "probabilities": {
+      "fee.writeoff.propose": 0.05,
+      "none": 0.71,
+      "fee.cancellation.raise": 0.15,
+      "fee.latefee.waive": 0.06,
+      "fee.credit.raise": 0.03
+     }
+    }
+   },
+   "usage": {
+    "input_tokens": 1570,
+    "output_tokens": 72
+   },
+   "seconds": 0.418
+  },
+  "ye cancellation hona chahiye": {
+   "model": "jev-1.13.0",
+   "answers": {
+    "intent_1": {
+     "type": "choice",
+     "choice": "fee.cancellation.raise",
+     "confidence": 0.37,
+     "probabilities": {
+      "fee.credit.raise": 0.0,
+      "fee.cancellation.raise": 0.51,
+      "fee.latefee.waive": 0.0,
+      "none": 0.49,
+      "fee.writeoff.propose": 0.0
+     }
+    }
+   },
+   "usage": {
+    "input_tokens": 1562,
+    "output_tokens": 77
+   },
+   "seconds": 0.407
   },
   "ye charge galat tha lekin family paisa de chuki hai, credit karo": {
    "model": "jev-1.13.0",
@@ -4871,21 +4867,21 @@
      "confidence": 0.98,
      "probabilities": {
       "fee.reminder.send": 0.0,
-      "fee.writeoff.propose": 0.0,
-      "fee.credit.raise": 0.98,
-      "fee.overdue.list": 0.0,
-      "fee.payment.record": 0.0,
-      "fee.latefee.waive": 0.0,
+      "fee.credit.raise": 0.99,
       "fee.cancellation.raise": 0.0,
-      "none": 0.02
+      "fee.payment.record": 0.0,
+      "fee.writeoff.propose": 0.0,
+      "fee.overdue.list": 0.0,
+      "fee.latefee.waive": 0.0,
+      "none": 0.01
      }
     }
    },
    "usage": {
-    "input_tokens": 2412,
+    "input_tokens": 2407,
     "output_tokens": 104
    },
-   "seconds": 0.432
+   "seconds": 0.382
   },
   "ye charge hi galat tha": {
    "model": "jev-1.13.0",
@@ -4893,21 +4889,22 @@
     "intent_1": {
      "type": "choice",
      "choice": "fee.cancellation.raise",
-     "confidence": 0.59,
+     "confidence": 0.55,
      "probabilities": {
-      "none": 0.3,
       "fee.latefee.waive": 0.0,
       "fee.writeoff.propose": 0.0,
-      "fee.credit.raise": 0.03,
-      "fee.cancellation.raise": 0.67
+      "fee.credit.raise": 0.05,
+      "fee.cancellation.raise": 0.63,
+      "none": 0.32,
+      "fee.payment.record": 0.0
      }
     }
    },
    "usage": {
-    "input_tokens": 1566,
-    "output_tokens": 77
+    "input_tokens": 1848,
+    "output_tokens": 86
    },
-   "seconds": 0.418
+   "seconds": 0.425
   },
   "ye credit hona chahiye": {
    "model": "jev-1.13.0",
@@ -4915,22 +4912,21 @@
     "intent_1": {
      "type": "choice",
      "choice": "fee.credit.raise",
-     "confidence": 0.66,
+     "confidence": 0.63,
      "probabilities": {
-      "fee.cancellation.raise": 0.0,
-      "fee.payment.record": 0.06,
+      "none": 0.27,
+      "fee.latefee.waive": 0.0,
       "fee.writeoff.propose": 0.0,
-      "fee.latefee.waive": 0.01,
-      "none": 0.22,
-      "fee.credit.raise": 0.71
+      "fee.cancellation.raise": 0.03,
+      "fee.credit.raise": 0.7
      }
     }
    },
    "usage": {
-    "input_tokens": 1838,
-    "output_tokens": 83
+    "input_tokens": 1564,
+    "output_tokens": 74
    },
-   "seconds": 0.414
+   "seconds": 0.384
   },
   "ye debt maaf kar do": {
    "model": "jev-1.13.0",
@@ -4938,15 +4934,15 @@
     "intent_1": {
      "type": "choice",
      "choice": "fee.writeoff.propose",
-     "confidence": 0.71,
+     "confidence": 0.66,
      "probabilities": {
-      "none": 0.17,
-      "fee.latefee.waive": 0.07,
-      "fee.cancellation.raise": 0.0,
       "fee.credit.raise": 0.0,
-      "fee.reminder.send": 0.0,
+      "fee.latefee.waive": 0.13,
+      "fee.cancellation.raise": 0.0,
       "fee.overdue.list": 0.0,
-      "fee.writeoff.propose": 0.76
+      "none": 0.15,
+      "fee.reminder.send": 0.0,
+      "fee.writeoff.propose": 0.72
      }
     }
    },
@@ -4954,7 +4950,7 @@
     "input_tokens": 2111,
     "output_tokens": 98
    },
-   "seconds": 0.384
+   "seconds": 0.471
   },
   "ye debt wasool nahi hoga, maaf kar do": {
    "model": "jev-1.13.0",
@@ -4962,24 +4958,24 @@
     "intent_1": {
      "type": "choice",
      "choice": "fee.writeoff.propose",
-     "confidence": 0.98,
+     "confidence": 0.94,
      "probabilities": {
-      "fee.latefee.waive": 0.0,
-      "fee.cancellation.raise": 0.0,
-      "fee.credit.raise": 0.0,
-      "fee.reminder.send": 0.0,
-      "fee.writeoff.propose": 0.99,
-      "fee.overdue.list": 0.0,
+      "fee.latefee.waive": 0.02,
+      "fee.writeoff.propose": 0.95,
       "dashboard.main.read": 0.0,
-      "none": 0.01
+      "none": 0.03,
+      "fee.overdue.list": 0.0,
+      "fee.cancellation.raise": 0.0,
+      "fee.reminder.send": 0.0,
+      "fee.credit.raise": 0.0
      }
     }
    },
    "usage": {
-    "input_tokens": 2227,
+    "input_tokens": 2224,
     "output_tokens": 107
    },
-   "seconds": 0.441
+   "seconds": 0.411
   },
   "ye family kitna deti hai?": {
    "model": "jev-1.13.0",
@@ -4987,17 +4983,17 @@
     "intent_1": {
      "type": "choice",
      "choice": "fee.overdue.list",
-     "confidence": 0.92,
+     "confidence": 0.75,
      "probabilities": {
+      "fee.overdue.list": 0.78,
       "fee.cancellation.raise": 0.0,
-      "fee.credit.raise": 0.0,
+      "none": 0.17,
       "dashboard.main.read": 0.02,
-      "fee.payment.record": 0.01,
-      "fee.overdue.list": 0.93,
-      "fee.latefee.waive": 0.0,
+      "fee.payment.record": 0.03,
       "fee.writeoff.propose": 0.0,
-      "none": 0.04,
-      "fee.reminder.send": 0.0
+      "fee.reminder.send": 0.0,
+      "fee.latefee.waive": 0.0,
+      "fee.credit.raise": 0.0
      }
     }
    },
@@ -5005,7 +5001,7 @@
     "input_tokens": 2497,
     "output_tokens": 115
    },
-   "seconds": 0.425
+   "seconds": 0.41
   },
   "ye invoice kisi aur bache ka hai aur abhi jama bhi nahi hua": {
    "model": "jev-1.13.0",
@@ -5013,24 +5009,24 @@
     "intent_1": {
      "type": "choice",
      "choice": "fee.cancellation.raise",
-     "confidence": 0.92,
+     "confidence": 0.99,
      "probabilities": {
-      "fee.reminder.send": 0.0,
-      "fee.credit.raise": 0.0,
-      "fee.latefee.waive": 0.0,
       "fee.writeoff.propose": 0.0,
-      "fee.cancellation.raise": 0.93,
-      "none": 0.06,
+      "none": 0.01,
+      "fee.reminder.send": 0.0,
+      "fee.cancellation.raise": 0.99,
+      "fee.credit.raise": 0.0,
       "fee.payment.record": 0.0,
-      "fee.overdue.list": 0.01
+      "fee.overdue.list": 0.0,
+      "fee.latefee.waive": 0.0
      }
     }
    },
    "usage": {
-    "input_tokens": 2409,
+    "input_tokens": 2415,
     "output_tokens": 107
    },
-   "seconds": 0.51
+   "seconds": 0.385
   },
   "ye payment galat student ke against lag gayi hai": {
    "model": "jev-1.13.0",
@@ -5038,24 +5034,24 @@
     "intent_1": {
      "type": "choice",
      "choice": "none",
-     "confidence": 0.66,
+     "confidence": 0.46,
      "probabilities": {
-      "fee.reminder.send": 0.0,
       "fee.writeoff.propose": 0.0,
-      "fee.payment.record": 0.02,
+      "none": 0.54,
       "fee.cancellation.raise": 0.01,
+      "fee.credit.raise": 0.44,
+      "fee.reminder.send": 0.0,
       "fee.overdue.list": 0.0,
       "fee.latefee.waive": 0.0,
-      "fee.credit.raise": 0.27,
-      "none": 0.7
+      "fee.payment.record": 0.01
      }
     }
    },
    "usage": {
-    "input_tokens": 2401,
+    "input_tokens": 2403,
     "output_tokens": 102
    },
-   "seconds": 0.419
+   "seconds": 1.161
   },
   "ye qarz doobne wala hai, write off ki tajweez tayyar karo": {
    "model": "jev-1.13.0",
@@ -5065,19 +5061,19 @@
      "choice": "fee.writeoff.propose",
      "confidence": 1.0,
      "probabilities": {
-      "fee.latefee.waive": 0.0,
-      "none": 0.0,
-      "fee.writeoff.propose": 1.0,
+      "fee.credit.raise": 0.0,
       "fee.cancellation.raise": 0.0,
-      "fee.credit.raise": 0.0
+      "fee.writeoff.propose": 1.0,
+      "none": 0.0,
+      "fee.latefee.waive": 0.0
      }
     }
    },
    "usage": {
-    "input_tokens": 1583,
+    "input_tokens": 1582,
     "output_tokens": 77
    },
-   "seconds": 0.399
+   "seconds": 0.471
   }
  }
 }

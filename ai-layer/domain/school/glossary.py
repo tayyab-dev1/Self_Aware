@@ -22,6 +22,7 @@ GLOSSARY: Mapping[str, str] = {
     "jama karna": "to pay in or deposit money",
     "walidain": "parents or guardians",
     "tajweez": "a proposal that someone else must approve",
+    "raise karna": "to create or file something (a bill, a credit, a proposal), not to increase it",
 }
 
 

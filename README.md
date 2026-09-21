@@ -185,16 +185,19 @@ Sonnet 5 through the Claude CLI (decision 69). The phase write-ups below are kep
 describe what was delivered and measured **with Claude**.
 
 - **Gemini's four numbers** (recorded 21 Sep 2026, with each lookup's description shown to the
-  planner, decision 71). The Phase 7 block below keeps Claude's for comparison.
+  planner, decision 71, and decompose's rules for stated problems, decision 73). The Phase 7 block
+  below keeps Claude's for comparison.
 
   ```
                         all             English         Roman Urdu
-  recall@30              95.4%           96.8%           94.6%
+  recall@30              96.6%           96.8%           96.4%
   plan accuracy          90.3%           92.1%           89.3%
-  refusal correctness    92.2%           93.9%           91.2%
+  refusal correctness    91.8%           92.9%           91.2%
   validator catch rate  100.0%          100.0%          100.0%
-  out of: 175 labelled sentences, 70 to refuse, 584 injected faults
+  out of: 175 labelled sentences, 70 to refuse, 579 injected faults
   ```
+
+  Before decision 73: recall 95.4% (Roman Urdu 94.6%), refusal correctness 92.2%.
 
   Against Claude: recall is the same, even though only 28 of 245 decompose answers match word for word.
   Plan accuracy is 1.7 points higher (Roman Urdu +3.6, English -1.6). Refusal correctness is 0.4 lower:
@@ -217,25 +220,26 @@ answers and writes `ai-layer/eval/reports/measure_with_jev.md`.
 
 ```
                       all                       English                   Roman Urdu
-recall@30             95.4% -> 95.4% (+0.0)     96.8% -> 96.8% (+0.0)     94.6% -> 94.6% (+0.0)
-plan accuracy         90.3% -> 87.4% (-2.9)     92.1% -> 93.7% (+1.6)     89.3% -> 83.9% (-5.4)
-refusal correctness   92.2% -> 90.2% (-2.0)     93.9% -> 94.9% (+1.0)     91.2% -> 87.1% (-4.1)
+recall@30             96.6% -> 96.6% (+0.0)     96.8% -> 96.8% (+0.0)     96.4% -> 96.4% (+0.0)
+plan accuracy         90.3% -> 89.1% (-1.1)     92.1% -> 90.5% (-1.6)     89.3% -> 88.4% (-0.9)
+refusal correctness   91.8% -> 91.4% (-0.4)     92.9% -> 92.9% (+0.0)     91.2% -> 90.5% (-0.7)
 validator catch rate  100.0% -> 100.0% (+0.0)   100.0% -> 100.0% (+0.0)   100.0% -> 100.0% (+0.0)
 ```
 
-- **Jev on its own** puts the expected capability in its shortlist for 93.5% of labelled sentences
-  (153 of 170 get a shortlist of one), and answers "none" for 86.4% of the sentences to refuse. Its
-  confidence is honest: picks at 0.9 or above are right 94.9% of the time, picks below 0.7 about 75%.
+With decompose's intents before decision 73 the gap was -2.9 overall and -5.4 in Roman Urdu.
+
+- **Jev on its own** puts the expected capability in its shortlist for 93.7% of labelled sentences
+  (158 of 174 get a shortlist of one), and answers "none" for 86.0% of the sentences to refuse. Its
+  confidence is honest: picks at 0.9 or above are right 95.2% of the time.
 - **Faster planning.** With only the shortlist, the planner's prompt is a quarter of the size and
   its call took a median of 2.7 s instead of 4.9 s (16 sentences, live). Jev itself takes a median of
   0.41 s, so a sentence is about 1.8 s faster. With 30 candidates in production the gap would be wider.
-- **Where it loses.** English gains, Roman Urdu loses. Every lost sentence is one Jev answered "none"
-  because decompose's English intent was wrong: "credit raise karo" became "Increase the credit
-  limit", and "unhon ne waqt par diya tha phir bhi late fee lag gayi" became "Check why a late fee
-  was charged…". The planner still reads the original message and recovers; Jev sees only the intent.
-  Giving Jev the original message as well did not help (it fixed one sentence and lost three refusals).
-- **Next.** The losses are decompose's, so better intents for short Roman Urdu requests would help
-  Jev and retrieval both. Until then the chooser stays off by default.
+- **Where it loses.** At first, every lost sentence was one Jev answered "none" because decompose's
+  English intent was wrong ("credit raise karo" became "Increase the credit limit"). Decision 73
+  fixed most of those. What is left is small and mixed: Jev still says "none" for a few payment
+  sentences ("counter pe paisay jama hue hain"), and it now refuses three sentences the planner alone
+  wrongly acted on. Giving Jev the original message as well did not help.
+- **Still off by default.** 1.1 points behind in plan accuracy, but about 1.8 s faster per sentence.
 
 ### What Phase 7 delivers
 
@@ -2140,15 +2144,35 @@ calibrated probabilities, no text, about 0.4 s) can do the first, so the planner
 - **Result.** Faster (about 1.8 s per sentence) and better in English, but 2.9 points lower plan accuracy
   overall, all from Roman Urdu sentences whose English intent was wrong. See Status.
 
+**73. Decompose states a problem as a problem to fix, and keeps the request.** Short Roman Urdu messages often
+state a problem instead of asking ("unhon ne waqt par diya tha phir bhi late fee lag gayi"). Decompose turned
+them into "Check why…" or "Report that…", dropped the request after an explanation ("…, credit bana do"), read
+"raise" as "increase", and added details ("attendance numbers" for "subah ke numbers"). Retrieval and Jev then
+searched for the wrong thing.
+
+- **The rules.** A problem with a fee record becomes the problem followed by a request to act on it ("…; fix this"),
+  without choosing the remedy (no cancel, refund, credit, waive or write off the user did not ask for). An
+  explanation followed by a request keeps both. School words are translated too ("outstanding fees", not
+  "baqaya"). Nothing is narrowed ("the numbers" stays "the numbers"). The glossary adds "raise karna": to create
+  or file, not to increase.
+- **Examples are not from the eval.** The prompt's examples ("The admission fee was billed twice; fix this")
+  appear in no eval sentence, so the numbers are not flattered. A first draft that named remedies ("forgive it")
+  had them copied into intents, so the rule now forbids adding one.
+- **Result.** Recall@30 95.4% -> 96.6% (Roman Urdu 94.6% -> 96.4%), plan accuracy unchanged at 90.3%, refusal
+  correctness 92.2% -> 91.8%. With Jev choosing first, the gap to the planner alone fell from 2.9 to 1.1 points.
+  Still wrong: "subah ke numbers do" becomes "Provide the numbers for subah".
+- **Recording.** Intents changed for 197 of 245 sentences, so only those sentences' planner and Jev answers were
+  asked again. The free Gemini tier allows 500 requests a day per project; a full re-record uses most of that.
+
 ## Open questions
 
-- **Should Jev choose the capability?** Faster, and better in English, but it loses Roman Urdu
-  sentences whose English intent is wrong (decision 72). Better intents from decompose would settle it.
+- **Should Jev choose the capability?** About 1.8 s faster per sentence, 1.1 points behind in plan
+  accuracy after decision 73 (decision 72). The rest of the gap is a few sentences either way.
 - **The free tier's terms.** On the free tier, Google may use requests to improve its products; on a
   paid tier it does not. Every sentence, with any student's name in it, goes into the prompt. Before
   real school data, the key needs a paid (billing-enabled) project, redaction (below), or both.
-- **Daily quota.** Limits are per Google Cloud project and reset at midnight Pacific time. Recording
-  the eval alone takes about 465 calls, and each new chat sentence takes two.
+- **Daily quota.** The free tier allows 500 requests a day per project and model, reset at midnight
+  Pacific time. Recording the eval alone takes about 465 calls, and each new chat sentence takes two.
 
 - **Lists of names.** The registry refuses a parameter that looks up a list of names, and no POC
   capability needs one. The real reminder contract's `student_ids` will, so the gateway will need it

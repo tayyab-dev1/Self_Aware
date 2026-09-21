@@ -1,6 +1,6 @@
 # Retrieval eval
 
-Generated 2026-09-21 11:25 UTC by `make ai-eval`. Model `BAAI/bge-m3@5617a9f61b028005a4858fdac845db406aefb181`, candidate cap 30, RRF k 60.
+Generated 2026-09-21 13:07 UTC by `make ai-eval`. Model `BAAI/bge-m3@5617a9f61b028005a4858fdac845db406aefb181`, candidate cap 30, RRF k 60.
 
 175 labelled sentences: 75 from planning-contracts, 100 written for this eval; 112 Roman Urdu, 63 English.
 

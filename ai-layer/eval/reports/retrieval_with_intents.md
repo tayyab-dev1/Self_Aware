@@ -1,61 +1,60 @@
 # Retrieval eval with real intents
 
-Generated 2026-09-21 11:25 UTC by `make ai-eval`. Every sentence was decomposed by `gemini-3.1-flash-lite`, and retrieval searched with its intents on the stress index (489 capabilities indexed). Model `BAAI/bge-m3@5617a9f61b028005a4858fdac845db406aefb181`, candidate cap 30.
+Generated 2026-09-21 13:07 UTC by `make ai-eval`. Every sentence was decomposed by `gemini-3.1-flash-lite`, and retrieval searched with its intents on the stress index (489 capabilities indexed). Model `BAAI/bge-m3@5617a9f61b028005a4858fdac845db406aefb181`, candidate cap 30.
 
-Decompose answered 173 of 175 sentences within the rules (180 intents; split into more than one: 7). 2 broke a rule and retrieve nothing here.
+Decompose answered 174 of 175 sentences within the rules (174 intents; split into more than one: 0). 1 broke a rule and retrieve nothing here.
 
 | | n | recall@30 | @1 | @3 | @5 | MRR |
 |---|---:|---:|---:|---:|---:|---:|
-| all sentences, through intents | 175 | **95.4%** | 48.0% | 70.3% | 77.1% | 0.609 |
-| English, through intents | 63 | **96.8%** | 52.4% | 74.6% | 82.5% | 0.658 |
-| Roman Urdu, through intents | 112 | **94.6%** | 45.5% | 67.9% | 74.1% | 0.582 |
+| all sentences, through intents | 175 | **96.6%** | 52.0% | 73.1% | 82.9% | 0.648 |
+| English, through intents | 63 | **96.8%** | 55.6% | 79.4% | 84.1% | 0.686 |
+| Roman Urdu, through intents | 112 | **96.4%** | 50.0% | 69.6% | 82.1% | 0.626 |
 
-Confusable clusters arrived whole in 157 of the 157 queries that retrieved any member.
+Confusable clusters arrived whole in 163 of the 163 queries that retrieved any member.
 
 By expected capability:
 
 | | n | recall@30 | @1 | @3 | @5 | MRR |
 |---|---:|---:|---:|---:|---:|---:|
-| dashboard.main.read | 20 | **70.0%** | 50.0% | 50.0% | 55.0% | 0.529 |
-| fee.cancellation.raise | 25 | **100.0%** | 20.0% | 64.0% | 68.0% | 0.435 |
-| fee.credit.raise | 26 | **100.0%** | 26.9% | 53.8% | 73.1% | 0.452 |
-| fee.latefee.waive | 19 | **94.7%** | 94.7% | 94.7% | 94.7% | 0.947 |
-| fee.overdue.list | 21 | **100.0%** | 66.7% | 85.7% | 95.2% | 0.781 |
-| fee.payment.record | 22 | **100.0%** | 45.5% | 90.9% | 90.9% | 0.646 |
-| fee.reminder.send | 20 | **100.0%** | 85.0% | 95.0% | 95.0% | 0.900 |
-| fee.writeoff.propose | 22 | **95.5%** | 13.6% | 36.4% | 50.0% | 0.307 |
+| dashboard.main.read | 20 | **75.0%** | 40.0% | 45.0% | 60.0% | 0.476 |
+| fee.cancellation.raise | 25 | **100.0%** | 20.0% | 56.0% | 80.0% | 0.429 |
+| fee.credit.raise | 26 | **100.0%** | 46.2% | 73.1% | 80.8% | 0.614 |
+| fee.latefee.waive | 19 | **100.0%** | 94.7% | 100.0% | 100.0% | 0.974 |
+| fee.overdue.list | 21 | **100.0%** | 71.4% | 95.2% | 100.0% | 0.837 |
+| fee.payment.record | 22 | **95.5%** | 40.9% | 68.2% | 77.3% | 0.553 |
+| fee.reminder.send | 20 | **100.0%** | 80.0% | 95.0% | 95.0% | 0.882 |
+| fee.writeoff.propose | 22 | **100.0%** | 36.4% | 59.1% | 72.7% | 0.510 |
 
 Hardest sentences (the intents searched; fused rank worse than 3, at most 25):
 
 | sentence | lang | expected | fused rank | top 3 | in top 30 |
 |---|---|---|---:|---|---|
-| Count the number of students enrolled. | ur-Latn | `dashboard.main.read` | - | `student.transfer.place`, `readmission.reactivate`, `student.place` | **no** |
-| Inquire about the current status of the school | ur-Latn | `dashboard.main.read` | - | `website.items.read`, `assets.read`, `asset.disposals.read` | **no** |
-| Provide the attendance numbers for the morning session | ur-Latn | `dashboard.main.read` | - | `report.attendance.run`, `admission.test.mark`, `payroll.run.return` | **no** |
-|  | ur-Latn | `fee.latefee.waive` | - |  | **no** |
-|  | ur-Latn | `fee.writeoff.propose` | - |  | **no** |
-| Inquire about the number of pending card requests. | en | `dashboard.main.read` | 69 | `pickup.queue.read`, `pickup.card.limit.set`, `pickup.requests.mine.read` | **no** |
-| Inquire about the total amount of cash available | ur-Latn | `dashboard.main.read` | 49 | `stock.advance.issue`, `stock.advances.read`, `stock.cashreturned.record` | **no** |
+| How many students are enrolled? | ur-Latn | `dashboard.main.read` | - | `student.place`, `withdrawal.return`, `readmission.reactivate` | **no** |
+| provide the morning attendance numbers | ur-Latn | `dashboard.main.read` | - | `report.attendance.run`, `exam.paper.attendance.correct`, `admission.test.mark` | **no** |
+|  | ur-Latn | `fee.payment.record` | - |  | **no** |
+| count how many card requests are pending | en | `dashboard.main.read` | 45 | `pickup.queue.read`, `pickup.card.limit.set`, `pickup.requests.mine.read` | **no** |
 | Ask how the school is doing today | en | `dashboard.main.read` | 36 | `stock.request.approve`, `asset.disposals.read`, `pickup.card.request` | **no** |
-| Report that payment has not been received yet. | ur-Latn | `fee.cancellation.raise` | - | `fee.payment.correction.raise`, `fee.payment.correction.return`, `fee.payment.record` | yes |
-| Waive the remaining amount of 4,200 | en | `fee.writeoff.propose` | - | `fee.latefee.waive`, `stock.advance.issue`, `appointment.letter.decline` | yes |
-| Waive the outstanding amount for the family as they have moved out and the house is empty. | ur-Latn | `fee.writeoff.propose` | 66 | `fee.refund.raise`, `fee.plan.request`, `fee.latefee.waive` | yes |
-| Waive the outstanding balance because the father passed away and there is no income | en | `fee.writeoff.propose` | 28 | `fee.refund.raise`, `payslip.mine.read`, `fee.plan.request` | yes |
-| Report that the bill was generated twice and both payments were made | ur-Latn | `fee.credit.raise` | 27 | `fee.payment.record`, `fee.writeoff.reverse`, `fee.payment.correction.raise` | yes |
-| Record this credit | ur-Latn | `fee.credit.raise` | 27 | `fee.refund.pay`, `asset.assign`, `branch.user.assign` | yes |
-| propose waiving the debt for this family as they are untraceable | en | `fee.writeoff.propose` | 21 | `expulsion.appeal.record`, `fee.invoice.issue`, `admission.invite.resend` | yes |
-| Write off 18,000 for this family | en | `fee.writeoff.propose` | 20 | `fee.writeoff.reverse`, `fee.latefee.waive`, `fee.invoice.issue` | yes |
-| Apply the concession that was supposed to be added | Process a refund for the amount paid | ur-Latn | `fee.credit.raise` | 18 | `stock.advance.issue`, `fee.refund.pay`, `asset.verification.correction.propose` | yes |
-| Check why a bill was generated for a child who had already left | ur-Latn | `fee.cancellation.raise` | 15 | `pickup.collections.read`, `expulsion.recommend`, `asset.disposals.read` | yes |
-| Correct the wrong bill and take it back | ur-Latn | `fee.cancellation.raise` | 13 | `exam.paper.attendance.correct`, `meetingday.revise`, `asset.verification.correction.return` | yes |
-| Process the refund for the fine that has been paid | ur-Latn | `fee.credit.raise` | 13 | `fee.refund.pay`, `expulsion.clearance.settle`, `fee.latefee.waive` | yes |
-| Send a proposal to waive the 2 year old outstanding dues | ur-Latn | `fee.writeoff.propose` | 13 | `fee.refund.raise`, `fee.cancellation.return`, `fee.concession.return` | yes |
-| Record receipt of the stamped challan for Usman for 12000 | ur-Latn | `fee.payment.record` | 13 | `stock.receipt.record`, `expulsion.appeal.record`, `fee.challan.generate` | yes |
+| Ask how the school is doing today | ur-Latn | `dashboard.main.read` | 36 | `stock.request.approve`, `asset.disposals.read`, `pickup.card.request` | **no** |
+| The money has not been received yet | ur-Latn | `fee.cancellation.raise` | - | `fee.payment.correction.raise`, `stock.cashreturned.record`, `appointment.letter.approve` | yes |
+| The family has left and the house is empty, waive the amount | ur-Latn | `fee.writeoff.propose` | 60 | `fee.latefee.waive`, `fee.refund.raise`, `fee.plan.request` | yes |
+| The family's phone is off and the address is empty, deal with the outstanding amount | en | `fee.writeoff.propose` | 59 | `fee.plan.request`, `fee.overdue.list`, `fee.reminder.send` | yes |
+| The bill was created incorrectly; take it back | ur-Latn | `fee.cancellation.raise` | 54 | `stock.request.withdraw`, `asset.verification.correction.return`, `fee.credit.raise` | yes |
+| The concession was supposed to be applied but was not, so refund the money | ur-Latn | `fee.credit.raise` | 26 | `fee.refund.approve`, `fee.refund.return`, `fee.payment.correction.raise` | yes |
+| The walid sahib has paid the fees for October | ur-Latn | `fee.payment.record` | 23 | `finance.voucher.pay`, `fee.reminder.send`, `fee.batch.authorise` | yes |
+| The fine has been paid, return it | ur-Latn | `fee.credit.raise` | 21 | `expulsion.clearance.settle`, `fee.batch.reverse`, `fee.latefee.waive` | yes |
+| The family has been asking for 18000 for a year and now will not pay | ur-Latn | `fee.writeoff.propose` | 20 | `fee.plan.request`, `complaints.parent.read`, `fee.overdue.list` | yes |
+| The student left without paying fees, so there is nothing to be done | ur-Latn | `fee.writeoff.propose` | 15 | `certificate.request`, `exam.makeup.refuse`, `timetable.freeteachers.list` | yes |
+| Hold the extra amount paid on the account instead of refunding | en | `fee.credit.raise` | 15 | `fee.refund.pay`, `certificate.hold.release`, `fee.refund.return` | yes |
+| The stamped copy of challan CH-2026-0417 has arrived from the bank | ur-Latn | `fee.payment.record` | 13 | `fee.challan.generate`, `paper.question.add`, `paper.create` | yes |
 | Provide a brief report on collection | ur-Latn | `dashboard.main.read` | 13 | `pickup.collections.read`, `report.operational.run`, `pickup.collection.verify` | yes |
-| Print a duplicate fee bill for Hamza | ur-Latn | `fee.cancellation.raise` | 13 | `fee.batch.authorise`, `fee.structure.approve`, `fee.structure.submit` | yes |
-| Ask how much money was collected today | ur-Latn | `dashboard.main.read` | 12 | `stock.request.approve`, `fee.payment.record`, `stock.issue.chase` | yes |
+| This cancellation should happen | ur-Latn | `fee.cancellation.raise` | 12 | `meeting.cancel`, `exam.cancel`, `leave.request.cancel` | yes |
+| Credit the invoice | ur-Latn | `fee.credit.raise` | 10 | `fee.batch.reverse`, `fee.credit.approve`, `fee.challan.generate` | yes |
+| Provide the accounts for the month | ur-Latn | `dashboard.main.read` | 9 | `account.reactivate`, `accounts.read`, `calendar.broadcast.send` | yes |
+| Zain left in July but still got a September bill, remove it | en | `fee.cancellation.raise` | 9 | `student.transfer.raise`, `asset.disposals.read`, `salary.approval.submit` | yes |
+| The bank stamped challan for Usman for 12,000 received on Monday has been returned; update the record | en | `fee.payment.record` | 8 | `stock.return.record`, `account.reactivate`, `withdrawal.property.record` | yes |
+| The family has paid the money, return it | ur-Latn | `fee.credit.raise` | 7 | `fee.refund.raise`, `fee.writeoff.reverse`, `fee.payment.record` | yes |
+| Inform the parents that the fees are late | ur-Latn | `fee.reminder.send` | 7 | `fee.credit.raise`, `fee.latefee.policy.approve`, `fee.writeoff.propose` | yes |
 
 Sentences decompose could not answer within the rules:
 
-- jurmana galti se laga hai, wapas lo: ENTITY_CHANGED
-- ye baqaya wasool nahi hoga: ENTITY_CHANGED
+- Bilal ke abbu 9000 naqad de gaye hain, entry kar do: NOT_ENGLISH
