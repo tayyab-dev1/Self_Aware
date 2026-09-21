@@ -6,7 +6,7 @@
 #   make db-up && make embeddings-up
 #   make backend-run      # terminal 1
 #   make ai-run           # terminal 2
-#   make verify-phase6    # terminal 3 (calls Haiku and Sonnet through the Claude CLI)
+#   make verify-phase6    # terminal 3 (calls the real models through the Gemini API)
 #
 # The write sends Class 5 Blue's WhatsApp reminder once more: reminders are logged and change no
 # balance. Everything else is a read, or cancelled before anything runs.
@@ -171,7 +171,7 @@ from app.decompose.decomposer import Decomposer
 from app.embeddings.client import EmbeddingsClient
 from app.gateway.client import GatewayClient
 from app.index.database import IndexDatabase
-from app.llm.claude_cli import ClaudeCliModel
+from app.llm.gemini import GeminiModel
 from app.orchestration.orchestrator import ChatOrchestrator, ChatTurn
 from app.orchestration.plan_cache import PlanCache
 from app.orchestration.session import InMemorySessionStore
@@ -195,7 +195,8 @@ class Counting:
 async def main():
     settings = Settings()
     token = os.environ["DEV_TOKEN"]
-    model = Counting(ClaudeCliModel.from_settings(settings))
+    real_model = GeminiModel.from_settings(settings)
+    model = Counting(real_model)
     gateway = GatewayClient.from_settings(settings)
     index = await IndexDatabase.connect(settings)
     embeddings = EmbeddingsClient.from_settings(settings)
@@ -241,6 +242,7 @@ async def main():
         await embeddings.aclose()
         await index.close()
         await gateway.aclose()
+        await real_model.aclose()
 
 
 asyncio.run(main())

@@ -288,6 +288,14 @@ class _Turn:
         step = self.plan.steps[step_number - 1]
         return self.o._catalog().get(step.capability_id)
 
+    def lookup(self, step_number: int | None, name: str | None) -> str | None:
+        """What the backend says this parameter's record is found by, if it says."""
+        if step_number is None or name is None:
+            return None
+        metadata = self.param(step_number, name)
+        param = next((p for p in metadata.params if p.name == name), None) if metadata else None
+        return param.lookup if param else None
+
     async def ask_next_missing(self, again: bool = False) -> ChatReply:
         session = self.session
         name = session.missing[0]
@@ -440,7 +448,9 @@ class _Turn:
                 attempts=attempts + 1,
             )  # fmt: skip
             session.phase = Phase.AWAITING_INPUT
-            return replies.not_found(raw, error, plan_id=plan.plan_id)
+            return replies.not_found(
+                raw, error, plan_id=plan.plan_id, lookup=self.lookup(error.step, error.param)
+            )
         if error.code in ("STALE_VERSION", "INVALID_PLAN"):
             # The cached plan no longer fits the backend; the next attempt plans afresh.
             self.o._cache.discard(session.plan_cache_key)

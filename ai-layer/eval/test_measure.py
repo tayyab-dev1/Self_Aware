@@ -25,7 +25,7 @@ from app.decompose.decomposer import THINKING as DECOMPOSE_THINKING
 from app.decompose.decomposer import system_prompt as decompose_prompt
 from app.embeddings.client import EmbeddingsClient
 from app.index.database import CapabilityRow
-from app.llm.claude_cli import ClaudeCliModel
+from app.llm.gemini import GeminiModel
 from app.llm.runner import DECOMPOSE_MODEL, PLANNER_MODEL
 from app.planning.planner import system_prompt as planner_prompt
 from app.retrieval.hybrid import HybridRetriever
@@ -82,8 +82,8 @@ def recordings() -> tuple[Recordings, Recordings]:
     )
 
 
-def model_or_none() -> ClaudeCliModel | None:
-    return ClaudeCliModel.from_settings(Settings()) if mode_from_environment() == "record" else None
+def model_or_none() -> GeminiModel | None:
+    return GeminiModel.from_settings(Settings()) if mode_from_environment() == "record" else None
 
 
 @pytest_asyncio.fixture(scope="module")

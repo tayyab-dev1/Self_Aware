@@ -34,7 +34,9 @@ import jakarta.validation.Validator;
 import java.time.Clock;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ObjectProvider;
@@ -87,9 +89,13 @@ public class AgentGatewayAutoConfiguration {
         List<String> checkIds = preconditionChecks.orderedStream().map(PreconditionCheck::id).toList();
         List<String> countIds = affectedCounts.orderedStream().map(AffectedCount::capabilityId).toList();
         List<String> resolverTypes = entityResolvers.orderedStream().map(EntityResolver::type).toList();
+        Map<String, String> lookups = new LinkedHashMap<>();
+        entityResolvers.orderedStream()
+                .filter(resolver -> resolver.lookup() != null && !resolver.lookup().isBlank())
+                .forEach(resolver -> lookups.putIfAbsent(resolver.type(), resolver.lookup().strip()));
 
         CapabilityRegistry registry = new CapabilityRegistryBuilder(objectMapper)
-                .build(handlerTypes, checkIds, countIds, resolverTypes);
+                .build(handlerTypes, checkIds, countIds, resolverTypes, lookups);
         log.info("Agent capability registry: {} capabilities {}", registry.size(), registry.ids());
         return registry;
     }

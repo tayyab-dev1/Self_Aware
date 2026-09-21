@@ -13,6 +13,8 @@ import java.util.List;
  * @param required     read from the record field ({@code @NotNull}, {@code @NotBlank}, primitive)
  * @param resolver     entity type preflight resolves a name into an id for; absent for literals
  * @param label        template key the resolved record's label is published under
+ * @param lookup       what the resolver searches by, in plain words (its {@code EntityResolver#lookup()});
+ *                     absent for literals, and for a resolver that says nothing
  * @param allowed      the only accepted values; empty when any value of the type is accepted
  * @param defaultValue what the planner uses when the user does not say; absent when none
  */
@@ -26,10 +28,16 @@ public record ParamMetadata(
         @NotNull String meaning,
         String resolver,
         String label,
+        String lookup,
         @NotNull List<String> allowed,
         String defaultValue) {
 
     public ParamMetadata {
         allowed = List.copyOf(allowed);
+    }
+
+    public ParamMetadata withLookup(String newLookup) {
+        return new ParamMetadata(name, type, multiple, required, meaning, resolver, label, newLookup, allowed,
+                defaultValue);
     }
 }

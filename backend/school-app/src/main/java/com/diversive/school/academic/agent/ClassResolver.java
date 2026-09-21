@@ -33,6 +33,11 @@ public class ClassResolver implements EntityResolver {
     }
 
     @Override
+    public String lookup() {
+        return "the class's name, e.g. class 5";
+    }
+
+    @Override
     public String type() {
         return "class";
     }

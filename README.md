@@ -25,8 +25,143 @@ Postgres 16 + pgvector   docker/        Embeddings: BGE-M3 service   docker/
 
 - **The rules:** [docs/CLAUDE.md](docs/CLAUDE.md), the twelve invariants. Read it before changing anything.
 - **The plan:** [docs/POC_Implementation_Plan.md](docs/POC_Implementation_Plan.md), seven phases, one per session.
-- **Who does what, in plain words:** [ARCHITECTURE.md](ARCHITECTURE.md): the AI layer, agent-gateway and school-app, and why they are split.
-- **Which file holds what:** [STRUCTURE.md](STRUCTURE.md).
+
+Everything else about this POC is in this file:
+
+| Section | What it answers |
+| --- | --- |
+| [Who does what](#who-does-what) | Which part does what, and why it is split that way |
+| [Status](#status) | What each phase delivers, and what it proves |
+| [Quick start](#quick-start) | How to run it, try it and check it |
+| [Where everything lives](#where-everything-lives) | What every folder and file is for |
+| [Decisions so far](#decisions-so-far) | Every choice made, and why |
+| [Open questions](#open-questions) | What is still undecided |
+
+---
+
+## Who does what
+
+The AI layer, agent-gateway and school-app, in plain words. The rules behind this split are in
+[docs/CLAUDE.md](docs/CLAUDE.md).
+
+### The picture
+
+```
+Staff member types: "class 5 blue ke defaulters ko whatsapp par reminder bhejo"
+        │
+        ▼
+┌───────────────────────────────┐
+│ AI LAYER          ai-layer/   │  understands the words, talks to the user
+└───────────────┬───────────────┘
+                │  HTTP, /agent/** only. The plan names a capability id, never a URL.
+┌───────────────▼───────────────┐  ┐
+│ AGENT GATEWAY  agent-gateway/ │  │  makes any action safe, for any product
+├───────────────────────────────┤  │  one Spring Boot backend
+│ SCHOOL APP     school-app/    │  │  knows the school: data, rules, actions
+└───────────────┬───────────────┘  ┘
+                ▼
+     Postgres (school data) + the AI layer's own capability index
+```
+
+The backend is **one application built from two parts**. `agent-gateway` is a library, and
+`school-app` is the program that includes it. The AI layer is a separate service.
+
+### Each part's one job
+
+| Part | Its job | Knows about schools? | Reads business data? |
+| --- | --- | --- | --- |
+| **AI layer** | Turn a sentence into a plan, and talk to the user | Only school words (a glossary) | **Never.** Only its own capability index |
+| **agent-gateway** | The safety process every action goes through, the same for every action | **No** | No: it asks school-app |
+| **school-app** | The school's tables, rules and actions | Yes | Yes |
+
+### What lives where
+
+| Piece of the architecture | Lives in | Phase |
+| --- | --- | --- |
+| Splitting the sentence into intents, in English (a model call) | AI layer | 5 |
+| School words such as challan, haazri, baqaya | AI layer (`domain/school`) | 5 |
+| Keeping its own index of capability descriptions in step with the backend (polling versions) | AI layer (`app/sync`) | 4 |
+| Finding the likely capabilities, each with its look-alikes, only among those the user may use | AI layer (`app/retrieval`) | 4 |
+| Measuring whether it finds the right one (the eval set) | AI layer (`eval/`) | 4 |
+| The four numbers (recall, plan accuracy, refusals, validator catch rate) and the CI regression run | AI layer (`eval/measure`, recorded model answers) | 7 |
+| Choosing the capability and filling its inputs (a model call) | AI layer | 5 |
+| Checking everything the model wrote before using it | AI layer (`app/validation`) | 5 |
+| Calling the model (Gemini 3.1 Flash-Lite, through the Gemini API), behind one interface | AI layer (`app/llm`) | 5, then decision 69 |
+| The conversation: asking questions, showing the confirmation, the plan cache | AI layer (`app/orchestration`, `POST /chat`) | 6 |
+| The test page and its pipeline view (each stage's input, output and timing) | AI layer (`app/web`, `app/core/trace.py`) | after 7 |
+| **Declaring** a capability: description, inputs, preconditions, templates | school-app, as annotations on the controller | 1 |
+| **Reading** those declarations, checking them at startup, versioning them | agent-gateway | 1 |
+| Publishing them (`GET /agent/metadata`) | agent-gateway | 1 |
+| Sign-in, and who may use which capability | school-app decides; agent-gateway asks | 1 |
+| The preflight process: pass order, error codes, filling templates, signing the token | agent-gateway | 2 |
+| Saying a capability is declared but not built yet, e.g. the four fee corrections | school-app marks it; agent-gateway refuses it with `NOT_IMPLEMENTED` | 2 |
+| Turning "class 5 blue" into one record, searching only what the user may see | school-app (resolvers) | 2 |
+| Precondition rules, e.g. "the section has defaulters" | school-app | 2 |
+| Counting what a write will touch, with the same query the action uses | school-app | 2 |
+| How values read in a confirmation, e.g. `PKR 71,500`, `WhatsApp` | school-app (a formatter); agent-gateway has a plain default | 2 |
+| Execute: re-check everything in one transaction, verify the result, audit events, no double runs | agent-gateway | 3 |
+| The audit table, append-only | school-app stores it; agent-gateway writes to it through an interface | 3 |
+| The action itself, e.g. logging the reminders or recording a payment | school-app | 3 |
+| Tables, migrations, demo data | school-app | 0 |
+
+**A simple test for new code:**
+
+- **Is it about understanding language or talking to the user?** It goes in the AI layer.
+- **Would it be exactly the same for a hospital or a shop?** It goes in agent-gateway.
+- **Does it mention students, fees, sections or invoices?** It goes in school-app. Only school *words* the model needs go in `ai-layer/domain/school`.
+
+### Why this split is better
+
+1. **The model can only suggest.** It never touches data and never writes a number the user
+   sees. Every step that changes something is ordinary code that checks again. When the model is
+   wrong, the worst outcome is a refusal, or a confirmation the user rejects.
+2. **Safety is written once.** The gateway runs the same checks for every capability. A new
+   capability is annotations plus a few small beans, and it cannot skip preflight. If the
+   declarations are inconsistent, the backend refuses to start.
+3. **The engine is reusable.** The gateway contains no school words. Its own tests use a made-up
+   "notes" app. The real school backend will take it as a dependency, the same way school-app
+   does, and nothing in the gateway or the AI layer changes.
+4. **Each part changes at its own pace.** Tuning prompts and retrieval is Python work in the AI
+   layer. Business rules are Java work in school-app. Neither redeploys the other.
+5. **Numbers cannot drift.** A count and its action live in the same place and share the same query,
+   so the confirmation cannot say 7 when the send reaches 5.
+6. **The boundary is enforced by the database.** The AI layer logs in to Postgres as a role that has
+   no permission on school data at all.
+7. **Each part can be tested alone.** The gateway is tested with fake capabilities, school-app
+   with real SQL, and the AI layer with an evaluation set.
+
+### One sentence, start to finish
+
+1. **AI layer:** reads "class 5 blue ke defaulters ko whatsapp par reminder bhejo".
+   - Decompose (a model call) rewrites it in English: "Send a WhatsApp reminder to the defaulters in class 5 blue", keeping "class 5 blue" exactly as typed.
+   - Retrieval finds the likely capabilities in its own index. `fee.reminder.send` comes with its look-alike `fee.overdue.list`, so the planner has to choose between them.
+   - The planner (a second model call) picks `fee.reminder.send` with section "class 5 blue" and channel whatsapp.
+   - Plain code checks the plan: the id is real and allowed, and "class 5 blue" really is the user's words. Only then does the plan go to the backend.
+2. **agent-gateway:** checks that the plan fits the capability, that its version is current, and
+   that the user may use it. It then runs the four preflight passes, asking school-app for each
+   piece.
+3. **school-app:**
+   - finds Class 5 Blue, looking only inside the user's campus;
+   - confirms that the section has overdue fees;
+   - counts the guardians who can be reached on WhatsApp: 5 of them, owing PKR 71,500.
+4. **agent-gateway:** fills the template, adds "This cannot be undone.", and signs a token that
+   holds the plan's fingerprint, the section id and the count.
+5. **AI layer:** shows the user
+   *"Send a fee reminder to 5 guardians in Class 5 Blue by WhatsApp, covering PKR 71,500
+   outstanding. This cannot be undone."*
+6. **On "yes":** the AI layer sends the same plan back with the token.
+   - The gateway checks everything again inside one transaction: the count is still 5, and nobody left the section.
+   - It records that the step started, and school-app logs the 5 reminders.
+   - The gateway checks that 5 were logged, records success, and replies *"Sent a fee reminder to 5 guardians in
+     Class 5 Blue by WhatsApp."*
+   - Sending the same plan again only replays that answer.
+
+### When the real school backend exists
+
+`school-app` is a stand-in: it exists so the POC has real data to work against. The real backend
+adds `agent-gateway` as a dependency and moves in the annotations, resolvers, checks and counts.
+Then `school-app` is deleted. The AI layer keeps calling the same `/agent/**` endpoints and does
+not notice.
 
 ---
 
@@ -42,6 +177,36 @@ Postgres 16 + pgvector   docker/        Embeddings: BGE-M3 service   docker/
 | 5 | Decompose and plan (Haiku 4.5, Sonnet 5, validator) | **Done** (14 Sep 2026) |
 | 6 | Orchestrator and chat (`POST /chat`) | **Done** (14 Sep 2026) |
 | 7 | Measure (recall, plan accuracy, refusals, CI regression) | **Done** (14 Sep 2026) |
+
+### Since the POC: the models moved to Gemini (21 Sep 2026)
+
+Both model calls now go to the Gemini API, to `gemini-3.1-flash-lite`, instead of Haiku 4.5 and
+Sonnet 5 through the Claude CLI (decision 69). The phase write-ups below are kept as they were: they
+describe what was delivered and measured **with Claude**.
+
+- **Gemini's four numbers** (recorded 21 Sep 2026, with each lookup's description shown to the
+  planner, decision 71). The Phase 7 block below keeps Claude's for comparison.
+
+  ```
+                        all             English         Roman Urdu
+  recall@30              95.4%           96.8%           94.6%
+  plan accuracy          90.3%           92.1%           89.3%
+  refusal correctness    92.2%           93.9%           91.2%
+  validator catch rate  100.0%          100.0%          100.0%
+  out of: 175 labelled sentences, 70 to refuse, 584 injected faults
+  ```
+
+  Against Claude: recall is the same, even though only 28 of 245 decompose answers match word for word.
+  Plan accuracy is 1.7 points higher (Roman Urdu +3.6, English -1.6). Refusal correctness is 0.4 lower:
+  English fell 3.1 points, because Gemini acted on two sentences asking to send a pending approval back
+  ("return this credit…"), planning a credit or cancellation instead. Both of those are not built, so
+  the backend refuses them anyway.
+- **The recordings and baseline are Gemini's.** `ai-layer/eval/recordings/` and
+  `eval/measure/baseline.json` hold Gemini's answers and numbers, so `make measure-ci` and the CI
+  `measure` job replay them again. Recording took 7 runs of `make measure`: Gemini often answered 503
+  "high demand" under 6 parallel calls, and each run records only the answers still missing.
+- **Needs a key.** Set `AI_LAYER_GEMINI_API_KEY` in `.env`. Without it, chat is off and readiness
+  says why. The Claude desktop app is no longer needed.
 
 ### What Phase 7 delivers
 
@@ -298,7 +463,7 @@ a refused or failed step rolls back, is recorded as REFUSED or FAILED, and stops
 - **Preflight now validates the whole request**, so a rule across fields refuses a plan before anyone confirms it. For example, a class list without a class.
 - **AI layer:** `GatewayClient.execute()`.
 - **Tests:**
-  - backend: 157 (100 gateway unit, 8 school-app unit, 49 integration); 163 since the "which one?" filter (decision 68: 103 gateway unit, 8 school-app unit, 52 integration);
+  - backend: 157 (100 gateway unit, 8 school-app unit, 49 integration); 166 since the "which one?" filter, names with a class and section, and published lookups (decisions 68, 70 and 71: 104 gateway unit, 8 school-app unit, 54 integration);
   - AI layer: 91 (76 unit, 13 integration, 2 build checks).
 
 **What the seeded school gives** (checked by `make verify-phase3`):
@@ -424,8 +589,8 @@ make backend-run    # terminal 1: migrates and seeds the database, builds the re
 make ai-install && make ai-run   # terminal 2: migrates the index, syncs the metadata into it
 ```
 
-Phases 5 and 6 also need the Claude desktop app, signed in: its bundled CLI runs Haiku and Sonnet on
-your Claude subscription, and the AI layer finds it by itself (or set `AI_LAYER_CLAUDE_CLI_PATH`).
+Phases 5 and 6 also need a Gemini API key: set `AI_LAYER_GEMINI_API_KEY` in `.env` (a key from
+[Google AI Studio](https://aistudio.google.com/apikey)). Both model calls go to `gemini-3.1-flash-lite`.
 
 ```bash
 make verify-phase6  # terminal 3: checks every Phase 6 "done when" item through POST /chat
@@ -436,7 +601,7 @@ make verify-phase7  # the four numbers from the recorded answers, and the broken
 ```
 
 `make verify-phase7` needs only Docker and the embeddings service. It runs the CI regression run
-(`make measure-ci`) with no Claude CLI reachable, and should end with
+(`make measure-ci`) with no model API key, and should end with
 `Phase 7 is done: every check passed.`
 
 Expected output of `make verify-phase6` (about a minute; it sends Class 5 Blue's WhatsApp reminder once more,
@@ -495,12 +660,12 @@ With the backend and the AI layer running, open **http://127.0.0.1:8081/**.
    | Who is asking | backend | the user id and the capabilities this user may use |
    | Conversation state | AI layer code | the phase before and after the turn (idle, waiting for an answer, waiting for yes) |
    | Plan cache | AI layer code | hit or miss; a hit skips both model calls |
-   | Decompose | Haiku | the prompt, and the English intents with the names it copied |
+   | Decompose | Gemini | the prompt, and the English intents with the names it copied |
    | Check the intents | AI layer code | the intents, once every name and the English are checked |
    | Embed the intents | BGE-M3 | the vector size and its first numbers |
    | Search the capability index | Postgres | per intent, the ranking by meaning and by words |
    | Fuse, add siblings, cap | AI layer code | the fused scores and ranks, and the candidates the planner sees |
-   | Plan | Sonnet | the message, intents, today and candidates it saw, and its raw answer |
+   | Plan | Gemini | the message, intents, today and candidates it saw, and its raw answer |
    | Validate the plan | AI layer code | the checked plan with versions stamped, or the broken rules |
    | Read the answer | AI layer code | how an option or typed value was put into the waiting plan |
    | Preflight | backend | the names it looked up, the count, and the confirmation (the token is hidden) |
@@ -508,7 +673,7 @@ With the backend and the AI layer running, open **http://127.0.0.1:8081/**.
    | Reply | AI layer code | the reply, written without a model |
 
    Only the stages a turn needs appear: a "yes" shows no model call. A failed stage is red and says why,
-   for example an expired Claude sign-in or a rule the planner broke. Colours tell apart the backend,
+   for example a used-up Gemini quota or a rule the planner broke. Colours tell apart the backend,
    model calls, search and plain code. Click a stage in the row at the top to jump to it, **raw JSON** to
    see the exact data, **Replay** to animate the stages again, and **Pipeline: … ›** on any earlier reply
    to show that turn.
@@ -525,23 +690,17 @@ The pipeline view comes from `POST /chat` with `"trace": true`. The trace is sen
 of that turn and is never logged. It never contains the user's token or the backend's confirmation token.
 `AI_LAYER_CHAT_TRACE_ENABLED=false` stops the AI layer from returning it.
 
-**Every reply says "Sorry, I can't understand requests right now"?** The Claude CLI could not be used.
+**Every reply says "Sorry, I can't understand requests right now"?** The Gemini API could not be used.
 The failed **Decompose** stage in the pipeline says why, and so does the AI layer's log
-(`planning_unavailable`). Most often it is `OAuth session expired and could not be refreshed`.
+(`planning_unavailable`). The usual causes:
 
-The AI layer runs the `claude` CLI bundled with the desktop app, and that CLI keeps its own sign-in in
-the macOS keychain (`Claude Code-credentials`). It is separate from the desktop app's own sign-in, so
-signing in to the app does not fix it. Sign the CLI in again from a terminal (a browser opens), then check:
-
-```bash
-"$(ls -d ~/Library/Application\ Support/Claude/claude-code/*/claude.app/Contents/MacOS/claude | sort -V | tail -1)" auth login
-```
-
-```bash
-"$(ls -d ~/Library/Application\ Support/Claude/claude-code/*/claude.app/Contents/MacOS/claude | sort -V | tail -1)" auth status
-```
-
-`auth status` should say `"loggedIn": true`. The AI layer does not need a restart: the next sentence uses the new sign-in.
+- **No key.** Readiness says `POST /chat is off: No Gemini API key`. Set `AI_LAYER_GEMINI_API_KEY` in
+  `.env` (a key from [Google AI Studio](https://aistudio.google.com/apikey)) and restart the AI layer.
+- **A key Google refused** (`400 INVALID_ARGUMENT` or `403 PERMISSION_DENIED`). Check the key, and
+  that the Gemini API is enabled for its project.
+- **A used-up quota** (`429 RESOURCE_EXHAUSTED`). Limits are per project, not per key; the daily
+  limit resets at midnight Pacific time. See your limits in
+  [AI Studio](https://aistudio.google.com/rate-limit).
 
 ### Chat with it from the terminal
 
@@ -568,13 +727,13 @@ curl -s -X POST http://127.0.0.1:8081/chat -H "Authorization: Bearer local-dev-t
 make verify-phase5  # decompose and plan with the real models
 ```
 
-`make verify-phase5` makes about a dozen model calls; its eval step replays the recorded Haiku
+`make verify-phase5` makes about a dozen model calls; its eval step replays the recorded decompose
 answers in `ai-layer/eval/recordings/`. Expected output:
 
 ```
 Phase 5: Decompose and plan
 
-The whole pipeline on the running stack: decompose (Haiku) → retrieve → plan (Sonnet) → validate → preflight
+The whole pipeline on the running stack: decompose → retrieve → plan (both Gemini) → validate → preflight
   ✓ Roman Urdu: decompose wrote English intents and copied the names untouched
   ✓ Roman Urdu: the plan is fee.reminder.send for the user's own words, versions stamped
   ✓ Roman Urdu: section_id carries "class 5 blue" as typed, and the current version
@@ -586,10 +745,10 @@ The whole pipeline on the running stack: decompose (Haiku) → retrieve → plan
 
 The same four, as tests (validator rules with scripted models; the real models without retrieval)
   ✓ validator: unknown, disallowed and non-candidate ids, invented and missing parameters, forms, types, quoted names and amounts, steps
-  ✓ real Haiku and Sonnet: Roman Urdu plan, refusal, two steps in order (make ai-model-checks)
+  ✓ real models: Roman Urdu plan, refusal, two steps in order (make ai-model-checks)
 
 Retrieval with real intents (the Phase 4 follow-up)
-  ✓ recall@30 > 90% on the 489-capability stress index when searching with Haiku's intents; clusters whole (make ai-eval)
+  ✓ recall@30 > 90% on the 489-capability stress index when searching with decompose's intents; clusters whole (make ai-eval)
 
 Phase 5 is done: every check passed.
 ```
@@ -726,11 +885,11 @@ curl -s -X POST http://127.0.0.1:8080/agent/execute -H "Authorization: Bearer lo
 | `make ai-test-unit` | AI layer unit tests only, no Docker, no embeddings service, no model calls |
 | `make measure` | The four numbers (recall@30, plan accuracy, refusal correctness, validator catch rate); records any missing model answer |
 | `make measure-ci` | The regression run: every eval from the recorded answers, no model called; fails below the baseline (what CI runs) |
-| `make ai-model-checks` | The Phase 5 checks against the real Haiku and Sonnet (Claude CLI, uses the subscription) |
+| `make ai-model-checks` | The Phase 5 checks against the real models (Gemini API; needs `AI_LAYER_GEMINI_API_KEY`) |
 | `make plan Q="..."` | Every stage for a sentence: intents, candidates, the checked plan, and preflight's answer (nothing runs) |
 | `make ai-build-checks` | The description-similarity build check |
 | `make descriptions-report` | How similar every pair of capability descriptions is |
-| `make ai-eval` | The retrieval eval: recall gates, clusters, Roman Urdu, and retrieval with Haiku's intents; writes `ai-layer/eval/reports/` (needs Docker, `embeddings-up` and the Claude CLI) |
+| `make ai-eval` | The retrieval eval: recall gates, clusters, Roman Urdu, and retrieval with decompose's intents; writes `ai-layer/eval/reports/` (needs Docker, `embeddings-up`, and a Gemini API key for any answer not yet recorded) |
 | `make retrieve Q="..."` | The candidates retrieval offers for a sentence, with scores and ranks (needs the AI layer to have synced once) |
 | `make eval-corpus` | Re-extract the eval's contract sentences and distractors from `../planning-contracts` |
 | `make ai-lint` | ruff + format check + mypy (strict) |
@@ -765,8 +924,10 @@ The Makefile loads it into every command.
   - `AI_LAYER_METADATA_SYNC_INTERVAL_SECONDS` (default 30) sets how often versions are polled; `AI_LAYER_METADATA_SYNC_ENABLED=false` turns sync off.
   - `AI_LAYER_RETRIEVAL_CANDIDATE_CAP` (30), `AI_LAYER_RETRIEVAL_RRF_K` (60) and `AI_LAYER_RETRIEVAL_BRANCH_LIMIT` (50, how deep each search looks) tune retrieval. The eval runs on the defaults.
 - **Models:**
-  - `AI_LAYER_CLAUDE_CLI_PATH` points at the `claude` binary. Empty means the newest one inside the Claude desktop app.
-  - `AI_LAYER_MODEL_TIMEOUT_SECONDS` (default 120) limits one model call.
+  - `AI_LAYER_GEMINI_API_KEY` is the Gemini API key. Empty turns chat off, and readiness says why.
+    A free-tier key's requests may be used by Google to improve its products; a paid one's are not.
+  - `AI_LAYER_MODEL_TIMEOUT_SECONDS` (default 120) limits one model call, the SDK's retries of
+    408, 429 and 5xx included (at most 3 attempts).
   - `AI_LAYER_PLAN_MAX_STEPS` (default 3, and never more) caps a plan.
   - The model ids are pinned in code (`app/llm/runner.py`), not settings: changing a model is a deploy.
 - **Chat:**
@@ -780,6 +941,645 @@ The Makefile loads it into every command.
   AgentDVR, so its local `.env` uses `BACKEND_PORT=8082`. On macOS a port taken over IPv4 can still
   look free over IPv6, so check with `lsof -nP -iTCP:<port> -sTCP:LISTEN`.
 - **Changed a database password or the init script?** Run `make db-reset`.
+
+---
+
+## Where everything lives
+
+What each file is for, in plain words. Update this section in the same change that adds, moves or
+removes a file.
+
+**Last updated:** 21 Sep 2026, the move to Gemini (decision 69), after Phase 7 and decisions 64-68.
+
+### The big picture
+
+The git repository is the folder above `self_aware/`, which also holds the use cases (`modules/`) and
+the planning contracts. CI for the AI layer is at the repository root:
+`.github/workflows/ai-layer.yml` (backend tests, AI layer tests, and the measure regression run). It
+runs only when `self_aware/` changes.
+
+```
+self_aware/
+├── README.md              this file: what this is, who does what, how to run it, status,
+│                          where every file lives, and the decisions behind it
+├── Makefile               short commands for everything (make help)
+├── .env.example           every setting with a safe local default; copy to .env
+├── .gitignore
+│
+├── docs/                  the specification (read before changing code)
+├── docker/                Postgres 16 + pgvector, and the BGE-M3 embeddings service
+├── openapi/               the API contract between the two services (generated)
+├── snapshots/             the capability metadata the backend serves (generated)
+├── scripts/               checks that run against the whole stack
+│
+├── backend/               Java · Spring Boot · port 8080
+│   ├── agent-gateway/     generic: the only door the AI layer uses into the backend
+│   └── school-app/        POC stand-in for the real school backend: data, capabilities, seed
+│
+└── ai-layer/              Python · FastAPI · port 8081
+    ├── app/               the service code
+    ├── domain/school/     school words the models need (glossary, time zone)
+    ├── migrations/        plain-SQL migrations for the capability index
+    ├── scripts/           code generation, eval corpus extraction
+    ├── tests/             unit, integration (Docker), build checks (embeddings), model checks (Gemini API)
+    └── eval/              labelled sentences, recorded model answers, the retrieval eval and the four numbers
+```
+
+
+#### The one rule that keeps it modular
+
+Dependencies point one way only, from the specific to the general:
+
+```
+backend:   school-app ──depends on──▶ agent-gateway        (never the reverse)
+ai-layer:  main / resources ──▶ api ──▶ gateway, index, embeddings, capabilities ──▶ core
+across:    ai-layer ──HTTP──▶ /agent/** only               (never a business endpoint)
+           ai-layer ──SQL───▶ schema ai_layer only         (never schema school)
+```
+
+The general parts (`agent-gateway`, and everything in the AI layer engine) know nothing about
+schools. The gateway's own tests use a made-up "notes" domain to keep it that way. School knowledge
+lives in `school-app`, and later in `ai-layer/domain/school/`. To point the engine at another
+product, you replace those edges and leave the engine alone. [Who does what](#who-does-what)
+explains the split, and why.
+
+---
+
+
+### `docs/` — the specification
+
+
+| File                          | What it has                                                                                                                                                                                               |
+| ----------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `CLAUDE.md`                   | The rules: architecture, the twelve invariants, the repository layout (matches this file), capability ids, the plan contract, the model calls, embeddings, build-time assertions, error codes, conventions |
+| `POC_Implementation_Plan.md`  | The seven phases and each one's "done when"                                                                                                                                                               |
+| `Preflight_Implementation.md` | The design preflight and execute were built from (Phases 2 and 3). Where the code differs, README decisions 17–36 say so                                                                                  |
+
+
+### `docker/` — local infrastructure
+
+
+| File                                             | What it has                                                                                                                                                                                                                                                                                             |
+| ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `docker-compose.yml`                             | Two services. `postgres`: Postgres 16 + pgvector on 127.0.0.1:5433. `embeddings` (optional profile): BGE-M3 at a pinned revision, served by Text Embeddings Inference on 127.0.0.1:8083, its batch capped at 2048 tokens so it fits in Docker's memory. Each has a named volume; the model's is ~2.3 GB |
+| `postgres/initdb/01-roles-schemas-extensions.sh` | Runs once, when the database volume is first created. Installs `vector`, creates the two login roles, gives each its own schema, and gives the AI layer role nothing on business data. The integration tests on both sides mount this same file                                                         |
+
+
+### `openapi/` and `snapshots/` — generated, checked on both sides
+
+
+| File                            | What it has                                                                                                                                                                                                                       |
+| ------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `openapi/agent-gateway.json`    | **Generated. Do not edit.** The OpenAPI description of `/agent/`**: request and response shapes, and for preflight and execute every error status with the codes it carries. The AI layer's Pydantic models are generated from it |
+| `snapshots/agent-metadata.json` | **Generated. Do not edit.** Exactly what `GET /agent/metadata` serves: every capability with its version. The AI layer's build checks and tests read it without a running backend                                                 |
+
+
+Both are rewritten by `make contracts`. The backend's `OpenApiContractIT` and `AgentMetadataSnapshotIT` fail when either is stale.
+
+### `scripts/` — whole-stack checks
+
+A check that cannot run counts as a failure in every script.
+
+
+| File               | What it has                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `verify_phase0.sh` | Checks every Phase 0 "done when" item against the running database, backend and AI layer (`make verify-phase0`)                                                                                                                                                                                                                                                                                                                            |
+| `verify_phase1.sh` | Checks every Phase 1 "done when" item against the running backend and embeddings service. It recomputes versions independently and runs the tests that prove a broken rule fails the build (`make verify-phase1`)                                                                                                                                                                                                                          |
+| `verify_phase2.sh` | Checks every Phase 2 "done when" item against the running backend: resolution, ambiguity, a failing precondition and the rendered confirmation. It counts guardians again with SQL, recomputes the token's plan hash in Python, calls preflight through the AI layer's client, and runs the token and scope tests (`make verify-phase2`)                                                                                                   |
+| `verify_phase3.sh` | Checks every Phase 3 "done when" item against the running backend: a confirmed reminder runs, is verified and audited (counted with SQL), a replay runs nothing twice, a payment added with SQL makes a precondition fail, a WhatsApp number added with SQL makes the count change, and the audit trail refuses changes. It undoes what it changes, and runs the rollback and payment tests on a throwaway database (`make verify-phase3`) |
+| `verify_phase4.sh` | Checks every Phase 4 "done when" item: the running AI layer's index matches the backend's versions, a row marked stale is repaired within one poll, a fee-correction sentence retrieves the whole cluster, the allow-list holds; then runs the retrieval eval and prints its recall table, plus the sync, fusion and index-query tests (`make verify-phase4`)                                                                              |
+| `verify_phase5.sh` | Checks every Phase 5 "done when" item with the real models on the running stack: a Roman Urdu sentence becomes a plan with English intents and names untouched that preflight accepts, a sentence matching nothing is refused, a hallucinated id from a mocked planner is caught, a two-part sentence becomes two steps in order; then runs the validator tests, the model checks and the eval with real intents (`make verify-phase5`)    |
+| `verify_phase7.sh` | Checks the Phase 7 "done when" items: `make measure-ci` prints the four numbers from the recordings with no model available, and a deliberately broken description shows up as a recall drop (`make verify-phase7`)                                                                                                                                                                                                                        |
+| `verify_phase6.sh` | Checks every Phase 6 "done when" item: through the running `POST /chat`, a read answered in one turn and a write confirmed then run (both audited, reminders counted with SQL); in process with model calls counted, an ambiguous name asked and resumed with no second planner call, and a cancelled confirmation leaving no audit row (`make verify-phase6`)                                                                             |
+
+
+---
+
+
+### `backend/` — the Spring Boot backend
+
+
+| File                                | What it has                                                                   |
+| ----------------------------------- | ----------------------------------------------------------------------------- |
+| `pom.xml`                           | Parent build: Spring Boot 3.5.16, Java 21, springdoc version, the two modules |
+| `mvnw`, `mvnw.cmd`, `.mvn/wrapper/` | Maven wrapper: downloads Maven 3.9.16 on first use, so nobody installs Maven  |
+
+
+#### `backend/agent-gateway/` — generic, reusable
+
+The gateway knows capabilities, plans, checks and execution, never schools. It plugs into any Spring
+Boot app through auto-configuration. `pom.xml` lists its few dependencies: web, validation API,
+transactions, and springdoc as optional.
+
+
+| File (under `src/main/java/com/diversive/agent/`)                                                                    | What it has                                                                                                                                                                                                                                                                                                                                              |
+| -------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `annotation/AgentCapability.java`                                                                                    | Marks a controller method as a capability: id, module, read-only or not, blast radius, what reverses it, description, siblings                                                                                                                                                                                                                           |
+| `annotation/AgentParam.java`, `AgentParams.java`                                                                     | Describes one field of the request record for the planner: meaning, resolver and label, allowed values, default. `AgentParams` is the container Java needs to repeat it                                                                                                                                                                                  |
+| `annotation/AgentPrecondition.java`, `AgentPreconditions.java`                                                       | Something that must hold before the capability runs: id, rule text, and the hint the user sees                                                                                                                                                                                                                                                           |
+| `annotation/AgentEffect.java`                                                                                        | What running it creates and who hears about it, plus the confirmation, pending and reply templates and the extra facts they may use                                                                                                                                                                                                                      |
+| `annotation/AgentNotImplemented.java`                                                                                | "Declared, but cannot run yet": preflight refuses it with `NOT_IMPLEMENTED`. Not published, so the planner cannot tell                                                                                                                                                                                                                                   |
+| `annotation/BlastRadius.java`                                                                                        | How much a capability can change: NONE (reads only), SINGLE, GROUP, BRANCH, ORGANISATION                                                                                                                                                                                                                                                                 |
+| `spi/PreconditionCheck.java`                                                                                         | What the host app implements for each precondition id                                                                                                                                                                                                                                                                                                    |
+| `spi/AffectedCount.java`                                                                                             | What the host app implements to count what a wide write touches, plus `CountResult` (count, unit, extra facts)                                                                                                                                                                                                                                           |
+| `spi/EntityResolver.java`, `EntityMatch.java`                                                                        | What the host app implements for each entity type: the user's words in, every matching record the user may see out, each with an id, a label and what tells it apart; and `lookup()`, what it searches by in plain words                                                                                                                                                                                     |
+| `spi/TemplateFormatter.java`                                                                                         | How a value reads inside a confirmation (money, dates, names); the host may supply one                                                                                                                                                                                                                                                                   |
+| `spi/UserContext.java`, `UserContextResolver.java`                                                                   | Who a request is for (id, roles, scope), and how the host app works it out from the request                                                                                                                                                                                                                                                              |
+| `spi/CapabilityPolicy.java`                                                                                          | Which capabilities a user may use; the host app decides                                                                                                                                                                                                                                                                                                  |
+| `spi/AuditTrail.java`, `AuditEvent.java`                                                                             | Where execute records what it did (the host owns the table): append an event; find a write that already succeeded under an idempotency key. An event holds the sentence, ids, labels, counts and error code, never a token                                                                                                                               |
+| `registry/CapabilityScanner.java`                                                                                    | Reads the annotations into entries. Takes parameter names, types and whether they are required from the request record, notes where the request and the signed-in user go in the handler's arguments and what the handler returns, and reports every rule a single entry breaks                                                                          |
+| `registry/RegistryRules.java`                                                                                        | The rules that need the whole registry or the app's beans: precondition, count and resolver beans, symmetric siblings, producible placeholders, confirmations without gaps, and a handler returning the facts and count execute reads. Bean rules skip capabilities that are not implemented                                                             |
+| `registry/CapabilityVersioner.java`                                                                                  | Version = SHA-256 of the entry's canonical JSON (every field but the version, keys sorted)                                                                                                                                                                                                                                                               |
+| `registry/CapabilityRegistryBuilder.java`                                                                            | Scan, apply every rule, add each resolver's lookup text to the parameters it finds, version. Throws with every problem listed at once                                                                                                                                                                                                                                                                                |
+| `registry/CapabilityRegistry.java`                                                                                   | The built registry: every capability, sorted by id, immutable                                                                                                                                                                                                                                                                                            |
+| `registry/RegisteredCapability.java`                                                                                 | One capability as the backend knows it: public metadata, plus the handler, its request record's fields, its argument positions, what it returns and whether it is implemented, which never leave the backend                                                                                                                                             |
+| `registry/CapabilityRegistryException.java`                                                                          | "The registry is invalid", with the list of problems                                                                                                                                                                                                                                                                                                     |
+| `registry/TemplatePlaceholders.java`                                                                                 | Finds `{placeholders}` in templates, spots malformed braces, and fills them (plain substitution)                                                                                                                                                                                                                                                         |
+| `metadata/AgentMetadataController.java`                                                                              | `GET /agent/metadata` and `GET /agent/metadata/versions`                                                                                                                                                                                                                                                                                                 |
+| `metadata/CapabilityMetadata.java`                                                                                   | One capability as the AI layer sees it: full detail, no URL                                                                                                                                                                                                                                                                                              |
+| `metadata/ParamMetadata.java`, `ParamType.java`                                                                      | One input: name, type (string, integer, decimal, boolean, date), list or not, required, meaning, resolver, label, lookup (what the resolver searches by), allowed values, default                                                                                                                                                                                                                |
+| `metadata/PreconditionMetadata.java`, `EffectMetadata.java`                                                          | A precondition and the effect, as published                                                                                                                                                                                                                                                                                                              |
+| `metadata/AgentMetadataResponse.java`, `CapabilityVersionsResponse.java`, `CapabilityVersion.java`                   | The two response bodies                                                                                                                                                                                                                                                                                                                                  |
+| `session/AgentSessionController.java`, `SessionCapabilitiesResponse.java`                                            | `GET /agent/session/capabilities`: the ids this user may use (the allow-list)                                                                                                                                                                                                                                                                            |
+| `plan/Plan.java`, `PlanStep.java`                                                                                    | What the AI layer wants done: plan and session ids, and up to 3 steps, each a capability id, its version and its parameters                                                                                                                                                                                                                              |
+| `plan/ParamValue.java`                                                                                               | One parameter, in one of three forms: a value, the user's words to look up (with the user's choice after an ambiguity), or a fact from an earlier step                                                                                                                                                                                                   |
+| `plan/PlanHasher.java`                                                                                               | A plan's fingerprint: SHA-256 of its canonical JSON, recomputable anywhere                                                                                                                                                                                                                                                                               |
+| `step/PlanReader.java`                                                                                               | Reads a plan against the registry before any data is touched: shape and plain ids, versions, permissions, implemented, parameters. Used by preflight and execute                                                                                                                                                                                         |
+| `step/StepPasses.java`                                                                                               | The passes preflight and execute both run: resolve names (offering, for an ambiguous name, only the matches that get furthest through the step's preconditions; at execute, find the confirmed record again), validate the whole request, check preconditions, count, fill templates                                                                     |
+| `step/ParamBinder.java`                                                                                              | Turns plan values into the request record's Java types with the app's Jackson, builds the whole record, and runs the record's validation constraints                                                                                                                                                                                                     |
+| `step/PreparedStep.java`                                                                                             | One step as preflight or execute works through it: typed values, names to resolve, values from earlier steps, resolved records and labels, count, confirmation line                                                                                                                                                                                      |
+| `step/StepRejections.java`                                                                                           | Every way a plan or a step is refused, as error bodies: invalid plan, stale version, not permitted, not implemented, not found, ambiguous (up to 10 candidates), precondition failed (with its hint), out of scope, count changed, conflict, execution and verification failed                                                                           |
+| `step/CapabilityBeans.java`                                                                                          | The host's checks, counts and resolvers, by the id each claims                                                                                                                                                                                                                                                                                           |
+| `step/PlainTemplateFormatter.java`                                                                                   | The default formatter: plain text, enums as their JSON value                                                                                                                                                                                                                                                                                             |
+| `preflight/PreflightController.java`                                                                                 | `POST /agent/preflight`: signs the user in, tags log lines with plan and session ids, logs refusals by code only                                                                                                                                                                                                                                         |
+| `preflight/PreflightService.java`                                                                                    | Preflight: read the plan, then resolve, validate, check, count and compose in one read-only snapshot; sign the token                                                                                                                                                                                                                                     |
+| `preflight/ConfirmationComposer.java`                                                                                | Joins the lines into one message, numbered when there are several, and adds "cannot be undone" and branch-wide warnings                                                                                                                                                                                                                                  |
+| `preflight/PreflightRequest.java`, `PreflightResponse.java`, `PreflightStepResult.java`, `ResolvedEntity.java`       | The request and response bodies: the confirmation, warnings, what each step resolved and counted, the token and its expiry                                                                                                                                                                                                                               |
+| `preflight/PreflightProperties.java`                                                                                 | Settings under `agent.gateway.preflight`: token secret, token lifetime (5 minutes), most steps per plan (3)                                                                                                                                                                                                                                              |
+| `execute/ExecuteController.java`                                                                                     | `POST /agent/execute`: signs the user in, tags log lines with plan and session ids, logs refusals by code only                                                                                                                                                                                                                                           |
+| `execute/ExecuteService.java`                                                                                        | Execute: verify the token and read the plan; then each step in a serializable transaction of its own: replay a write that already succeeded, find the confirmed records again, validate, check, count with the delta rule, audit, run the handler, verify, reply. Records refusals and failures after rollback, retries conflicts, reports partial plans |
+| `execute/CapabilityHandlers.java`                                                                                    | Calls a capability's handler: the registry's method, on the application's bean, with the request record and the signed-in user                                                                                                                                                                                                                           |
+| `execute/ResponseReader.java`                                                                                        | Reads a handler's response by JSON name with its Java types, and turns values into text and JSON for the audit trail                                                                                                                                                                                                                                     |
+| `execute/DeltaRule.java`                                                                                             | When a count moved too far from the confirmed one: any change at or below 20, more than 5% above                                                                                                                                                                                                                                                         |
+| `execute/VerificationFailure.java`                                                                                   | "The handler did not do what it declares": a missing fact, or a different count; its step is rolled back                                                                                                                                                                                                                                                 |
+| `execute/ExecuteRequest.java`, `ExecuteResponse.java`, `ExecutedStep.java`, `ExecuteOutcome.java`, `StepStatus.java` | The request (plan, token, sentence) and the response: completed, partial or failed, and per step succeeded, replayed, failed or not run, with its reply, count, data or error                                                                                                                                                                            |
+| `execute/ExecuteProperties.java`                                                                                     | Settings under `agent.gateway.execute`: the delta rule's small count and tolerance, conflict retries, the longest sentence                                                                                                                                                                                                                               |
+| `web/PlanLogContext.java`                                                                                            | Puts plan and session ids on every log line while a plan is handled, only when they are plain ids                                                                                                                                                                                                                                                        |
+| `web/UserContextArgumentResolver.java`                                                                               | Lets a handler take the signed-in `UserContext` when it is called as a plain HTTP endpoint; 401 without one                                                                                                                                                                                                                                              |
+| `token/PreflightTokens.java`                                                                                         | Signs and verifies tokens: `base64url(payload).HMAC-SHA256`. Verifying checks form, signature, expiry, user and plan hash, in that order                                                                                                                                                                                                                 |
+| `token/PreflightToken.java`                                                                                          | What a token vouches for: plan hash, user, expiry, and per step the resolved ids and the count                                                                                                                                                                                                                                                           |
+| `token/TokenVerificationException.java`                                                                              | Why a token was refused, as `TOKEN_EXPIRED` or `TOKEN_INVALID`                                                                                                                                                                                                                                                                                           |
+| `error/AgentErrorResponse.java`, `EntityCandidate.java`                                                              | The error body: a `code` the AI layer branches on, a message, and where they apply the step, parameter, candidates, precondition, hint, and the confirmed and current counts                                                                                                                                                                             |
+| `error/AgentErrorCodes.java`                                                                                         | Every error code, and the HTTP status each is sent with                                                                                                                                                                                                                                                                                                  |
+| `error/AgentRejectionException.java`, `AgentUnauthenticatedException.java`                                           | "Refuse with this error body": any refusal, and the 401 for no valid credential                                                                                                                                                                                                                                                                          |
+| `error/AgentGatewayExceptionHandler.java`                                                                            | Turns refusals into error bodies for every gateway endpoint                                                                                                                                                                                                                                                                                              |
+| `error/AgentRequestBodyExceptionHandler.java`                                                                        | A body that is not JSON or has an unknown field becomes `INVALID_PLAN`, never echoing the body                                                                                                                                                                                                                                                           |
+| `config/AgentGatewayAutoConfiguration.java`                                                                          | Switches the gateway on in any servlet web app. Builds the registry against the app's checks, counts and resolvers, wires preflight, execute and tokens with their transactions, and stops the app if a rule is broken, unknown JSON fields would be accepted, or there is no audit trail                                                                |
+| `config/AgentGatewayOpenApiConfiguration.java`                                                                       | When the host uses springdoc: documents each error status of preflight and execute with the codes it carries, and keeps `UserContext` out of the docs                                                                                                                                                                                                    |
+| `src/main/resources/META-INF/spring/…AutoConfiguration.imports`                                                      | The lines that tell Spring Boot the two auto-configurations exist                                                                                                                                                                                                                                                                                        |
+
+
+| Test (under `src/test/java/com/diversive/agent/`) | What it proves                                                                                                                                                                                                                                                                                                                                  |
+| ------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `fixtures/NotesCapabilities.java`                 | A made-up "notes" domain: share a folder (group write), archive a note (single write), find notes (read), and edited or broken variants of archive                                                                                                                                                                                              |
+| `fixtures/PreflightFixtures.java`                 | The notes domain with behaviour: resolvers, checks, counts and handlers over a `NotesStore`, a capability that is not implemented, copy-then-pin for steps that depend on each other, and a branch-wide sweep                                                                                                                                   |
+| `fixtures/NotesStore.java`                        | The notes data in memory, which tests change between preflight and execute: ambiguous names, an empty folder, an archived note                                                                                                                                                                                                                  |
+| `fixtures/MemoryAuditTrail.java`                  | An audit trail in a list, for tests without a database                                                                                                                                                                                                                                                                                          |
+| `fixtures/BrokenCapabilities.java`                | Handlers that break rules on purpose                                                                                                                                                                                                                                                                                                            |
+| `registry/CapabilityRegistryBuilderTest.java`     | Full detail from annotations and records; lists, dates, decimals; versions are stable SHA-256; one changed character changes only that entry's version                                                                                                                                                                                          |
+| `registry/RegistryRulesTest.java`                 | Each rule rejects what it should (including a missing resolver bean, a confirmation with a gap, a list of names), a not-implemented capability needs no beans, all problems reported together                                                                                                                                                   |
+| `config/AgentGatewayAutoConfigurationTest.java`   | In a running app: preflight is wired; a missing precondition or resolver bean, a one-sided sibling, a short token secret or lenient JSON stops startup                                                                                                                                                                                          |
+| `metadata/AgentMetadataControllerTest.java`       | The JSON the endpoints serve, and that no handler or path leaks                                                                                                                                                                                                                                                                                 |
+| `session/AgentSessionControllerTest.java`         | 401 without a user; only what the policy permits                                                                                                                                                                                                                                                                                                |
+| `plan/PlanHasherTest.java`                        | The plan hash equals SHA-256 of hand-written canonical JSON; parameter order does not matter; one character changes it                                                                                                                                                                                                                          |
+| `preflight/PreflightServiceTest.java`             | The passes: labels, candidates, only matches the step could act on (one left needs no question; all breaking the same rule are all offered), the user's choice, not found before ambiguity, a rule across fields, hints, typed values, real counts, defaults, numbered warnings, pending steps, reads, the token, and 19 ways a plan is invalid |
+| `preflight/PreflightControllerTest.java`          | The wire format both ways, and each refusal's status and body                                                                                                                                                                                                                                                                                   |
+| `preflight/PreflightTestSupport.java`             | Builds a preflight over the fixtures, and plans against it                                                                                                                                                                                                                                                                                      |
+| `token/PreflightTokensTest.java`                  | A tampered plan hash, an edited plan, another key, another user, garbage and a token past 5 minutes all fail; the payload has no words; short secrets refused                                                                                                                                                                                   |
+| `execute/ExecuteServiceTest.java`                 | A write runs once and is audited; a replay runs nothing twice; reads run again; a value from an earlier step; a precondition, a count or a record that changed; a misreporting or broken handler; a partial plan; altered and expired tokens; stale versions; the sentence required                                                             |
+| `execute/ExecuteControllerTest.java`              | The wire format: 200 step by step, a step's error inside it, a token refused as a whole, 401, unknown fields                                                                                                                                                                                                                                    |
+| `execute/DeltaRuleTest.java`                      | Any change on a small count, a few percent on a large one                                                                                                                                                                                                                                                                                       |
+| `execute/ExecuteTestSupport.java`                 | A preflight and an execute over one notes store, to confirm a plan, change the world, then execute                                                                                                                                                                                                                                              |
+| `GatewayTestApplication.java`                     | A tiny app, so the gateway's tests run without school-app                                                                                                                                                                                                                                                                                       |
+
+
+#### `backend/school-app/` — the school application
+
+A stand-in for the real school management backend, which does not exist yet. It is here so the AI
+layer has real data and real endpoints to work against during the POC. It is small but not fake:
+real tables, real SQL and real tests, because Phases 1–3 prove the invariants on it. When the real
+backend exists, that backend adds `agent-gateway` as a dependency and this module is retired.
+
+Each business package keeps its agent beans (resolvers, checks, counts) next to the data they read.
+
+
+| File (under `src/main/java/com/diversive/school/`)                               | What it has                                                                                                                                                                                                             |
+| -------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `SchoolApplication.java`                                                         | The `main` method                                                                                                                                                                                                       |
+| `academic/agent/SectionResolver.java`                                            | "class 5 blue" (or "class 5 ka blue section") → the section Class 5 Blue, among the open session's sections in the user's branch                                                                                        |
+| `academic/agent/ClassResolver.java`                                              | "class 5" → the class Class 5, the same way                                                                                                                                                                             |
+| `student/agent/StudentResolver.java`                                             | A student by name (optionally with class and section) or admission number, in the user's branch; namesakes told apart by section                                                                                                                        |
+| `fee/overdue/FeeOverdueController.java`, `FeeOverdueQuery.java`                  | `fee.overdue.list` (read): who owes what, by school, class, section or student; the query checks its scope has exactly its own target                                                                                   |
+| `fee/overdue/FeeOverdueService.java`, `FeeOverdueResponse.java`                  | The list: one row per student with overdue fees, filtered by age band and minimum amount, with the total                                                                                                                |
+| `fee/reminder/FeeReminderController.java`, `FeeReminderRequest.java`             | `fee.reminder.send` (group write, counted): remind every overdue family in a section. The channel reads as "WhatsApp", "SMS" or "email"                                                                                 |
+| `fee/reminder/FeeReminderRepository.java`                                        | Who a section's reminder reaches: the one query both the count and the send use, with "overdue" written once; logs a reminder; counts every guardian who owes                                                           |
+| `fee/reminder/FeeReminderService.java`, `FeeReminderResponse.java`               | The send: one Queued reminder log entry per guardian reached, what they owe, and how many the channel did not reach                                                                                                     |
+| `fee/reminder/FeeReminderAgentBeans.java`                                        | `section_has_defaulters`, `channel_reaches_defaulters`, and the reminder count (with the outstanding total and "5 guardians" in words)                                                                                  |
+| `fee/payment/FeePaymentController.java`, `FeePaymentRequest.java`                | `fee.payment.record` (single write): money received against one invoice. The route reads as "in cash" or "by bank challan"                                                                                              |
+| `fee/payment/FeePaymentService.java`, `FeePaymentResponse.java`                  | Records the payment with the next gapless receipt number, after locking the invoice and checking its balance again                                                                                                      |
+| `fee/invoice/InvoiceResolver.java`, `InvoicePhrase.java`                         | An invoice by number, or by student (optionally with class and section) and month in English or Roman Urdu; candidates say what is still owed                                                                                                            |
+| `fee/invoice/InvoiceBalances.java`                                               | What is billed, paid and owed on one invoice of the user's branch                                                                                                                                                       |
+| `fee/invoice/InvoiceAgentBeans.java`                                             | `invoice_is_open` and `amount_within_balance`                                                                                                                                                                           |
+| `fee/cancellation/FeeCancellationController.java`, `FeeCancellationRequest.java` | `fee.cancellation.raise`: metadata only (`@AgentNotImplemented`), one of the four confusable corrections                                                                                                                |
+| `fee/credit/FeeCreditController.java`, `FeeCreditRequest.java`                   | `fee.credit.raise`: metadata only, confusable                                                                                                                                                                           |
+| `fee/writeoff/FeeWriteoffController.java`, `FeeWriteoffRequest.java`             | `fee.writeoff.propose`: metadata only, confusable                                                                                                                                                                       |
+| `fee/latefee/LateFeeWaiverController.java`, `LateFeeWaiverRequest.java`          | `fee.latefee.waive`: metadata only, confusable                                                                                                                                                                          |
+| `dashboard/DashboardController.java`                                             | `dashboard.main.read` (read): the main dashboard figures, e.g. today's collection                                                                                                                                       |
+| `dashboard/DashboardService.java`, `DashboardResponse.java`                      | Today's and this month's collection and what is outstanding, for the user's branch, with when they were calculated                                                                                                      |
+| `platform/agent/DevTokenUserContextResolver.java`, `DevUserProperties.java`      | POC sign-in: `Authorization: Bearer <dev token>` acts as the configured user from `app_users`, with their branch as scope                                                                                               |
+| `platform/agent/SingleRoleCapabilityPolicy.java`                                 | POC permissions: the one role may use every capability                                                                                                                                                                  |
+| `platform/agent/SchoolScope.java`                                                | Reads the user's branch from their scope, for every resolver, check and count                                                                                                                                           |
+| `platform/agent/NameSearch.java`                                                 | How names match: whole words, any order, exact names first; the same splitting in Java and SQL                                                                                                                          |
+| `platform/agent/SchoolTemplateFormatter.java`, `DisplayName.java`                | How values read in confirmations: rupees, dates in words, enums by display name                                                                                                                                         |
+| `platform/agent/JdbcAuditTrail.java`                                             | The gateway's audit trail in the `agent_audit` table: inserts only, and finds a write that already succeeded                                                                                                            |
+| `platform/agent/PendingImplementations.java`                                     | The 501 answer of the four capabilities that are declared but never built                                                                                                                                               |
+| `platform/format/SchoolFormats.java`                                             | "PKR 71,500", "14 September 2026", "14 September 2026 at 3:05 pm", "September 2026", "5 guardians"                                                                                                                      |
+| `platform/time/ClockConfiguration.java`                                          | The school's clock (Asia/Karachi): "today" for overdue fees, and token expiry                                                                                                                                           |
+| `platform/openapi/OpenApiConfiguration.java`                                     | Title, fixed server URL and named enums for the published OpenAPI, so the exported contract is the same everywhere                                                                                                      |
+| `src/main/resources/application.yml`                                             | Database, Flyway, port and bind address, the `agent-gateway` OpenAPI group, the dev user, preflight token and execute settings, the school's time zone, plan and session ids on log lines, "reject unknown JSON fields" |
+
+
+**Database migrations** (`src/main/resources/db/`). Flyway applies them in version order on start.
+Both folders share one numbering. Never edit a migration that has run; add a new one.
+
+
+| File                                                          | What it has                                                                                                                                                    |
+| ------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `migration/V1__core_branches_and_users.sql`                   | Branches (campuses) and staff users                                                                                                                            |
+| `migration/V2__academic_sessions_classes_sections.sql`        | Academic sessions, classes ("Class 5"), sections ("Blue")                                                                                                      |
+| `migration/V3__guardians_students_enrolments.sql`             | Guardians (one per family code, with contact channels), students, enrolments                                                                                   |
+| `migration/V4__fee_invoices_lines_payments.sql`               | Invoices, invoice lines, payments, and the `fee_invoice_balances` view                                                                                         |
+| `seed/V5__seed_demo_school.sql`                               | The demo school (POC only). Its header lists every number the tests pin                                                                                        |
+| `migration/V6__agent_audit_fee_reminders_payment_details.sql` | The append-only `agent_audit` table (a trigger refuses changes; one success per idempotency key), `fee_reminders`, and a payment's bank stamp date and remarks |
+
+
+**Tests** (`src/test/java/com/diversive/school/`). Classes ending in `IT` need Docker.
+
+
+| File                                                                   | What it proves                                                                                                                                                                                                                                                                                                                                                                                                    |
+| ---------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `agent/ExecuteIT.java`                                                 | Phase 3 on the seeded school: a reminder sent once, verified and audited; a replay; a payment with the next receipt; a precondition, a count and a section that changed after the confirmation; a partial plan; an altered token; the audit trail refusing changes; reads; handlers as plain endpoints. Puts the seed back after each test                                                                        |
+| `agent/ExecuteRollbackIT.java`                                         | A handler that writes 5 rows but reports 99 fails verification: its rows are rolled back and only `FAILED` is recorded (boots its own backend)                                                                                                                                                                                                                                                                    |
+| `agent/PreflightIT.java`                                               | Phase 2 on the seeded school: labels in the confirmation, candidates, a paid invoice or a section without defaulters never offered, the furthest match refused with its hint, a real choice still asked, the user's choice, hints, counts per channel checked against SQL, invoices, reads, the four refused corrections, a value the endpoint would reject, another branch invisible, the token binding the plan |
+| `agent/CapabilityIdsMatchPlanningContractsTest.java`                   | Every capability id is an operation in `planning-contracts/`, with a matching read or write kind (no Docker)                                                                                                                                                                                                                                                                                                      |
+| `agent/AgentGatewayEndpointIT.java`                                    | The running backend registers exactly the 8 capabilities and serves them with full detail; the dev user gets every id; a missing or wrong token gets 401                                                                                                                                                                                                                                                          |
+| `agent/RegistryBuildChecksIT.java`                                     | The real backend refuses to start without a precondition bean, without a resolver bean, or with a one-directional sibling                                                                                                                                                                                                                                                                                         |
+| `agent/OpenApiContractIT.java`                                         | `openapi/agent-gateway.json` matches what the backend serves                                                                                                                                                                                                                                                                                                                                                      |
+| `agent/AgentMetadataSnapshotIT.java`                                   | `snapshots/agent-metadata.json` matches what the backend serves, and every school resolver says what it searches by                                                                                                                                                                                                                                                                                                                                                   |
+| `database/DatabaseMigrationIT.java`                                    | All six migrations run clean, pgvector works, and the seed has the exact shape later phases rely on                                                                                                                                                                                                                                                                                                               |
+| `fee/invoice/InvoicePhraseTest.java`                                   | Invoice words: names, months, years, Roman Urdu particles (no Docker)                                                                                                                                                                                                                                                                                                                                             |
+| `platform/agent/SchoolWordingTest.java`                                | Whole-word matching, exact names first, rupees, dates, display names, plurals (no Docker)                                                                                                                                                                                                                                                                                                                         |
+| `support/SchoolPostgresContainer.java`, `PostgresIntegrationTest.java` | One pgvector container per test run, and the base class that boots the backend against it signed in with a test token                                                                                                                                                                                                                                                                                             |
+| `support/CommittedJson.java`                                           | "This committed JSON file must equal what the backend serves", or rewrite it with `-Dcontract.update=true`                                                                                                                                                                                                                                                                                                        |
+
+
+---
+
+
+### `ai-layer/` — the FastAPI service
+
+
+| File                                        | What it has                                                                                                      |
+| ------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| `pyproject.toml`                            | Dependencies, and pytest (markers `integration`, `embeddings`) / ruff / mypy settings (mypy also checks `eval/`) |
+| `uv.lock`                                   | Exact versions of every dependency (uv writes it; commit it)                                                     |
+| `.python-version`                           | Python 3.12                                                                                                      |
+| `migrations/0001_capability_index.sql`      | The `capability_index` table from the plan                                                                       |
+| `migrations/0002_capability_index_sync.sql` | Adds what sync and siblings need: `version`, `disambiguate_from`, `embedding_model`, `synced_at`                 |
+
+
+#### `ai-layer/app/` — the service code
+
+
+| File           | What it has                                                                                                                                                                                                       |
+| -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `__main__.py`  | `python -m app` starts the server                                                                                                                                                                                 |
+| `main.py`      | `create_app()`: logging, resources opened at startup and closed at shutdown, middleware, routes                                                                                                                   |
+| `resources.py` | Opens the index database (running migrations if enabled), the gateway and embeddings clients, metadata sync, the retriever, the Gemini model and chat (when a key is set); starts the sync loop, and at shutdown stops it and closes every client |
+
+
+`app/core/` — the bottom layer, imports nothing else from `app`
+
+
+| File          | What it has                                                                                                                                                                         |
+| ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `settings.py` | Every setting, read from `AI_LAYER_*` variables. Unknown or misspelled variables are an error                                                                                       |
+| `logging.py`  | structlog setup; tokens, passwords and secrets are replaced with `[REDACTED]`                                                                                                       |
+| `trace.py`    | The per-turn pipeline trace for the chat page: `stage(...)` times a block and keeps what it was given and produced, only while a request collects a trace; no secrets, never logged |
+
+
+`app/api/` — what the AI layer serves over HTTP
+
+
+| File           | What it has                                                                                                                                                                                         |
+| -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `health.py`    | `GET /health/live` and `GET /health/ready` (index, backend, whether metadata sync has filled the index, and whether chat is on)                                                                     |
+| `chat.py`      | `POST /chat`: the bearer token, one turn (a message, a choice or a confirm), and the typed reply (answer, question, confirmation, refusal); with `"trace": true`, every pipeline stage the turn ran |
+| `chat_page.py` | `GET /`: serves the chat test page with a strict content-security policy (off with `AI_LAYER_CHAT_PAGE_ENABLED=false`)                                                                              |
+
+
+`app/web/` — the chat test page
+
+
+| File              | What it has                                                                                                                                                                                                                                                                                                                                                                            |
+| ----------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `chat.html`       | One self-contained page: the chat on the left (sign in with the dev token, send sentences, answer questions with option buttons, confirm or cancel, the backend's data as tables); on the right, the **Pipeline** tab showing each stage of the selected turn with its input, output and timing, and the **Try it** tab with examples of everything the POC can do; the readiness pill |
+| `middleware.py`   | One log line per request, with a request id echoed on the response                                                                                                                                                                                                                                                                                                                     |
+| `dependencies.py` | How a route gets the shared resources                                                                                                                                                                                                                                                                                                                                                  |
+
+
+`app/gateway/` — the only way into the backend
+
+
+| File        | What it has                                                                                                                                                                                                                                            |
+| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `client.py` | Async client for `/agent/metadata`, `/agent/metadata/versions`, `/agent/session/capabilities`, `POST /agent/preflight` and `POST /agent/execute`. It sends the user token and never logs it, and validates every response against the generated models |
+| `errors.py` | `GatewayUnavailableError`, `GatewayProtocolError`, and `GatewayRejectedError`, which carries the backend's error body: the `code`, and the candidates or hint where they apply                                                                         |
+| `models.py` | **Generated. Do not edit.** Pydantic models from `openapi/agent-gateway.json` (plans, preflight, execute, metadata, errors), all `extra="forbid"`                                                                                                      |
+
+
+`app/index/` — the only database access
+
+
+| File            | What it has                                                                                                                                                                                                                                                                         |
+| --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `database.py`   | The connection pool; connections never leave its methods, so none is held across a model call. The index queries: `indexed_versions`, `apply_sync` (upserts and deletes in one transaction), `dense_ranking` (pgvector cosine), `lexical_ranking` (full text, any word), `siblings` |
+| `migrations.py` | Runs `ai-layer/migrations/*.sql` once each, in order, with checksums                                                                                                                                                                                                                |
+| `__main__.py`   | `python -m app.index` applies the migrations without starting the server (`make ai-migrate`)                                                                                                                                                                                        |
+
+
+`app/embeddings/` — vectors from the embeddings service
+
+
+| File        | What it has                                                                                                                                                                         |
+| ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `client.py` | Async client for Text Embeddings Inference: checks the service runs pinned `BAAI/bge-m3`, embeds texts in small batches, and checks vector count and size. Also `cosine_similarity` |
+
+
+`app/sync/` — keeping the index in step with the backend
+
+
+| File               | What it has                                                                                                                                                                                                                                                                    |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `metadata_sync.py` | `MetadataSync`: polls versions, fetches and re-embeds only what changed (or was embedded by another model), deletes what was withdrawn, keeps the latest metadata as the `catalog`, and reports its status to readiness. `run_forever()` polls every 30 s and survives outages |
+
+
+`app/retrieval/` — which capabilities the planner may choose from
+
+
+| File          | What it has                                                                                                                                                                                              |
+| ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `fusion.py`   | The pure parts: `fuse` (reciprocal rank fusion, k = 60) and `expand_with_siblings` (each capability followed by its siblings, groups never split, capped)                                                |
+| `hybrid.py`   | `HybridRetriever.retrieve(queries, allowed)`: embeds first, then dense and lexical search per query inside the allow-list, fusion, siblings, cap 30. The result keeps the fused order too, for measuring |
+| `__main__.py` | `python -m app.retrieval "sentence"` prints the candidates with scores, ranks and `sibling_of` (`make retrieve Q="..."`)                                                                                 |
+
+
+`app/llm/` — model calls behind one interface
+
+
+| File        | What it has                                                                                                                                                                                                      |
+| ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `runner.py` | `StructuredModel` (the interface), `ModelRequest`, the errors, and the pinned model ids: `gemini-3.1-flash-lite` for both decompose and the planner, kept as two names so either can move alone                   |
+| `gemini.py` | `GeminiModel`: one Gen AI SDK client for every call (pinned model, system instruction, JSON schema, no tools, thinking `minimal` or `high`, one timeout over the SDK's retries), and `gemini_schema`, which rewrites a schema into the JSON Schema subset Gemini accepts |
+
+
+`app/decompose/` — model call 1
+
+
+| File               | What it has                                                                                                                                                                                                             |
+| ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `decomposer.py`    | `Decomposer.decompose(sentence)`: 1-3 English intents with the names each carries, the output schema, and `check_decomposition` (schema, names quoted from the sentence and kept in their intent, no untranslated Urdu) |
+| `system_prompt.md` | Decompose's instructions; the glossary is filled in at startup                                                                                                                                                          |
+
+
+`app/planning/` — model call 2, and the pipeline
+
+
+| File               | What it has                                                                                                                                               |
+| ------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `outcomes.py`      | What planning ends in (`PlannedSteps`, `NeedsInput`, `Refusal`) and the strict shape of the planner's answer, with its JSON schema                        |
+| `planner.py`       | `Planner.plan(...)`: builds the prompt (sentence, intents as a retrieval aid, today, candidates with their parameters and, for a looked-up one, what it is found by) and validates the answer           |
+| `system_prompt.md` | The planner's instructions                                                                                                                                |
+| `service.py`       | `SentencePlanner.understand(sentence, allowed, session_id)`: decompose → retrieve → plan → validate. No candidates means a refusal without a planner call |
+| `__main__.py`      | `python -m app.planning "sentence"` shows every stage and the backend's preflight answer (`make plan Q="..."`)                                            |
+
+
+`app/validation/` — checks on model output, no model involved
+
+
+| File                | What it has                                                                                                                                                                                                                                                                                   |
+| ------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `problems.py`       | `Problem`, `InvalidModelOutputError` (with a code per broken rule), and the quoting helpers                                                                                                                                                                                                   |
+| `plan_validator.py` | `validate_plan`: ids in the metadata, the allow-list and the candidates; parameters declared, not duplicated, required ones present; forms, types, allowed values, real dates; names and amounts quoted from the sentence; earlier-step facts; step count; versions stamped from the metadata |
+
+
+`app/orchestration/` — the conversation
+
+
+| File              | What it has                                                                                                                                                                                                                                                                         |
+| ----------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `orchestrator.py` | `ChatOrchestrator.handle(session_id, turn, user_token)`: the state machine. Plans a new sentence (or takes it from the cache), preflights, asks, resumes the same plan with the answer, confirms, executes, and handles an expired token, a moved count and every preflight refusal |
+| `session.py`      | `Session` (phase, sentence, plan, what was asked, the token), the phases, `SessionStore` and the in-memory store with its time limit                                                                                                                                                |
+| `answers.py`      | Reading answers without a model: yes and no in English and Roman Urdu, an option by number or name, a value by type                                                                                                                                                                 |
+| `plan_cache.py`   | `PlanCache` (least recently used) and `plan_cache_key` (normalised sentence, allow-list, capability versions, today)                                                                                                                                                                |
+
+
+`app/response/` — what the user reads
+
+
+| File         | What it has                                                                                                                                                                                          |
+| ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `replies.py` | `ChatReply`, and every reply: refusals by code, questions (a choice, a name again, a missing value), confirmations (the backend's text), cancelled, and answers built from each step's backend reply |
+
+
+`app/capabilities/` — capability metadata as data
+
+
+| File            | What it has                                                                                                      |
+| --------------- | ---------------------------------------------------------------------------------------------------------------- |
+| `snapshot.py`   | Loads `snapshots/agent-metadata.json` into the generated models                                                  |
+| `similarity.py` | Build-time assertion 5: pairwise description similarity, and the pairs above 0.92 that are not declared siblings |
+| `__main__.py`   | `python -m app.capabilities` prints every pair's similarity (`make descriptions-report`)                         |
+
+
+#### `ai-layer/domain/school/`
+
+
+| File          | What it has                                                                                                |
+| ------------- | ---------------------------------------------------------------------------------------------------------- |
+| `glossary.py` | A short glossary of office words (challan, baqaya, jurmana, wasooli, …) for both prompts                   |
+| `calendar.py` | The school's time zone (`Asia/Karachi`) and `school_today()`, for the planner's "today" and the plan cache |
+
+
+#### `ai-layer/scripts/`
+
+
+| File                         | What it has                                                                                                                                            |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `generate_gateway_models.py` | Regenerates `app/gateway/models.py` from the OpenAPI contract with fixed options (part of `make contracts`)                                            |
+| `extract_eval_corpus.py`     | Rewrites `eval/retrieval/data/contract_sentences.jsonl` and `distractors.jsonl` from `planning-contracts/dist/routing-index.json` (`make eval-corpus`) |
+
+
+#### `ai-layer/tests/`
+
+The folder decides the marker:
+
+- `integration/` needs Docker;
+- `build_checks/` needs `make embeddings-up`;
+- `model_checks/` calls the real models through the Gemini API.
+
+`make ai-test-unit` runs none of them, and `make ai-test` runs everything except `model_checks/`.
+
+
+| File                                             | What it proves                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `conftest.py`                                    | Hides your `AI_LAYER_*` variables from tests, and marks tests by folder                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| `unit/test_settings.py`                          | Defaults, overrides, typo detection, `.env.example` documenting exactly the real settings                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| `unit/test_logging.py`                           | Sensitive values never reach a log line                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| `unit/test_gateway_client.py`                    | Parsing real metadata, unknown and missing fields, versions, the bearer token, error codes, unreachable and slow backends; preflight's request body (no empty fields), its confirmation, and refusals carrying candidates or a hint; execute's request, step results and a whole-plan refusal                                                                                                                                                                                                                                                                       |
+| `unit/test_gateway_models.py`                    | Generated models match the contract, and all reject unknown fields                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| `unit/test_capability_snapshot.py`               | The snapshot parses, versions are SHA-256, siblings are registered and symmetric, no URLs                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| `unit/test_description_similarity.py`            | Pair ordering, the 0.92 threshold, siblings allowed, descriptions are what gets embedded                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| `unit/test_embeddings_client.py`                 | Pinned model accepted, any other refused, batching, wrong sizes refused, a helpful error when the service is down                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| `unit/test_health_api.py`                        | Live/ready for every failure mode, request ids, shutdown, startup without a database; not ready until the first sync, still ready after a later failed poll                                                                                                                                                                                                                                                                                                                                                                                                         |
+| `unit/test_metadata_sync.py`                     | The first sync indexes every description; nothing is fetched or embedded when nothing changed; a new version re-embeds only that one; withdrawn capabilities are deleted; another model's rows are re-embedded; a wrong model writes nothing; the loop survives a backend outage                                                                                                                                                                                                                                                                                    |
+| `unit/test_retrieval.py`                         | Fusion scores, ranks and ties; siblings follow their capability, keep their own score, never split, never come from outside the allow-list; the cap; the retriever embeds before touching the index, searches every intent, and retrieves nothing for an empty allow-list                                                                                                                                                                                                                                                                                           |
+| `unit/test_eval_dataset.py`                      | The committed eval set is sound (size, labels, duplicates, Roman Urdu with glosses, every cluster member covered), the rules catch a bad set, and the recall and cluster metrics                                                                                                                                                                                                                                                                                                                                                                                    |
+| `unit/test_migration_files.py`                   | Migration file naming, numbering, checksums, schema-name safety                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| `unit/test_gemini.py` | With a fake SDK client: the request (pinned model, system instruction, prompt as the only content, JSON schema, no tools), `minimal` or `high` thinking, the schema rewritten into Gemini's subset (`$ref`s inlined, type lists as `anyOf`, property names kept), API errors, an unreachable API and the timeout as unavailable, a blocked or cut-off answer and non-JSON as output errors, a missing key, closing the client |
+| `unit/test_decomposer.py`                        | The pinned model and glossary are used, without thinking; a name the user never wrote, a changed name, untranslated Urdu and anything outside the schema are refused                                                                                                                                                                                                                                                                                                                                                                                                |
+| `unit/test_plan_validator.py`                    | A good two-step plan with versions from the metadata; a hallucinated id; ids outside the allow-list or candidates; invented, duplicate and missing parameters; defaults; forms, types, allowed values, dates; words and amounts not in the sentence; earlier-step facts; step limits; refusals and `needs_input`; contradictory or unknown shapes                                                                                                                                                                                                                   |
+| `unit/test_planning_service.py`                  | With scripted models: retrieval searches with the English intent, the planner sees the sentence, the intents as a retrieval aid, today and the candidates; nothing retrieved means no planner call; the allow-list holds; a traced run shows all seven understanding stages, and a rejected plan is a failed stage listing the broken rules                                                                                                                                                                                                                         |
+| `unit/test_chat_orchestrator.py`                 | With a scripted backend and planner: a read in one turn; a write after yes; an ambiguous name resumed without planning; a missing value filled; cancelling runs nothing; an expired token and a moved count confirmed again; a failed precondition in the backend's words; a name not found asked up to three times; the plan cache; model failures not cached; a new sentence replacing a waiting plan; sessions per user; an answer after the session expired; a stale version; the stages a traced question, choice and confirmation show, with no token in them |
+| `unit/test_chat_answers.py`                      | Yes and no words, choosing options, reading amounts, dates, allowed values and free text; the plan cache key and eviction                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| `unit/test_measure_logic.py`                     | Recordings (asked once, replayed without a model, refused for a changed prompt or thinking setting, outages not recorded), every fault caught for its own reason, and how the four numbers are counted                                                                                                                                                                                                                                                                                                                                                              |
+| `unit/test_chat_page.py`                         | `GET /` serves the page self-contained and locked to its own origin, inserts replies as text, can be turned off, and stays out of the API description                                                                                                                                                                                                                                                                                                                                                                                                               |
+| `unit/test_chat_api.py`                          | `POST /chat` over HTTP: the reply's shape, exactly one kind of turn, 401 without a token or when the backend refuses it, 503 when chat or the backend is off; the trace comes back when asked, and not when the setting is off                                                                                                                                                                                                                                                                                                                                      |
+| `unit/test_trace.py`                             | Stages kept in the order they start, with input, output and timing; a failed stage marked with its error; nothing kept outside a request; long text cut                                                                                                                                                                                                                                                                                                                                                                                                             |
+| `model_checks/test_planning_with_real_models.py` | The real models (Gemini API): a Roman Urdu sentence becomes a valid plan with names intact, a sentence matching nothing is refused, a two-part sentence becomes two steps in order                                                                                                                                                                                                                                                                                                                                                                                         |
+| `integration/conftest.py`                        | The container and connection fixtures                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| `integration/test_database_boundary.py`          | Invariant 1 in Postgres                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| `integration/test_index_migrations.py`           | The index table matches the plan; edited, failed or unknown migrations are handled safely                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| `integration/test_startup_and_readiness.py`      | The real startup path migrates the index and reports ready; with sync on, it fills the index from the backend's metadata before reporting ready, and the retriever finds the reminder                                                                                                                                                                                                                                                                                                                                                                               |
+| `integration/test_capability_index_queries.py`   | Against Postgres + pgvector: sync upserts and deletes, dense ranking by cosine within the allow-list and embedding model, lexical ranking on any word with stemming, stop words match nothing, siblings                                                                                                                                                                                                                                                                                                                                                             |
+| `build_checks/test_capability_descriptions.py`   | Against the live embeddings service: it runs pinned BGE-M3, and no two descriptions embed above 0.92 unless declared siblings. Fails, not skips, when the service is down                                                                                                                                                                                                                                                                                                                                                                                           |
+
+
+#### `ai-layer/eval/` — measuring the AI layer
+
+Run with `make ai-eval` (every eval) or `make measure` (the four numbers); both need Docker and
+`make embeddings-up`, and record any model answer not yet recorded. `make measure-ci` replays the
+recordings without calling a model. None of this is part of `make ai-test`.
+
+
+| File                                                | What it has                                                                                                                                                                                                   |
+| --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `conftest.py`                                       | Reuses the integration tests' throwaway Postgres; opens empty, migrated indexes that last the whole module                                                                                                    |
+| `test_retrieval_recall.py`                          | The Phase 4 gates: recall@30 above 90% on the POC index, and among distractors for queries in English; whole clusters on both; Roman Urdu reported on its own                                                 |
+| `test_retrieval_with_intents.py`                    | Retrieval as it really runs: every sentence decomposed by the decompose model, the stress index searched with its intents, held to the same 90% gate                                                                        |
+| `retrieval/intents.py`                              | Decomposes every eval sentence with the decompose model, through the recordings                                                                                                                                             |
+| `test_measure.py`                                   | Phase 7: prints the four numbers (all, English, Roman Urdu) and fails if one fell below the baseline; the validator catches every injected fault; a deliberately broken description shows up as a recall drop |
+| `measure/pipeline.py`                               | Every case (175 labelled sentences, 70 to refuse) through decompose, retrieval on the stress index, the planner and the validator, keeping each stage's result                                                |
+| `measure/recordings.py`                             | Recorded model answers in `eval/recordings/`: record mode asks only for what is missing, replay mode never calls a model; a changed prompt invalidates the recording                                          |
+| `measure/faults.py`                                 | Thirteen ways to break a real planner answer (a made-up id, an invented parameter, a name the user never wrote, …) and the tally of what the validator caught                                                 |
+| `measure/scores.py`                                 | The four numbers per language                                                                                                                                                                                 |
+| `measure/report.py`                                 | The printed table and `reports/measure.md`                                                                                                                                                                    |
+| `measure/baseline.json`                             | The numbers a run must not fall below (update with `EVAL_UPDATE_BASELINE=1 make measure`)                                                                                                                     |
+| `measure/data/refusal_sentences.jsonl`              | 60 requests the POC must refuse, labelled by the contracts as routing to capabilities it does not publish: every other fee intent, and one per other module (generated)                                       |
+| `measure/data/refusal_authored.jsonl`               | 10 non-requests and out-of-scope questions (greetings, weather, a joke), English and Roman Urdu                                                                                                               |
+| `recordings/decompose.json`, `recordings/plan.json` | The recorded model answers, before validation, committed so CI measures without a model. Each file names its model; today they still hold Claude's answers (see Status)                                                                                                            |
+| `retrieval/data/contract_sentences.jsonl`           | 75 sentences labelled by the planning contracts: routing examples and near-misses for the 8 capabilities (generated)                                                                                          |
+| `retrieval/data/authored_sentences.jsonl`           | 100 sentences written for this eval, English and Roman Urdu with glosses, weighted towards the four fee corrections                                                                                           |
+| `retrieval/data/distractors.jsonl`                  | 481 other planning-contract intents' one-line summaries, for the stress index (generated)                                                                                                                     |
+| `retrieval/dataset.py`                              | Loads the files and lists why a set would give a flattering number (too small, unknown labels, duplicates, Roman Urdu without glosses, thin cluster members)                                                  |
+| `retrieval/harness.py`                              | Builds the POC index with the real sync and the stress index with distractors, then retrieves every sentence as typed and every Roman Urdu gloss                                                              |
+| `retrieval/metrics.py`                              | Recall@30 from the candidates; recall@1/3/5 and MRR from the fused order; the cluster check                                                                                                                   |
+| `retrieval/embedding_cache.py`                      | Keeps eval embeddings in `eval/.cache/` (not committed), one file per model revision                                                                                                                          |
+| `retrieval/report.py`                               | Writes `reports/retrieval.md`                                                                                                                                                                                 |
+| `reports/retrieval.md`                              | The latest results: every index and query group, per capability, per source, and the hardest sentences                                                                                                        |
+| `reports/measure.md`                                | The four numbers, outcomes per set, plan accuracy per capability, faults per kind, and every sentence planned wrongly or acted on when it should have been refused                                            |
+| `reports/retrieval_with_intents.md`                 | The latest results with real intents, and any sentence decompose could not answer within the rules                                                                                                            |
+
+
+---
+
+
+### Where the next phases go
+
+
+| Phase         | Backend                             | AI layer                                                                                       |
+| ------------- | ----------------------------------- | ---------------------------------------------------------------------------------------------- |
+| After the POC | the real backend adds agent-gateway | Redis behind `SessionStore`, redaction before any model call (the SDK behind `StructuredModel` is done: decision 69) |
+
+
+The "Repository layout" section of `docs/CLAUDE.md` shows this same structure, including these
+future folders. Change both together.
+
+---
+
+
+### Recipes
+
+**Add a capability.**
+
+1. Find its operation name in `planning-contracts/dist/capability-index.json`. Never invent one: if
+  it is missing, write the planning contract first.
+2. Put `@AgentCapability`, one `@AgentParam` per request-record field, any `@AgentPrecondition`s and
+  an `@AgentEffect` on the controller method.
+3. Add what it needs to run, next to the data it reads:
+  - a `PreconditionCheck` bean for each new precondition id;
+  - an `AffectedCount` bean if the blast radius is above `SINGLE`, or if its confirmation uses a fact;
+  - an `EntityResolver` bean for each new resolver type.
+   If it is declared only so retrieval must tell it apart, mark it `@AgentNotImplemented` instead.
+   Otherwise the handler returns a record carrying every declared fact, and `count` when it has a
+   count bean; it may take the signed-in `UserContext` as a second parameter.
+4. Run `make contracts`, then `make test`. A broken rule stops the backend with every problem
+  listed. A description too close to a non-sibling fails the build checks.
+
+**Add an entity type to resolve.** Implement `EntityResolver` in the package that owns the data (for
+example `academic/agent/`).
+
+- Put the user's branch in the SQL `WHERE` clause with `SchoolScope`, never in a filter afterwards.
+- Match with `NameSearch`.
+- Return a label the confirmation can use, and a context that tells namesakes apart.
+- Name the type in `@AgentParam(resolver = "...", label = "...")`.
+
+**Add a precondition check.** Declare `@AgentPrecondition(id, text, hint)` on the capability. Add a
+`PreconditionCheck.of(id, ...)` bean beside the repository it reads. It receives the parameter values
+already typed, and ids already resolved. The hint is what the user sees; never suggest a way around it.
+
+**Add a backend table.** Create `school-app/src/main/resources/db/migration/V<next>__what_it_is.sql`,
+run `make backend-verify`, and list the file in this document.
+
+**Add or change a gateway endpoint.** Change `agent-gateway`, run `make contracts` (it rewrites the
+OpenAPI spec, the snapshot and `app/gateway/models.py`), then use the new models in
+`app/gateway/client.py`. Never hand-write a model the backend already describes.
+
+**Add an index migration.** Create `ai-layer/migrations/<next NNNN>_what_it_is.sql`. Never edit an
+applied one: the runner refuses to start.
+
+**Change a prompt or the glossary.** Edit `app/decompose/system_prompt.md`,
+`app/planning/system_prompt.md` or `domain/school/glossary.py`. Then run `make ai-model-checks` and
+`make ai-eval`: the eval decomposes every sentence again for the new prompt, and says whether retrieval
+still clears 90%.
+
+**Add eval sentences.** Append lines to `eval/retrieval/data/authored_sentences.jsonl`:
+`{"text", "lang": "en" | "ur-Latn", "expected": "<capability id>", "source": "authored", "gloss"}`,
+with a gloss for every Roman Urdu line. `tests/unit/test_eval_dataset.py` says whether the set is still
+sound. Then run `make ai-eval`. Never add a description's own wording as a sentence.
+
+**Add an AI layer setting.** Add a field to `app/core/settings.py` and the matching
+`AI_LAYER_…` line to `.env.example`. A test fails if either one is missing.
 
 ---
 
@@ -802,7 +1602,7 @@ confusable cluster. This is the registered set:
 | Confusable | `fee.writeoff.propose` | write off a debt that will never be collected | UC-04-09-PC-1 | never |
 | Confusable | `fee.latefee.waive` | waive a late fee | UC-04-15-PC-4 | never |
 
-**2. General engine, school-specific edges.** [ARCHITECTURE.md](ARCHITECTURE.md) explains the split in
+**2. General engine, school-specific edges.** [Who does what](#who-does-what) explains the split in
 plain words.
 
 - `backend/agent-gateway` is generic, and Maven's module direction keeps it that way: its test
@@ -843,11 +1643,12 @@ and pinned by `DatabaseMigrationIT`.
 - **Ambiguous names:** "class 5", "blue" and "ahmed" each match more than one record.
 
 **8. Both model calls go through the Claude Code CLI (Phase 5)**, on the owner's subscription.
+*Superseded by decision 69: both calls now go to the Gemini API.*
 
 - The CLI path is versioned inside the desktop app, so it has to be a setting.
 - The pinned model ids are `claude-haiku-4-5-20251001` and `claude-sonnet-5`.
 - There is no temperature control. Consistency comes from structured output, the validator and the plan cache.
-- CLAUDE.md records this under "On the Claude CLI".
+- CLAUDE.md recorded this under "On the Claude CLI" (now "On the model calls").
 
 **9. Versions:** Spring Boot 3.5.16, springdoc 2.8.17, Flyway 11, Maven 3.9.16 through the wrapper,
 pgvector `0.8.6-pg16`, Text Embeddings Inference `cpu-1.9.3`, FastAPI 0.141, Pydantic 2.13, uv 0.11.
@@ -1041,7 +1842,7 @@ labelled capabilities compete with about as many as the full product will index.
 the distractors' shorter style is not what makes it hard: with contract summaries in place of our
 descriptions, dense recall was about the same.
 
-**43. Model calls use the Claude Code CLI headless, never `--bare`.**
+**43. Model calls use the Claude Code CLI headless, never `--bare`.** *Superseded by decision 69.*
 
 - `--bare` accepts only an API key, not the subscription's sign-in.
 - Instead, each call turns off tools, MCP servers and settings files, keeps no session, and runs in an empty temporary directory.
@@ -1072,11 +1873,12 @@ checks it is a real date, and the user sees it in the backend's confirmation.
 reaches 96.0–96.6% on the stress index, better than the Phase 4 stand-in, so adding the typed sentence is
 not needed now (decision 40).
 
-**49. Real model calls stay out of `make ai-test`.** They use the subscription and take time.
-`make ai-model-checks`, `make ai-eval` and `make verify-phase5` run them. The eval replays Haiku's
+**49. Real model calls stay out of `make ai-test`.** They use the API quota and take time.
+`make ai-model-checks`, `make ai-eval` and `make verify-phase5` run them. The eval replays decompose's
 answers from `eval/recordings/` (Phase 7), so a changed prompt or glossary must be re-recorded.
 
-**50. There is no temperature.** The CLI has no sampling setting and Sonnet 5 rejects one. Consistency
+**50. There is no temperature.** The CLI had no sampling setting and Sonnet 5 rejects one; with Gemini
+(decision 69) it stays at the default of 1.0, as Google recommends for Gemini 3. Consistency
 comes from the schema, the validator and, in Phase 6, the plan cache. The live checks use sentences
 a correct planner gets right every time. Phase 7 measures how often it doesn't.
 
@@ -1156,6 +1958,33 @@ address as `/chat` avoids any cross-origin setup, and the page needs no build st
 - Replies are inserted as text, never as markup.
 - The token stays in the browser tab.
 
+**65. CI lives at the repository root and watches `self_aware/` only.** The repository also holds the use
+cases and planning contracts, which do not affect these jobs. A push that changes only those documents
+does not start them.
+
+**66. The pipeline view is a trace each stage records about itself.** It is not a second copy of the
+pipeline written for the page.
+
+- `app/core/trace.py` keeps a list of stages for one request in a context variable. Decompose, retrieval,
+  planning, validation, preflight and execute each wrap their own work in `trace.stage(...)`. The trace
+  therefore shows what really ran, in order, with real timings, and a new stage appears by adding one block.
+- With no trace active, a stage keeps nothing. The eval runs and the tests are unchanged.
+- A request asks for it (`"trace": true`), and a setting can refuse it. Traces hold the sentence, prompts
+  and the backend's data, so they go back only to the caller of that turn and are never logged. The two
+  secrets, the user's token and the preflight token, are never put in.
+
+**67. Decompose runs without extended thinking.** The Claude CLI lets the model think before answering by
+default. For decompose, that hidden thinking was up to 3,571 tokens for a one-line intent, and the call
+took anywhere from 4 to 40 s. Without it (`ModelRequest.thinking=False`, which sets `MAX_THINKING_TOKENS=0`
+for that call) Haiku writes about 130 tokens in 2-3 s at the API, so a new sentence takes about 10 s in all.
+
+- Only decompose changed. The planner keeps thinking, because its choices are what plan accuracy measures.
+- Decompose was re-recorded with the real model. Recall@30 went from 96.6% to 95.4%: two Roman Urdu
+  sentences were phrased differently ("Return the money…" instead of "Refund the money…"). Asking the same
+  two sentences five more times each, with thinking on and off, gave the same mix of phrasings, so this is
+  Haiku's normal variation, not a loss from turning thinking off. The new numbers are the baseline.
+- A recording made without thinking says so (`"thinking": false`), and replay refuses to mix the two.
+
 **68. "Which one?" offers only records the action could use.** Before, a name matching several records
 offered all of them. "Maryam Javed" for a payment offered her August invoice, already paid in full, beside
 September. Now, in preflight's resolve pass (agent-gateway, so every capability gets it):
@@ -1176,34 +2005,81 @@ Two small fixes came with it. "blue section" now finds the Blue sections, becaus
 the word "section". A name not found is asked again without the backend's developer text ("Step 1: no
 section matches …").
 
-**67. Decompose runs without extended thinking.** The Claude CLI lets the model think before answering by
-default. For decompose, that hidden thinking was up to 3,571 tokens for a one-line intent, and the call
-took anywhere from 4 to 40 s. Without it (`ModelRequest.thinking=False`, which sets `MAX_THINKING_TOKENS=0`
-for that call) Haiku writes about 130 tokens in 2-3 s at the API, so a new sentence takes about 10 s in all.
+**69. Both model calls go to the Gemini API, to `gemini-3.1-flash-lite` (21 Sep 2026).** Your
+decision, for its daily request allowance, and as the first step towards running the AI layer in the
+cloud: the Claude CLI was one subprocess per call, signed in through a desktop app's keychain entry,
+which a server cannot have. It replaces decisions 8 and 43.
 
-- Only decompose changed. The planner keeps thinking, because its choices are what plan accuracy measures.
-- Decompose was re-recorded with the real model. Recall@30 went from 96.6% to 95.4%: two Roman Urdu
-  sentences were phrased differently ("Return the money…" instead of "Refund the money…"). Asking the same
-  two sentences five more times each, with thinking on and off, gave the same mix of phrasings, so this is
-  Haiku's normal variation, not a loss from turning thinking off. The new numbers are the baseline.
-- A recording made without thinking says so (`"thinking": false`), and replay refuses to mix the two.
+- **One file changed hands.** `app/llm/claude_cli.py` is gone, and `app/llm/gemini.py` implements
+  the same `StructuredModel` interface with Google's Gen AI SDK. Decompose, the planner, the
+  validator and the eval did not change.
+- **Pinned.** `gemini-3.1-flash-lite` is Google's stable model code, not an alias. Both calls use it
+  but keep separate names (`DECOMPOSE_MODEL`, `PLANNER_MODEL`), so either can move alone.
+- **Thinking.** `thinking=False` (decompose, decision 67) asks for `minimal`, Gemini 3's lowest
+  level; Google says it matches "no thinking" for most requests but does not guarantee it.
+  `thinking=True` (the planner) asks for `high`, where the model decides how much to think, as Sonnet
+  did. Changing either level means re-recording.
+- **The schema is rewritten for Gemini, not changed.** Gemini documents only a subset of JSON Schema,
+  so the transport inlines `$ref`s, writes a list of types as `anyOf` and drops keywords outside the
+  subset (the length limits). What the model returns is still parsed with `extra="forbid"` models and
+  checked by the validator.
+- **Errors.** A missing key, an API error (with Google's status and message, which never repeat the
+  prompt), an unreachable API and the timeout are `ModelUnavailableError`. A blocked prompt, an answer
+  cut off early and anything but a JSON object are `ModelOutputError`. The SDK retries 408, 429 and
+  5xx, at most 3 attempts, inside one timeout.
+- **Recordings and CI.** Recordings name their model, so Claude's recordings no longer replayed. Gemini's
+  answers were recorded on 21 Sep 2026, and they are the baseline now (see Status).
+- **Tests.** `tests/unit/test_gemini.py` replaces `test_claude_cli.py`. A unit test's stand-in model
+  told decompose and plan calls apart by model id, which are now equal; it uses the call's purpose.
 
-**65. CI lives at the repository root and watches `self_aware/` only.** The repository also holds the use
-cases and planning contracts, which do not affect these jobs. A push that changes only those documents
-does not start them.
+**70. A student's or invoice's name may include the class and section.** "Record payment of 2000 for
+Ahmed Raza in Class 5 Blue received as cash" failed with "I couldn't find…". The planner rightly kept the
+user's words, "Ahmed Raza Class 5 Blue fees", but the invoice lookup wanted every word in the student's
+name. Now the student and invoice lookups match the words against the name plus the class and section
+(the invoice's own section), so the extra words narrow the search instead of breaking it.
 
-**66. The pipeline view is a trace each stage records about itself.** It is not a second copy of the
-pipeline written for the page.
+- At least one word must come from the student's name. "class 5 blue fees" names no student, so it is
+  not a lookup; "Ahmed Raza class 6 blue" finds nothing, because he is in Class 5 Blue.
+- Joining words ("in", "of", "section", "student", "ka/ki/ke") are ignored, as "fees" and "invoice" were.
+- With decision 68, the paid August invoice is not offered, so the sentence goes straight to the
+  confirmation for September.
 
-- `app/core/trace.py` keeps a list of stages for one request in a context variable. Decompose, retrieval,
-  planning, validation, preflight and execute each wrap their own work in `trace.stage(...)`. The trace
-  therefore shows what really ran, in order, with real timings, and a new stage appears by adding one block.
-- With no trace active, a stage keeps nothing. The eval runs and the tests are unchanged.
-- A request asks for it (`"trace": true`), and a setting can refuse it. Traces hold the sentence, prompts
-  and the backend's data, so they go back only to the caller of that turn and are never logged. The two
-  secrets, the user's token and the preflight token, are never put in.
+**71. Each lookup says what it searches by, and the planner is told.** The planner used to know only that a
+parameter is "looked up from the user's words". It did not know what an invoice lookup can use, so it guessed
+differently on each call ("Ahmed Raza Class 5 Blue fees", "Ahmed Raza in Class 5 Blue").
+
+- **Where it lives.** `EntityResolver` (agent-gateway) has an optional `lookup()`: what that resolver searches
+  by, in plain words. The school's four resolvers fill it in. For example the invoice one says "the student's
+  name, optionally with the month or year billed and the class and section, e.g. Ahmed Raza September or Ahmed
+  Raza class 5 blue; or the invoice number, e.g. INV/LHR/26-27/000031".
+- **Published per parameter.** It belongs to the resolver, so one text serves every parameter that uses it:
+  payment, credit, cancellation and write-off all look up an invoice. The registry copies it into each such
+  parameter's metadata as `lookup`, and it counts towards the version. A changed text re-versions the
+  capabilities using it, and the AI layer re-syncs on its own. `AgentMetadataSnapshotIT` fails if a school
+  resolver says nothing.
+- **Two uses in the AI layer.** The planner sees it as `looked_up_by` beside `looked_up_from_words`. It is told
+  to pass the user's words that fit it, to leave out words about something else (amounts, "record",
+  "payment"), and never to add a word. "Hamza Sheikh class 5 blue ki August ki fees 3500 naqad aaj mili" now
+  becomes "Hamza Sheikh class 5 blue August". When a name is not found, the question says what to type
+  ("Please type the student's name, optionally with the month…") instead of a vague "type the name again".
+- **Kept as it was.** The words are still only the user's own (decision 60), and the lookups stay forgiving
+  (decision 70). The hint makes a good phrase likely, not required. Separate fields (`student_name`, `month`)
+  in the plan were considered and not done: they would change the plan contract and move parsing from the
+  backend into the model.
+- **Measured with Gemini**, together with the move to Gemini (decision 69): recall 95.4%, plan accuracy
+  90.3%, refusal correctness 92.2%, catch rate 100%. See Status for the comparison with Claude.
 
 ## Open questions
+
+- **How well does Gemini 3.1 Flash-Lite plan?** Not measured yet. The four numbers in Status are
+  Claude's, and a Flash-Lite model, Google's lightest tier, now does the job Sonnet did. Recording its
+  answers with `make measure` settles it, English and Roman Urdu separately. If the planner falls
+  short, `PLANNER_MODEL` can move to a larger model alone.
+- **The free tier's terms.** On the free tier, Google may use requests to improve its products; on a
+  paid tier it does not. Every sentence, with any student's name in it, goes into the prompt. Before
+  real school data, the key needs a paid (billing-enabled) project, redaction (below), or both.
+- **Daily quota.** Limits are per Google Cloud project and reset at midnight Pacific time. Recording
+  the eval alone takes about 465 calls, and each new chat sentence takes two.
 
 - **Lists of names.** The registry refuses a parameter that looks up a list of names, and no POC
   capability needs one. The real reminder contract's `student_ids` will, so the gateway will need it
@@ -1225,10 +2101,11 @@ pipeline written for the page.
 - **The glossary shares words with the eval** (`baqaya`, `jurmana`, `wasooli`, `naqad`, `raseed`).
   They are genuine office words, but that makes the eval a little kinder than new sentences would be.
   Phase 7 should add sentences from real staff.
-- **Speed.** A new sentence takes about 10 seconds end to end through the CLI (it was 15-60 s before
-  decompose stopped thinking, decision 67): a new process for each of the two calls, plus retrieval. Answers, choices and confirmations take well under a second, because
-  they make no model call. The plan cache makes a repeated sentence fast; the SDK would remove the
-  process start.
+- **Speed.** Through the CLI a new sentence took about 10 seconds end to end (15-60 s before decompose
+  stopped thinking, decision 67): a new process for each of the two calls, plus retrieval. The Gemini
+  SDK (decision 69) removes the process start and reuses connections; the new time is not measured
+  yet. Answers, choices and confirmations take well under a second, because they make no model call,
+  and the plan cache makes a repeated sentence fast.
 - **Questions read awkwardly.** A missing value is asked from the parameter's `meaning`, which was written
   for the planner ("I need one more detail. Exactly the amount received, never rounded and never assumed
   to be the balance (an amount)?"). A short `question` on `@AgentParam`, written by the backend, would read
@@ -1251,11 +2128,8 @@ pipeline written for the page.
 - **The reminder only reaches a whole section.** The contracts also route "is family ko fees ka reminder
   karo" and "message the over-90-day defaulters" to `fee.reminder.send`, and the planner rightly refuses
   both today. The real capability's `student_ids` (see "Lists of names") would cover them.
-- **CI has not run on GitHub yet.** The workflow is at the repository root
-  (`.github/workflows/ai-layer.yml`) and runs only when `self_aware/` changes. All three jobs pass in a clean
-  clone on this Mac (backend, AI layer, and `measure`, which took 7.5 minutes with nothing cached), but
-  a GitHub runner is Linux. Its `measure` job downloads the 2.3 GB model once and caches it. The 75 contract sentences score a little
-  lower than the 100 written here (see the report). Phase 7 should add sentences from real staff.
+- **The 75 contract sentences score lower than the 100 written here** (see the report), so the eval
+  is a little kinder than new sentences would be. Phase 7 should add sentences from real staff.
 - **The other two docs still use old wording.** `docs/POC_Implementation_Plan.md` and
   `docs/Preflight_Implementation.md` still show snake_case example ids and "temperature 0". The
   preflight doc also shows `OUT_OF_SCOPE` coming from resolution (see decision 19). Only CLAUDE.md

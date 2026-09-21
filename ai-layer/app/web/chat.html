@@ -218,9 +218,9 @@
           <ol>
             <li>who is asking, and what they may use (backend)</li>
             <li>the plan cache</li>
-            <li>decompose into English intents (Haiku), then a check</li>
+            <li>decompose into English intents (Gemini), then a check</li>
             <li>embed, search the capability index, fuse</li>
-            <li>plan (Sonnet), then the validator</li>
+            <li>plan (Gemini), then the validator</li>
             <li>preflight and, once confirmed, execute (backend)</li>
             <li>the reply, written without a model</li>
           </ol>
@@ -279,7 +279,7 @@
 
   // What a developer can do about a refusal that is not the sentence's fault.
   const HINTS = {
-    MODEL_UNAVAILABLE: "The Claude CLI could not be used. The failed stage in the pipeline says why; if it says the OAuth session expired, sign the CLI in again from a terminal (claude auth login, see the README).",
+    MODEL_UNAVAILABLE: "The Gemini API could not be used. The failed stage in the pipeline says why: most often no key (set AI_LAYER_GEMINI_API_KEY), a key it refused, or a used-up quota (429 RESOURCE_EXHAUSTED).",
     MODEL_FAILED: "The model answered, but a check refused its answer. The failed stage in the pipeline lists the broken rules.",
     BACKEND_UNAVAILABLE: "Is the backend running? (make backend-run)",
     SESSION_EXPIRED: "A question or confirmation waits 30 minutes for an answer (AI_LAYER_CHAT_SESSION_TTL_SECONDS). Send the sentence again; the plan cache makes the repeat quick.",

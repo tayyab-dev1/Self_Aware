@@ -92,11 +92,20 @@ def which_one(raw: str, options: Sequence[EntityCandidate], *, plan_id: str) -> 
     )
 
 
-def not_found(raw: str, error: AgentErrorResponse, *, plan_id: str) -> ChatReply:
-    # The backend's message ("Step 1: no section matches ...") is for developers, not repeated.
+def not_found(
+    raw: str, error: AgentErrorResponse, *, plan_id: str, lookup: str | None = None
+) -> ChatReply:
+    """Ask for the name again, saying what the record is found by when the backend says it."""
+    # The backend's message ("Step 1: no section matches ...") is for developers, not repeated. The
+    # lookup ("the student's name, optionally with ...") is the backend's own wording for users.
+    ask = (
+        f"Please type {lookup.rstrip('.')}."
+        if lookup
+        else ("Please type the name again, as the school's records write it.")
+    )
     return ChatReply(
         "question",
-        f"I couldn't find \"{raw}\". Please type the name again, as the school's records write it.",
+        f'I couldn\'t find "{raw}". {ask}',
         code="NOT_FOUND",
         plan_id=plan_id,
     )

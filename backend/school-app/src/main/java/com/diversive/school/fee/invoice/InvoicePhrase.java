@@ -23,7 +23,7 @@ record InvoicePhrase(List<String> nameWords, int month, int year) {
 
     private static final Set<String> FILLER = Set.of(
             "invoice", "invoices", "fee", "fees", "bill", "challan", "tuition", "for", "of", "the", "month", "s",
-            "ka", "ki", "ke");
+            "in", "section", "student", "ka", "ki", "ke");
     private static final Map<String, Month> MONTHS = months();
 
     InvoicePhrase {

@@ -103,7 +103,7 @@ ai-test-unit: ## AI layer unit tests only (no Docker, no embeddings service, no 
 	$(UV) run pytest -m "not integration and not embeddings and not model"
 
 .PHONY: ai-model-checks
-ai-model-checks: ## Phase 5 checks against the real Haiku and Sonnet (Claude CLI, uses the subscription)
+ai-model-checks: ## Phase 5 checks against the real models (Gemini API; needs AI_LAYER_GEMINI_API_KEY)
 	$(UV) run pytest tests/model_checks
 
 .PHONY: plan
@@ -124,7 +124,7 @@ measure: ## Print the four numbers (recall@30, plan accuracy, refusal correctnes
 
 .PHONY: measure-ci
 measure-ci: ## The regression run: every eval from eval/recordings/ only, no model called (what CI runs)
-	cd ai-layer && EVAL_MODEL_CALLS=replay AI_LAYER_CLAUDE_CLI_PATH=/nonexistent uv run pytest eval -p no:cacheprovider -q
+	cd ai-layer && EVAL_MODEL_CALLS=replay AI_LAYER_GEMINI_API_KEY= uv run pytest eval -p no:cacheprovider -q
 
 .PHONY: eval-corpus
 eval-corpus: ## Re-extract the eval's contract sentences and distractors from ../planning-contracts

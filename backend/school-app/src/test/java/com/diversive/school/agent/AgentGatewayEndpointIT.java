@@ -62,7 +62,8 @@ class AgentGatewayEndpointIT extends PostgresIntegrationTest {
         assertThat(reminder.get("params").toString()).isEqualTo("""
                 [{"name":"section_id","type":"integer","multiple":false,"required":true,\
                 "meaning":"The section whose families with overdue fees are reminded, e.g. Class 5 Blue",\
-                "resolver":"section","label":"section_name","allowed":[]},\
+                "resolver":"section","label":"section_name",\
+                "lookup":"the class and section together, e.g. class 5 blue, or only the section, e.g. blue","allowed":[]},\
                 {"name":"channel","type":"string","multiple":false,"required":true,\
                 "meaning":"How the reminder is delivered","allowed":["whatsapp","sms","email"],"default_value":"whatsapp"}]""");
         assertThat(reminder.get("preconditions").findValuesAsText("id"))

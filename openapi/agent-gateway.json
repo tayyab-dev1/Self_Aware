@@ -248,6 +248,9 @@
           "label" : {
             "type" : "string"
           },
+          "lookup" : {
+            "type" : "string"
+          },
           "meaning" : {
             "type" : "string"
           },

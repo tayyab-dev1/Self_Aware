@@ -6,6 +6,7 @@ requires-python = ">=3.12,<3.13"
 dependencies = [
     "asyncpg>=0.31.0",
     "fastapi>=0.141.1",
+    "google-genai>=2.24.0",
     "httpx>=0.28.1",
     "pydantic>=2.13.5",
     "pydantic-settings>=2.15.0",
@@ -37,7 +38,7 @@ addopts = "-ra --strict-markers"
 markers = [
     "integration: needs Docker (starts a throwaway Postgres + pgvector container)",
     "embeddings: needs the embeddings service running (make embeddings-up)",
-    "model: calls Haiku or Sonnet through the Claude CLI, on the Claude subscription",
+    "model: calls the real models through the Gemini API (needs AI_LAYER_GEMINI_API_KEY)",
 ]
 
 [tool.ruff]

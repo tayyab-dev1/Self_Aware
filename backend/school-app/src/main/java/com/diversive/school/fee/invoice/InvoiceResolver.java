@@ -15,7 +15,9 @@ import org.springframework.stereotype.Component;
 
 /**
  * An invoice, by its number ("INV/LHR/26-27/000031") or by the student and month ("Ahmed Raza's September
- * invoice"), among the user's branch's invoices. Every invoice is a candidate, paid or not; the context
+ * invoice"), among the user's branch's invoices. People also add the class and section ("Ahmed Raza Class 5
+ * Blue fees"), so the words may come from the student's name or the invoice's class and section, but at least
+ * one must be from the name: "class 5 blue fees" alone names no student. Every invoice is a candidate, paid or not; the context
  * says what is still owed, so the user can choose, and preconditions decide what may be done with it.
  */
 @Component
@@ -26,19 +28,28 @@ public class InvoiceResolver implements EntityResolver {
             FROM fee_invoices fi
             JOIN students st              ON st.id = fi.student_id
             JOIN fee_invoice_balances b   ON b.invoice_id = fi.id
+            JOIN sections sec             ON sec.id = fi.section_id
+            JOIN classes c                ON c.id = sec.class_id
             WHERE fi.branch_id = :branchId
               AND (lower(fi.invoice_no) = lower(:raw)
                    OR (:nameWords <> ''
                        AND %s @> string_to_array(:nameWords, ' ')
+                       AND %s && string_to_array(:nameWords, ' ')
                        AND (:month = 0 OR extract(month FROM fi.billing_period) = :month)
                        AND (:year = 0 OR extract(year FROM fi.billing_period) = :year)))
             ORDER BY fi.billing_period, st.full_name, fi.invoice_no
-            LIMIT 50""".formatted(NameSearch.wordsOf("st.full_name"));
+            LIMIT 50""".formatted(NameSearch.wordsOf("st.full_name || ' ' || c.name || ' ' || sec.name"),
+            NameSearch.wordsOf("st.full_name"));
 
     private final JdbcClient jdbc;
 
     public InvoiceResolver(JdbcClient jdbc) {
         this.jdbc = jdbc;
+    }
+
+    @Override
+    public String lookup() {
+        return "the student's name, optionally with the month or year billed and the class and section, e.g. Ahmed Raza September or Ahmed Raza class 5 blue; or the invoice number, e.g. INV/LHR/26-27/000031";
     }
 
     @Override

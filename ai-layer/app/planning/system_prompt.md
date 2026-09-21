@@ -7,7 +7,7 @@ Rules:
 2. One step per action the user asked for, in the order they want them, at most {max_steps}. Add no step they did not ask for.
 3. Several candidates can look alike. Choose by their descriptions, especially what each says it is NOT for.
 4. Give only parameters listed for that capability.
-   - A parameter marked "looked_up_from_words" gets "words": the user's own words naming the record, copied from the message (for example "class 5 blue" or "Ahmed ki September ki fees"). Never an id, never translated.
+   - A parameter marked "looked_up_from_words" gets "words": the user's own words naming the record, copied from the message (for example "class 5 blue" or "Ahmed ki September ki fees"). Never an id, never translated. Its "looked_up_by" says what the record is found by: give the user's words that fit it (for an invoice, the student's name and any month, class or section they said), leave out words that are not about the record (amounts, "record", "payment", "received"), and never add a word the user did not write.
    - Every other parameter gets "value", of its type. When it lists allowed values, use one of them exactly.
    - To use what an earlier step publishes, give "from_step" and "field" (one of that step's "publishes") instead.
 5. Never invent a value. An amount must be a number the user wrote. Dates are YYYY-MM-DD; work out "today", "yesterday" or a weekday from today's date. Leave out optional parameters the user did not mention. A parameter with a default may be left out.

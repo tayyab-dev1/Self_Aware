@@ -1,23 +1,23 @@
-"""Phase 5 "done when", against the real Haiku 4.5 and Sonnet 5 through the Claude CLI.
+"""Phase 5 "done when", against the real decompose and plan models through the Gemini API.
 
-    make ai-model-checks      (needs the Claude desktop app's CLI, signed in; uses the subscription)
+    make ai-model-checks      (needs AI_LAYER_GEMINI_API_KEY; a run makes about a dozen calls)
 
 Retrieval is replaced by every published capability, so these check the two model calls and the
-validator, not the index. Fails, rather than skips, when the CLI is missing: an unrun check is not a
-passing check. Models are not deterministic, so each sentence is one a correct planner gets right
-every time.
+validator, not the index. Fails, rather than skips, when there is no API key: an unrun check is
+not a passing check. Models are not deterministic, so each sentence is one a correct planner gets
+right every time.
 """
 
 from __future__ import annotations
 
-from collections.abc import Collection, Sequence
+from collections.abc import AsyncIterator, Collection, Sequence
 
-import pytest
+import pytest_asyncio
 
 from app.capabilities.snapshot import load_snapshot
 from app.core.settings import Settings
 from app.decompose.decomposer import Decomposer
-from app.llm.claude_cli import ClaudeCliModel
+from app.llm.gemini import GeminiModel
 from app.planning.outcomes import PlannedSteps, Refusal
 from app.planning.planner import Planner
 from app.planning.service import SentencePlanner, Understanding
@@ -36,22 +36,23 @@ class EveryCapability:
         return RetrievalResult(tuple(Candidate(capability_id=c, score=0.0) for c in ids))
 
 
-@pytest.fixture(scope="module")
-def planner() -> SentencePlanner:
-    model = ClaudeCliModel.from_settings(Settings())
-    return SentencePlanner(
+@pytest_asyncio.fixture(scope="module")
+async def planner() -> AsyncIterator[SentencePlanner]:
+    model = GeminiModel.from_settings(Settings())
+    yield SentencePlanner(
         Decomposer(model, glossary_lines()),
         EveryCapability(),
         Planner(
             model,
             max_steps=3,
-            # The real date: the CLI tells the model today's date too, so a fixed one conflicts.
+            # The real date, so the sentences' relative dates ("aaj") mean what they say.
             today=school_today,
             time_zone=SCHOOL_TIME_ZONE,
             record_words=RECORD_WORDS,
         ),
         lambda: CATALOG,
     )
+    await model.aclose()
 
 
 async def understand(planner: SentencePlanner, sentence: str) -> Understanding:

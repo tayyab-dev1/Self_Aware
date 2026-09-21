@@ -29,6 +29,26 @@ class CapabilityRegistryBuilderTest {
     }
 
     @Test
+    void aResolversLookupIsPublishedWithEveryParameterItFindsAndIsPartOfTheVersion() {
+        Map<String, String> lookups = Map.of("folder", "the folder's name, e.g. travel plans");
+        CapabilityRegistry described = builder.build(List.of(ShareAndFindHandlers.class, ArchiveHandler.class),
+                NotesCapabilities.CHECK_IDS, NotesCapabilities.COUNT_IDS, NotesCapabilities.RESOLVER_TYPES, lookups);
+        CapabilityMetadata share = described.find("notes.folder.share").orElseThrow().metadata();
+        CapabilityMetadata plain = build(ShareAndFindHandlers.class, ArchiveHandler.class)
+                .find("notes.folder.share").orElseThrow().metadata();
+
+        assertThat(share.params()).filteredOn(param -> param.name().equals("folder_id"))
+                .extracting(ParamMetadata::lookup).containsExactly("the folder's name, e.g. travel plans");
+        assertThat(share.params()).filteredOn(param -> param.resolver() == null)
+                .extracting(ParamMetadata::lookup).containsOnlyNulls();
+        assertThat(share.version()).isNotEqualTo(plain.version());
+        // A resolver that says nothing leaves its parameters as they were.
+        assertThat(described.find("notes.note.archive").orElseThrow().metadata().version())
+                .isEqualTo(build(ShareAndFindHandlers.class, ArchiveHandler.class)
+                        .find("notes.note.archive").orElseThrow().metadata().version());
+    }
+
+    @Test
     void buildsEveryEntrySortedById() {
         CapabilityRegistry registry = build(ShareAndFindHandlers.class, ArchiveHandler.class);
 
@@ -50,11 +70,11 @@ class CapabilityRegistryBuilderTest {
         assertThat(share.disambiguateFrom()).containsExactly("notes.note.archive");
         assertThat(share.params()).containsExactly(
                 new ParamMetadata("folder_id", ParamType.INTEGER, false, true, "The folder to share",
-                        "folder", "folder_name", List.of(), null),
+                        "folder", "folder_name", null, List.of(), null),
                 new ParamMetadata("channel", ParamType.STRING, false, true, "How members are told",
-                        null, null, List.of("email", "sms"), "email"),
+                        null, null, null, List.of("email", "sms"), "email"),
                 new ParamMetadata("cover_note", ParamType.STRING, false, false, "A short note sent with the share",
-                        null, null, List.of(), null));
+                        null, null, null, List.of(), null));
         assertThat(share.preconditions()).containsExactly(new PreconditionMetadata(
                 "folder_not_empty", "The folder must contain a note", "There is nothing in this folder to share"));
         assertThat(share.effect()).isEqualTo(new EffectMetadata(

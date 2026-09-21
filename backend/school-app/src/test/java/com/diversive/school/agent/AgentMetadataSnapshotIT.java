@@ -1,11 +1,14 @@
 package com.diversive.school.agent;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
+import com.diversive.agent.spi.EntityResolver;
 import com.diversive.school.support.CommittedJson;
 import com.diversive.school.support.PostgresIntegrationTest;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.MockMvc;
@@ -26,6 +29,9 @@ class AgentMetadataSnapshotIT extends PostgresIntegrationTest {
     @Autowired
     private MockMvc mockMvc;
 
+    @Autowired
+    private List<EntityResolver> resolvers;
+
     @Test
     void committedSnapshotMatchesTheServedMetadata() throws Exception {
         String served = mockMvc.perform(get("/agent/metadata"))
@@ -34,5 +40,12 @@ class AgentMetadataSnapshotIT extends PostgresIntegrationTest {
                 .getContentAsString(StandardCharsets.UTF_8);
 
         CommittedJson.assertMatchesOrUpdate(SNAPSHOT, served);
+    }
+
+    /** The planner learns from it which of the user's words to pass, so every school resolver says it. */
+    @Test
+    void everyResolverSaysWhatItSearchesBy() {
+        assertThat(resolvers).isNotEmpty().allSatisfy(resolver ->
+                assertThat(resolver.lookup()).as(resolver.type()).isNotBlank());
     }
 }

@@ -1,4 +1,4 @@
-"""Decompose every eval sentence with Haiku 4.5, through eval/measure/recordings.py.
+"""Decompose every eval sentence with the decompose model, through eval/measure/recordings.py.
 
 A sentence whose answer broke a rule is kept as its problem codes: it retrieves nothing, and counts
 against recall like any other miss.

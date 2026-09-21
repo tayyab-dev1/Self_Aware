@@ -30,6 +30,7 @@
     "params" : [ {
       "allowed" : [ ],
       "label" : "invoice_label",
+      "lookup" : "the student's name, optionally with the month or year billed and the class and section, e.g. Ahmed Raza September or Ahmed Raza class 5 blue; or the invoice number, e.g. INV/LHR/26-27/000031",
       "meaning" : "The invoice raised in error",
       "multiple" : false,
       "name" : "invoice_id",
@@ -61,7 +62,7 @@
       "text" : "The invoice must not already be cancelled, credited or written off"
     } ],
     "read_only" : false,
-    "version" : "ff1044ccc7ba652193186d893ada06b9f9242ca8bb34177a3522434aaf0da413"
+    "version" : "646e2d8016d7e04f4955ca89a7423a42211ccfdc5c9a9e5f7e454f47e48a6043"
   }, {
     "blast_radius" : "single",
     "description" : "Proposes crediting a fee charge that was wrong but has already been paid, holding the money on the family's account so it reduces their next bill rather than being handed back. It credits nothing on its own: a School Admin must approve it. Not for a wrong charge nobody has paid yet - use fee.cancellation.raise. Not for a correct debt the school will never collect - use fee.writeoff.propose. Not for removing only a late fee - use fee.latefee.waive.",
@@ -79,6 +80,7 @@
     "params" : [ {
       "allowed" : [ ],
       "label" : "invoice_label",
+      "lookup" : "the student's name, optionally with the month or year billed and the class and section, e.g. Ahmed Raza September or Ahmed Raza class 5 blue; or the invoice number, e.g. INV/LHR/26-27/000031",
       "meaning" : "The paid invoice that carried the wrong charge",
       "multiple" : false,
       "name" : "invoice_id",
@@ -121,7 +123,7 @@
       "text" : "The invoice must not already be cancelled, credited or written off"
     } ],
     "read_only" : false,
-    "version" : "1a730c787c569541cf1c760403f33e4a935adc1c4f2c1c4fd009ee5a8a0e863a"
+    "version" : "2296bd6443f4c535ea324dcb26f3190ddc0afabe40bb630e0eca7f81058916a8"
   }, {
     "blast_radius" : "single",
     "description" : "Waives a late fee that has already been charged to a family, removing the fine from their invoice while both the fine and its waiver stay on record. One fine at a time, each with its own reason. Not for cancelling or crediting the fee charge itself - use fee.cancellation.raise or fee.credit.raise. Not for writing off an unpaid debt - use fee.writeoff.propose.",
@@ -178,6 +180,7 @@
     }, {
       "allowed" : [ ],
       "label" : "class_name",
+      "lookup" : "the class's name, e.g. class 5",
       "meaning" : "The class, when the list covers a whole class, e.g. Class 5",
       "multiple" : false,
       "name" : "class_id",
@@ -187,6 +190,7 @@
     }, {
       "allowed" : [ ],
       "label" : "section_name",
+      "lookup" : "the class and section together, e.g. class 5 blue, or only the section, e.g. blue",
       "meaning" : "The section, when the list covers one section, e.g. Class 5 Blue",
       "multiple" : false,
       "name" : "section_id",
@@ -196,6 +200,7 @@
     }, {
       "allowed" : [ ],
       "label" : "student_name",
+      "lookup" : "the student's name, optionally with their class and section, e.g. Ahmed Raza class 5 blue; or the admission number, e.g. 2026-0501",
       "meaning" : "The student, when the list covers one student",
       "multiple" : false,
       "name" : "student_id",
@@ -219,7 +224,7 @@
     } ],
     "preconditions" : [ ],
     "read_only" : true,
-    "version" : "1436db8c9a641625949a4fea9730d2648fcd9b6094d9b3a48be9ae6ed5baae8d"
+    "version" : "e9ca41751b8bf96b5601b6fc943b875a65f04a498f5c9f9c663c2f46d0f2f68a"
   }, {
     "blast_radius" : "single",
     "description" : "Records money a family has paid against one fee invoice, in cash at the office or through a bank challan, and issues the numbered receipt. Use this when a payment has actually been received. Not for online payments, which record themselves. Not for fixing a payment that was recorded wrongly - use fee.payment.correction.raise.",
@@ -237,6 +242,7 @@
     "params" : [ {
       "allowed" : [ ],
       "label" : "invoice_label",
+      "lookup" : "the student's name, optionally with the month or year billed and the class and section, e.g. Ahmed Raza September or Ahmed Raza class 5 blue; or the invoice number, e.g. INV/LHR/26-27/000031",
       "meaning" : "The invoice the money is for",
       "multiple" : false,
       "name" : "invoice_id",
@@ -290,7 +296,7 @@
     } ],
     "read_only" : false,
     "reverses" : "fee.payment.correction.raise",
-    "version" : "29b9eec5c7cbcc7b1148e8273e21e7b66023ad758223d35276d1bc1b25391fe5"
+    "version" : "726cd7266b7106ad45c3594b7712cc587897cdb8509d652d0b978d1ff2d291b6"
   }, {
     "blast_radius" : "group",
     "description" : "Sends a fee reminder by WhatsApp, SMS or email to the guardians of every student in a section who has overdue fees, each message carrying that family's own amount and due date. Use this for chasing overdue payments. Not for seeing who owes money without contacting anyone - use fee.overdue.list.",
@@ -308,6 +314,7 @@
     "params" : [ {
       "allowed" : [ ],
       "label" : "section_name",
+      "lookup" : "the class and section together, e.g. class 5 blue, or only the section, e.g. blue",
       "meaning" : "The section whose families with overdue fees are reminded, e.g. Class 5 Blue",
       "multiple" : false,
       "name" : "section_id",
@@ -333,7 +340,7 @@
       "text" : "At least one guardian with overdue fees in the section must have a contact for the chosen channel"
     } ],
     "read_only" : false,
-    "version" : "bb4c3f72ba2a4de82a744c0cb8b768d60dd90b1a2e0d3a81c7c068755ce8d938"
+    "version" : "e60fa8a94a2f5c35d3e930b88dd8e3a4ee13e02f4b3260ac86ae9ac18d10b69d"
   }, {
     "blast_radius" : "single",
     "description" : "Proposes writing off a correctly charged fee debt that the school will never collect, for example because the family cannot be traced or cannot pay, with an account of what was done to recover it. It writes off nothing on its own: the Principal must approve it. Not for a charge raised in error - use fee.cancellation.raise, or fee.credit.raise if it was paid. Not for removing only a late fee - use fee.latefee.waive.",
@@ -351,6 +358,7 @@
     "params" : [ {
       "allowed" : [ ],
       "label" : "invoice_label",
+      "lookup" : "the student's name, optionally with the month or year billed and the class and section, e.g. Ahmed Raza September or Ahmed Raza class 5 blue; or the invoice number, e.g. INV/LHR/26-27/000031",
       "meaning" : "The invoice carrying the debt",
       "multiple" : false,
       "name" : "invoice_id",
@@ -393,6 +401,6 @@
       "text" : "The invoice must not already be cancelled, credited or written off"
     } ],
     "read_only" : false,
-    "version" : "fb44d7813e4c25647406c1adc45e0cf4fb27b2803045dc164173887d2d6eb637"
+    "version" : "050d2fc3fc448739e7d373b95e39129cd241c08fc646b329853ce56ae8fe9598"
   } ]
 }

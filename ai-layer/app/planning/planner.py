@@ -1,4 +1,4 @@
-"""The planner (model call 2, Sonnet 5): the sentence, its intents and the candidates, into a plan.
+"""The planner (model call 2): the sentence, its intents and the candidates, into a plan.
 
 The model sees the user's own sentence, the intents (only as a hint: they were written for search
 and can be wrong), today's date, and the candidates with their parameters. It answers with a plan,
@@ -36,6 +36,8 @@ def candidate_entry(capability: CapabilityMetadata) -> dict[str, Any]:
         }
         if param.resolver is not None:
             entry["looked_up_from_words"] = True
+            if param.lookup:
+                entry["looked_up_by"] = param.lookup
         if param.allowed:
             entry["allowed"] = param.allowed
         if param.default_value is not None:

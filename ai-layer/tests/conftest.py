@@ -27,7 +27,7 @@ def pytest_collection_modifyitems(items: list[pytest.Item]) -> None:
 
     tests/integration  needs Docker (a throwaway Postgres)          -> marker "integration"
     tests/build_checks needs the embeddings service (embeddings-up) -> marker "embeddings"
-    tests/model_checks calls the real models through the Claude CLI -> marker "model"
+    tests/model_checks calls the real models (a Gemini API key)     -> marker "model"
     """
     for item in items:
         if "integration" in item.path.parts:

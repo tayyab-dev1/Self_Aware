@@ -339,6 +339,8 @@ async def test_a_name_not_found_is_asked_again_up_to_three_times() -> None:
     first = await chat.say(message="class 55 ko reminder bhejo")
     assert first.reply.type == "question" and first.reply.code == "NOT_FOUND"
     assert "No section matches" not in first.reply.text  # the backend's developer message stays out
+    lookup = next(p.lookup for p in CATALOG["fee.reminder.send"].params if p.name == "section_id")
+    assert lookup and first.reply.text == f'I couldn\'t find "class 5". Please type {lookup}.'
     second = await chat.say(message="class 56")
     assert second.reply.type == "question"
     assert chat.backend.preflighted[1].steps[0].params["section_id"] == ParamValue(raw="class 56")

@@ -156,6 +156,7 @@ class ParamMetadata(BaseModel):
     allowed: list[str]
     default_value: str | None = None
     label: str | None = None
+    lookup: str | None = None
     meaning: str
     multiple: bool
     name: str

@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 # Checks the Phase 7 "done when" items (docs/POC_Implementation_Plan.md): one command prints the four
 # numbers, and a deliberately broken description shows up as a recall drop. It runs the CI
-# regression run itself, from the recorded model answers, with no Claude CLI reachable.
+# regression run itself, from the recorded model answers, with no model API key.
 #
 #   make db-up && make embeddings-up
-#   make measure          # once, to record any missing model answer (uses the Claude subscription)
+#   make measure          # once, to record any missing model answer (needs AI_LAYER_GEMINI_API_KEY)
 #   make verify-phase7
 #
 # Needs Docker and the embeddings service; the backend and the AI layer need not run.
@@ -37,7 +37,7 @@ run_check() {
 
 printf '\033[1mPhase 7: Measure\033[0m\n'
 
-section "The regression run: make measure-ci (recorded answers only; the Claude CLI path points nowhere)"
+section "The regression run: make measure-ci (recorded answers only; no model API key is set)"
 
 CI_LOG="$LOG_DIR/measure-ci.log"
 if make measure-ci >"$CI_LOG" 2>&1; then
@@ -65,7 +65,7 @@ else
   fail "the broken-description check printed nothing" "see $CI_LOG"
 fi
 
-if grep -q "ModelUnavailableError\|claude-code" "$CI_LOG"; then
+if grep -q "ModelUnavailableError\|generativelanguage" "$CI_LOG"; then
   fail "the regression run tried to reach a model" "see $CI_LOG"
 else
   pass "no model was called: every answer came from ai-layer/eval/recordings/"

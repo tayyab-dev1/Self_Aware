@@ -4,7 +4,7 @@ the backend's preflight says about it. Nothing is executed.
     uv run python -m app.planning "class 5 blue ke defaulters ko whatsapp par reminder bhejo"
     (or: make plan Q="...")
 
-Needs the backend, the embeddings service, an index the AI layer has synced, and the Claude CLI.
+Needs the backend, the embeddings service, an index the AI layer has synced, and a Gemini API key.
 Acts as the dev user: the token is read from BACKEND_DEV_USER_TOKEN, and never printed.
 """
 
@@ -24,7 +24,7 @@ from app.embeddings.client import EmbeddingsClient
 from app.gateway.client import GatewayClient
 from app.gateway.errors import GatewayRejectedError
 from app.index.database import IndexDatabase
-from app.llm.claude_cli import ClaudeCliModel
+from app.llm.gemini import GeminiModel
 from app.planning.outcomes import PlannedSteps
 from app.planning.planner import Planner
 from app.planning.service import SentencePlanner
@@ -42,7 +42,7 @@ async def _plan(sentence: str) -> int:
         log.error("usage", example='BACKEND_DEV_USER_TOKEN=... python -m app.planning "sentence"')
         return 2
 
-    model = ClaudeCliModel.from_settings(settings)
+    model = GeminiModel.from_settings(settings)
     gateway = GatewayClient.from_settings(settings)
     index = await IndexDatabase.connect(settings)
     embeddings = EmbeddingsClient.from_settings(settings)
@@ -87,6 +87,7 @@ async def _plan(sentence: str) -> int:
         await embeddings.aclose()
         await index.close()
         await gateway.aclose()
+        await model.aclose()
     return 0
 
 

@@ -75,12 +75,10 @@ def fake_embeddings(request: httpx.Request) -> httpx.Response:
 async def test_startup_syncs_the_backend_metadata_into_the_index_before_reporting_ready(
     postgres_server: PostgresServer, superuser_connection: asyncpg.Connection, tmp_path: Path
 ) -> None:
-    cli = tmp_path / "claude"  # never run here; chat only needs to find it
-    cli.write_text("#!/bin/sh\nexit 1\n")
     settings = postgres_server.ai_settings(
         backend_base_url="http://backend.test",
         embeddings_base_url="http://embeddings.test",
-        claude_cli_path=str(cli),
+        gemini_api_key="not-a-real-key",  # never used here; chat only needs one to be set
     )
     factory = functools.partial(
         build_resources,

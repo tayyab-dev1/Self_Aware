@@ -22,7 +22,7 @@ from app.embeddings.client import EmbeddingsClient
 from app.gateway.client import GatewayClient
 from app.gateway.models import AgentMetadataResponse
 from app.index.database import IndexDatabase, IndexProbe
-from app.llm.claude_cli import ClaudeCliModel
+from app.llm.gemini import GeminiModel
 from app.llm.runner import ModelUnavailableError
 from app.orchestration.orchestrator import ChatOrchestrator
 from app.orchestration.plan_cache import PlanCache
@@ -65,7 +65,9 @@ class AppResources:
     sync: MetadataSync | None = None
     retriever: HybridRetriever | None = None
     chat: ChatOrchestrator | None = None
-    # Why chat is off while sync is on (for example, no Claude CLI); readiness reports it.
+    # The model client chat calls; closed at shutdown.
+    model: Closeable | None = None
+    # Why chat is off while sync is on (for example, no Gemini API key); readiness reports it.
     chat_problem: str | None = None
     _sync_task: asyncio.Task[None] | None = field(default=None, init=False)
 
@@ -82,6 +84,8 @@ class AppResources:
                     await self._sync_task
             if self.embeddings is not None:
                 await self.embeddings.aclose()
+            if self.model is not None:
+                await self.model.aclose()
             await self.gateway.aclose()
         finally:
             await self.index.close()
@@ -125,7 +129,7 @@ async def build_resources(
         rrf_k=settings.retrieval_rrf_k,
         branch_limit=settings.retrieval_branch_limit,
     )
-    chat, chat_problem = _build_chat(settings, gateway, retriever, sync)
+    chat, model, chat_problem = _build_chat(settings, gateway, retriever, sync)
     return AppResources(
         index=index,
         gateway=gateway,
@@ -133,6 +137,7 @@ async def build_resources(
         sync=sync,
         retriever=retriever,
         chat=chat,
+        model=model,
         chat_problem=chat_problem,
     )
 
@@ -142,15 +147,15 @@ def _build_chat(
     gateway: GatewayClient,
     retriever: HybridRetriever,
     sync: MetadataSync | None,
-) -> tuple[ChatOrchestrator | None, str | None]:
-    """Chat needs the catalog from sync and the Claude CLI. Without sync, chat is simply off."""
+) -> tuple[ChatOrchestrator | None, GeminiModel | None, str | None]:
+    """Chat needs the catalog from sync and a model. Without sync, chat is simply off."""
     if sync is None:
-        return None, None
+        return None, None, None
     try:
-        model = ClaudeCliModel.from_settings(settings)
+        model = GeminiModel.from_settings(settings)
     except ModelUnavailableError as exc:
         log.warning("chat_unavailable", reason=str(exc))
-        return None, str(exc)
+        return None, None, str(exc)
     planner = SentencePlanner(
         Decomposer(model, glossary_lines()),
         retriever,
@@ -171,4 +176,4 @@ def _build_chat(
         plan_cache=PlanCache(settings.plan_cache_size),
         today=school_today,
     )
-    return chat, None
+    return chat, model, None

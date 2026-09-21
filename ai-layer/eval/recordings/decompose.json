@@ -1,12 +1,12 @@
 {
- "model": "claude-haiku-4-5-20251001",
+ "model": "gemini-3.1-flash-lite",
  "system_prompt_sha256": "741362c3ec4de73c1233061cdf06cec1344faa912983d15e1c3119b6c39f4673",
  "thinking": false,
  "answers": {
   "2000 zyada le liye aur wo de bhi chuke, credit kar do": {
    "intents": [
     {
-     "text": "Credit 2000 for overpayment already given",
+     "text": "Credit the 2000 that was taken extra and already paid",
      "entities": []
     }
    ]
@@ -24,7 +24,7 @@
   "7 green walon ko WhatsApp par baqaya yaad karwao": {
    "intents": [
     {
-     "text": "Remind 7 green families about outstanding fees via WhatsApp",
+     "text": "Send a WhatsApp reminder for the outstanding fees for class 7 green",
      "entities": [
       "7 green"
      ]
@@ -34,7 +34,7 @@
   "Ahmed Raza ka kitna baqaya hai": {
    "intents": [
     {
-     "text": "Check how much outstanding fees baqaya Ahmed Raza has",
+     "text": "Check the outstanding fees for Ahmed Raza",
      "entities": [
       "Ahmed Raza"
      ]
@@ -44,7 +44,7 @@
   "Ali walon ne duplicate bill bhi bhar diya, agle mahine mein adjust karo": {
    "intents": [
     {
-     "text": "Adjust duplicate bill for Ali in next month's account",
+     "text": "Adjust the duplicate bill paid by Ali family in next month's fee",
      "entities": [
       "Ali"
      ]
@@ -54,7 +54,7 @@
   "Ali's parents paid the duplicate invoice too, credit it against next month": {
    "intents": [
     {
-     "text": "Credit the payment made by Ali's parents on the duplicate invoice against next month's fees",
+     "text": "Credit the duplicate payment from Ali's parents against next month's invoice",
      "entities": [
       "Ali"
      ]
@@ -64,11 +64,9 @@
   "Ayesha ki September ki fees 5000 cash mili hai, record kar do": {
    "intents": [
     {
-     "text": "Record that 5000 cash was received for Ayesha's September fees",
+     "text": "Record receipt of 5000 cash for September fees for Ayesha",
      "entities": [
-      "Ayesha",
-      "September",
-      "5000"
+      "Ayesha"
      ]
     }
    ]
@@ -76,7 +74,7 @@
   "Bilal ke abbu 9000 naqad de gaye hain, entry kar do": {
    "intents": [
     {
-     "text": "Record 9000 cash payment from Bilal's father",
+     "text": "Record a cash payment of 9000 for Bilal",
      "entities": [
       "Bilal"
      ]
@@ -86,7 +84,7 @@
   "Bilal's father paid 9,000 cash for October, record it": {
    "intents": [
     {
-     "text": "Record 9,000 cash payment for October from Bilal's father",
+     "text": "Record cash payment of 9,000 for October for Bilal",
      "entities": [
       "Bilal"
      ]
@@ -96,7 +94,7 @@
   "Danish ke October ke bill se jurmana hata do, bank band tha": {
    "intents": [
     {
-     "text": "Waive the fine from Danish's October bill because the bank was closed",
+     "text": "Waive the late fee for October bill of Danish because the bank was closed",
      "entities": [
       "Danish"
      ]
@@ -126,7 +124,7 @@
   "Grade 4 ka baqaya dikhao": {
    "intents": [
     {
-     "text": "Show outstanding fees for Grade 4",
+     "text": "Show the outstanding fees for Grade 4",
      "entities": [
       "Grade 4"
      ]
@@ -136,10 +134,9 @@
   "Grade 4 ke September ke invoice bana do": {
    "intents": [
     {
-     "text": "Create the invoice for Grade 4 for September",
+     "text": "Create September invoice for Grade 4",
      "entities": [
-      "Grade 4",
-      "September"
+      "Grade 4"
      ]
     }
    ]
@@ -147,7 +144,7 @@
   "Grade 4 ke liye fee structure bana do — tuition 5000 mahana": {
    "intents": [
     {
-     "text": "Create a fee structure for Grade 4 with tuition of 5000 per month",
+     "text": "Create a fee structure for Grade 4 with a monthly tuition of 5000",
      "entities": [
       "Grade 4"
      ]
@@ -157,7 +154,7 @@
   "Grade 4 ki fees badha do, January se 5500": {
    "intents": [
     {
-     "text": "Increase Grade 4 fees from January to 5500",
+     "text": "Increase the fees for Grade 4 to 5500 starting from January",
      "entities": [
       "Grade 4"
      ]
@@ -167,7 +164,7 @@
   "Grade 9 ke jin ki fees due hai unhe msg kar do": {
    "intents": [
     {
-     "text": "Send a message to students in Grade 9 whose fees are due",
+     "text": "Send a message to Grade 9 students who have overdue fees",
      "entities": [
       "Grade 9"
      ]
@@ -177,7 +174,7 @@
   "Hamza ka duplicate bill nikal do": {
    "intents": [
     {
-     "text": "Get a duplicate bill for Hamza",
+     "text": "Print a duplicate fee bill for Hamza",
      "entities": [
       "Hamza"
      ]
@@ -187,7 +184,7 @@
   "Hina Tariq ki fees bank challan se aa gayi hai": {
    "intents": [
     {
-     "text": "Hina Tariq's fees payment has been received via bank challan",
+     "text": "Mark Hina Tariq fees as paid via bank challan",
      "entities": [
       "Hina Tariq"
      ]
@@ -197,9 +194,9 @@
   "Khan family bahar chali gayi, rabta nahi ho raha, baqaya write off karwao": {
    "intents": [
     {
-     "text": "Write off the outstanding fees for Khan family",
+     "text": "Write off the outstanding fees for Khan family as they have moved abroad and are not responding.",
      "entities": [
-      "Khan"
+      "Khan family"
      ]
     }
    ]
@@ -207,7 +204,7 @@
   "March mein koi inquiry kyun nahi aayi?": {
    "intents": [
     {
-     "text": "Why did no inquiry come in March?",
+     "text": "Ask why there were no inquiries in March.",
      "entities": []
     }
    ]
@@ -215,7 +212,13 @@
   "Maryam se lab fee ghalat li gayi thi, paisay unke khate mein rakh do": {
    "intents": [
     {
-     "text": "Credit the lab fee amount that was incorrectly charged to Maryam's account",
+     "text": "Correct the lab fee mistakenly charged to Maryam",
+     "entities": [
+      "Maryam"
+     ]
+    },
+    {
+     "text": "Credit the money into Maryam account",
      "entities": [
       "Maryam"
      ]
@@ -225,7 +228,7 @@
   "Qureshi family ka 500 ka late charge maaf karo": {
    "intents": [
     {
-     "text": "Waive the 500 rupee late charge for Qureshi family",
+     "text": "Waive the 500 late fee for Qureshi family",
      "entities": [
       "Qureshi"
      ]
@@ -235,7 +238,7 @@
   "Rehan ki 2024 ki fees ka baqaya khatam karne ki darkhwast principal ko bhejo": {
    "intents": [
     {
-     "text": "Send a proposal to the principal to clear Rehan's 2024 fees baqaya",
+     "text": "Send a request to the principal to waive the outstanding fees for 2024 for Rehan",
      "entities": [
       "Rehan"
      ]
@@ -245,7 +248,7 @@
   "Sara ka August ka bill do dafa ban gaya, ek hata do": {
    "intents": [
     {
-     "text": "Remove one duplicate copy of Sara's August bill",
+     "text": "Delete the duplicate August bill for Sara",
      "entities": [
       "Sara"
      ]
@@ -255,10 +258,9 @@
   "Usman ke challan ki stamp wali copy mil gayi, 12000": {
    "intents": [
     {
-     "text": "Received stamped copy of challan for Usman for 12000",
+     "text": "Record receipt of the stamped challan for Usman for 12000",
      "entities": [
-      "Usman",
-      "12000"
+      "Usman"
      ]
     }
    ]
@@ -266,17 +268,15 @@
   "WhatsApp pe sab ko yaad dila do": {
    "intents": [
     {
-     "text": "Remind everyone on WhatsApp",
-     "entities": [
-      "WhatsApp"
-     ]
+     "text": "Send a reminder to everyone on WhatsApp",
+     "entities": []
     }
    ]
   },
   "Zain July mein school chhor gaya tha, September ka bill kyun bana, cancel karo": {
    "intents": [
     {
-     "text": "Cancel the September bill for Zain because the student left school in July",
+     "text": "Cancel the September invoice for Zain because he left the school in July",
      "entities": [
       "Zain"
      ]
@@ -286,7 +286,7 @@
   "Zain left in July but still got a September bill, get rid of it": {
    "intents": [
     {
-     "text": "Remove the September bill for Zain who left in July",
+     "text": "Cancel the September bill for Zain who left in July",
      "entities": [
       "Zain"
      ]
@@ -296,7 +296,7 @@
   "a parent just paid at the counter, enter the receipt": {
    "intents": [
     {
-     "text": "Enter a receipt for a parent payment made at the counter",
+     "text": "Record the receipt for the payment made at the counter",
      "entities": []
     }
    ]
@@ -304,7 +304,7 @@
   "aadhi fees jama hui hai, 3000 record karo": {
    "intents": [
     {
-     "text": "Record that half fees have been paid in, 3000",
+     "text": "Record 3000 as a partial fee payment",
      "entities": []
     }
    ]
@@ -312,7 +312,7 @@
   "aaj ka collection kitna hua?": {
    "intents": [
     {
-     "text": "Tell me how much money was collected today",
+     "text": "Report the total amount collected today",
      "entities": []
     }
    ]
@@ -320,7 +320,7 @@
   "aaj kitne paisay aaye": {
    "intents": [
     {
-     "text": "Check how much money was received today",
+     "text": "Ask how much money was collected today",
      "entities": []
     }
    ]
@@ -328,7 +328,7 @@
   "approve the Grade 4 fee structure": {
    "intents": [
     {
-     "text": "Approve the Grade 4 fee structure",
+     "text": "approve the Grade 4 fee structure",
      "entities": [
       "Grade 4"
      ]
@@ -356,7 +356,7 @@
   "approve the refund for the Khan family": {
    "intents": [
     {
-     "text": "Approve the refund for the Khan family",
+     "text": "approve the refund for the Khan family",
      "entities": [
       "Khan"
      ]
@@ -366,7 +366,7 @@
   "approve the tax configuration": {
    "intents": [
     {
-     "text": "Approve the tax configuration",
+     "text": "approve the tax configuration",
      "entities": []
     }
    ]
@@ -374,7 +374,7 @@
   "assalam o alaikum": {
    "intents": [
     {
-     "text": "Greeting",
+     "text": "Acknowledge the greeting",
      "entities": []
     }
    ]
@@ -382,10 +382,8 @@
   "assign the projector to the physics laboratory": {
    "intents": [
     {
-     "text": "Assign the projector to the physics laboratory",
-     "entities": [
-      "physics laboratory"
-     ]
+     "text": "assign the projector to the physics laboratory",
+     "entities": []
     }
    ]
   },
@@ -400,7 +398,7 @@
   "bacha bina fees diye chala gaya, ab kuch nahi hoga": {
    "intents": [
     {
-     "text": "A student left without paying fees and the staff member is reporting this situation",
+     "text": "Record that the child left without paying fees and confirm no further action will be taken",
      "entities": []
     }
    ]
@@ -408,7 +406,7 @@
   "bank se stamped copy aayi hai, challan CH-2026-0417": {
    "intents": [
     {
-     "text": "Receive stamped copy from bank for challan CH-2026-0417",
+     "text": "Record the payment for challan CH-2026-0417 using the stamped copy received from the bank",
      "entities": [
       "CH-2026-0417"
      ]
@@ -418,7 +416,11 @@
   "bill ghalat tha magar ada ho gaya, ab kya karein, credit bana do": {
    "intents": [
     {
-     "text": "Create a credit for an incorrect bill that has already been paid",
+     "text": "Report that the bill was incorrect but has already been paid",
+     "entities": []
+    },
+    {
+     "text": "Create a credit for the overpayment",
      "entities": []
     }
    ]
@@ -426,7 +428,7 @@
   "branch ka total baqaya kitna hai abhi": {
    "intents": [
     {
-     "text": "Tell me the total outstanding fees for the branch right now",
+     "text": "Check the total outstanding fee amount for the branch.",
      "entities": []
     }
    ]
@@ -442,7 +444,7 @@
   "build a late fee policy — 200 after 7 days, 500 after 30, capped at 1,000": {
    "intents": [
     {
-     "text": "Build a late fee policy with 200 charge after 7 days, 500 charge after 30 days, capped at 1,000",
+     "text": "Create a late fee policy with 200 after 7 days, 500 after 30 days, and a maximum cap of 1,000",
      "entities": []
     }
    ]
@@ -450,7 +452,7 @@
   "can you waive this month's late fee for Fatima": {
    "intents": [
     {
-     "text": "Waive this month's late fee for Fatima",
+     "text": "Waive the late fee for Fatima for this month",
      "entities": [
       "Fatima"
      ]
@@ -460,7 +462,7 @@
   "cancellation raise karo": {
    "intents": [
     {
-     "text": "Create a cancellation request",
+     "text": "Raise a cancellation request",
      "entities": []
     }
    ]
@@ -468,7 +470,7 @@
   "cancellation wapas bhej do, wajah saaf nahi hai": {
    "intents": [
     {
-     "text": "Send back the cancellation because the reason is not clear",
+     "text": "send back the cancellation as the reason is not clear",
      "entities": []
     }
    ]
@@ -476,7 +478,7 @@
   "cash kitna para hai?": {
    "intents": [
     {
-     "text": "Check how much cash is available",
+     "text": "Inquire about the total amount of cash available",
      "entities": []
     }
    ]
@@ -484,7 +486,7 @@
   "charge galat tha, credit karo": {
    "intents": [
     {
-     "text": "Credit back an incorrect charge",
+     "text": "The charge was incorrect, please credit it.",
      "entities": []
     }
    ]
@@ -492,7 +494,7 @@
   "charge hi galat tha": {
    "intents": [
     {
-     "text": "The charge was wrong",
+     "text": "Report that the charge was incorrect",
      "entities": []
     }
    ]
@@ -500,7 +502,7 @@
   "chase the defaulters in Grade 9 Red by WhatsApp": {
    "intents": [
     {
-     "text": "Send a WhatsApp message to chase the defaulters in Grade 9 Red",
+     "text": "Send a collection message to defaulters in Grade 9 Red via WhatsApp",
      "entities": [
       "Grade 9 Red"
      ]
@@ -510,7 +512,7 @@
   "class 5 blue ke parents ko fees ka message bhej do": {
    "intents": [
     {
-     "text": "Send a fees message to the parents of class 5 blue",
+     "text": "Send a fee notification message to the parents of class 5 blue",
      "entities": [
       "class 5 blue"
      ]
@@ -520,7 +522,7 @@
   "class 5 blue mein kis kis ki fees baqi hai?": {
    "intents": [
     {
-     "text": "Find which students in class 5 blue have outstanding fees",
+     "text": "List the students in class 5 blue who have outstanding fees.",
      "entities": [
       "class 5 blue"
      ]
@@ -530,7 +532,7 @@
   "classify this absence as excused — the student was on approved leave": {
    "intents": [
     {
-     "text": "Classify the student's absence as excused because the student was on approved leave",
+     "text": "Classify the student's absence as excused because they were on approved leave.",
      "entities": []
     }
    ]
@@ -538,7 +540,7 @@
   "collection ki report mukhtasar mein batao": {
    "intents": [
     {
-     "text": "Provide a brief report of the collection",
+     "text": "Provide a brief report on collection",
      "entities": []
     }
    ]
@@ -554,7 +556,11 @@
   "concession lagni thi lekin nahi lagi, ab paisa wapas karna hai": {
    "intents": [
     {
-     "text": "Return the money because a concession that was supposed to be applied was not given",
+     "text": "Apply the concession that was supposed to be added",
+     "entities": []
+    },
+    {
+     "text": "Process a refund for the amount paid",
      "entities": []
     }
    ]
@@ -562,7 +568,7 @@
   "concession wapas bhej do": {
    "intents": [
     {
-     "text": "Send back the concession",
+     "text": "Send the concession back",
      "entities": []
     }
    ]
@@ -570,15 +576,17 @@
   "counter par 4500 wasool hue, raseed bana do": {
    "intents": [
     {
-     "text": "Create a receipt for 4500 collected at counter",
-     "entities": []
+     "text": "Record the collection of 4500 and create a raseed",
+     "entities": [
+      "raseed"
+     ]
     }
    ]
   },
   "counter pe paisay jama hue hain": {
    "intents": [
     {
-     "text": "Record that money has been deposited at the counter",
+     "text": "Record that cash was deposited at the counter",
      "entities": []
     }
    ]
@@ -586,10 +594,8 @@
   "credit 1,500 of what they paid — only part of the charge was wrong": {
    "intents": [
     {
-     "text": "Credit 1,500 because only part of the charge was wrong",
-     "entities": [
-      "1,500"
-     ]
+     "text": "credit 1,500 of the amount paid because part of the charge was wrong",
+     "entities": []
     }
    ]
   },
@@ -604,7 +610,7 @@
   "credit raise karo": {
    "intents": [
     {
-     "text": "Increase credit",
+     "text": "Increase the credit limit",
      "entities": []
     }
    ]
@@ -612,7 +618,7 @@
   "das hazaar se zyada wale nadehindagan kaun hain": {
    "intents": [
     {
-     "text": "Show me the defaulters who owe more than 10000 rupees",
+     "text": "Identify defaulters who owe more than 10000",
      "entities": []
     }
    ]
@@ -628,18 +634,15 @@
   "date of birth theek kar do, B-form pe 14 March 2016 likha hai": {
    "intents": [
     {
-     "text": "Correct the date of birth to 14 March 2016 based on the B-form",
-     "entities": [
-      "B-form",
-      "14 March 2016"
-     ]
+     "text": "Correct the date of birth to 14 March 2016 as per the B-form",
+     "entities": []
     }
    ]
   },
   "decline this request — they've broken two plans already this year": {
    "intents": [
     {
-     "text": "Decline this request because they have broken two plans already this year",
+     "text": "Decline the request because they have already broken two plans this year",
      "entities": []
     }
    ]
@@ -663,7 +666,7 @@
   "do dafa bill bana tha aur dono jama ho gaye": {
    "intents": [
     {
-     "text": "Two bills were created and both have been paid in.",
+     "text": "Report that the bill was generated twice and both payments were made",
      "entities": []
     }
    ]
@@ -671,7 +674,7 @@
   "do mahine se purane defaulters dikhao": {
    "intents": [
     {
-     "text": "Show defaulters from the past two months",
+     "text": "Show the list of defaulters who are overdue by 2 months",
      "entities": []
     }
    ]
@@ -679,7 +682,7 @@
   "do saal purana baqaya hai, maaf karne ki tajweez bhejo": {
    "intents": [
     {
-     "text": "Send a proposal to waive the two-year-old outstanding fees",
+     "text": "Send a proposal to waive the 2 year old outstanding dues",
      "entities": []
     }
    ]
@@ -687,7 +690,7 @@
   "drop the late payment penalty on invoice INV/LHR/26-27/000045": {
    "intents": [
     {
-     "text": "Drop the late payment penalty on invoice INV/LHR/26-27/000045",
+     "text": "Waive the late fee for invoice INV/LHR/26-27/000045",
      "entities": [
       "INV/LHR/26-27/000045"
      ]
@@ -705,7 +708,7 @@
   "ek family ka jurmana maaf kar do": {
    "intents": [
     {
-     "text": "Waive the fine for one family",
+     "text": "Waive the fine for a family",
      "entities": []
     }
    ]
@@ -713,7 +716,7 @@
   "ek galat charge cancel kar do": {
    "intents": [
     {
-     "text": "Cancel one wrong charge",
+     "text": "Cancel an incorrect charge",
      "entities": []
     }
    ]
@@ -721,7 +724,7 @@
   "email the guardians in section 3 Yellow about their pending dues": {
    "intents": [
     {
-     "text": "Email the guardians in section 3 Yellow about their pending dues",
+     "text": "email the guardians in section 3 Yellow about their pending dues",
      "entities": [
       "3 Yellow"
      ]
@@ -731,15 +734,17 @@
   "enter the challan payment, the bank stamped it on Friday": {
    "intents": [
     {
-     "text": "Enter the challan payment that the bank stamped on Friday",
-     "entities": []
+     "text": "Record the payment for challan stamped by the bank on Friday",
+     "entities": [
+      "challan"
+     ]
     }
    ]
   },
   "family ka koi pata nahi, ghar khali hai, ye raqam chhor do": {
    "intents": [
     {
-     "text": "Write off or waive the outstanding amount because the family cannot be located and the house is empty",
+     "text": "Waive the outstanding amount for the family as they have moved out and the house is empty.",
      "entities": []
     }
    ]
@@ -747,15 +752,17 @@
   "family ne aadhi fees di hai — 2000": {
    "intents": [
     {
-     "text": "Record that a family has paid 2000 as half of the fees",
-     "entities": []
+     "text": "Record that family paid half of the fees which is 2000",
+     "entities": [
+      "family"
+     ]
     }
    ]
   },
   "family ne jo zyada diya wo account mein credit karo": {
    "intents": [
     {
-     "text": "Credit the extra amount the family paid to their account",
+     "text": "Credit the extra amount paid by the family to their account",
      "entities": []
     }
    ]
@@ -763,23 +770,31 @@
   "family ne paisa de diya hai, phir bhi charge galat tha": {
    "intents": [
     {
-     "text": "A family has paid money but the charge was incorrect",
-     "entities": []
+     "text": "Check the payment status for family because the charge was incorrect",
+     "entities": [
+      "family"
+     ]
     }
    ]
   },
   "family ne paisa de diya hai, wo wapas karo": {
    "intents": [
     {
-     "text": "Return money to a family",
-     "entities": []
+     "text": "Return the money that family paid",
+     "entities": [
+      "family"
+     ]
     }
    ]
   },
   "family wapas aa gayi hai aur paisa de rahi hai, write off reverse karo": {
    "intents": [
     {
-     "text": "The family has returned and is paying money; reverse the write-off.",
+     "text": "Record that the family has returned and is paying the amount",
+     "entities": []
+    },
+    {
+     "text": "Reverse the write off",
      "entities": []
     }
    ]
@@ -787,7 +802,11 @@
   "family's phone is off and the address is empty, we give up on the outstanding amount": {
    "intents": [
     {
-     "text": "Stop collection efforts on the outstanding amount for this family due to inability to contact them",
+     "text": "Report that the family's phone is off and the address is empty",
+     "entities": []
+    },
+    {
+     "text": "Write off the outstanding amount",
      "entities": []
     }
    ]
@@ -803,7 +822,7 @@
   "fees ka reminder bhejo": {
    "intents": [
     {
-     "text": "Send a reminder about fees",
+     "text": "Send fee reminder",
      "entities": []
     }
    ]
@@ -811,7 +830,7 @@
   "fees ki payment record karo": {
    "intents": [
     {
-     "text": "Record the fees payment",
+     "text": "Record the payment of fees",
      "entities": []
     }
    ]
@@ -819,7 +838,7 @@
   "fees sahi thi lekin wasooli na-mumkin hai": {
    "intents": [
     {
-     "text": "The fees were correct but collection is not possible",
+     "text": "Report that fee collection is impossible",
      "entities": []
     }
    ]
@@ -837,15 +856,17 @@
   "forgive the fine on this invoice, there was a death in the family": {
    "intents": [
     {
-     "text": "Waive the fine on this invoice because there was a death in the family",
-     "entities": []
+     "text": "Waive the fine on invoice",
+     "entities": [
+      "invoice"
+     ]
     }
    ]
   },
   "galat bill bana diya, wapas lo": {
    "intents": [
     {
-     "text": "Reverse or correct an incorrect bill",
+     "text": "Correct the wrong bill and take it back",
      "entities": []
     }
    ]
@@ -853,7 +874,7 @@
   "galti se transport charge lag gaya, paisay nahi diye, khatam karo": {
    "intents": [
     {
-     "text": "Remove the transport charge that was incorrectly applied",
+     "text": "Remove the incorrectly applied transport charge",
      "entities": []
     }
    ]
@@ -861,7 +882,7 @@
   "ghalat charge ka paisa aa chuka hai, agle bill se kaat lena": {
    "intents": [
     {
-     "text": "Deduct the money for the wrong charge from the next bill",
+     "text": "Adjust the overcharged amount from the next bill.",
      "entities": []
     }
    ]
@@ -869,11 +890,11 @@
   "ghalat mahine ka bill bana hai, cancellation bhejo": {
    "intents": [
     {
-     "text": "Cancel the bill because it was made for the wrong month",
+     "text": "Correct the bill created for the wrong month",
      "entities": []
     },
     {
-     "text": "Send the cancellation",
+     "text": "Send a cancellation for the bill",
      "entities": []
     }
    ]
@@ -881,7 +902,7 @@
   "ghar mein fotgi hui thi, jurmana na lagaen": {
    "intents": [
     {
-     "text": "Waive the fine because there was a mistake at home",
+     "text": "Waive the fine due to a death in the family",
      "entities": []
     }
    ]
@@ -889,7 +910,7 @@
   "give me the defaulters list for the whole school": {
    "intents": [
     {
-     "text": "Give me the defaulters list for the whole school",
+     "text": "Provide the list of defaulters for the entire school",
      "entities": []
     }
    ]
@@ -897,7 +918,7 @@
   "give me today's figures": {
    "intents": [
     {
-     "text": "Provide today's figures",
+     "text": "Provide figures for today",
      "entities": []
     }
    ]
@@ -905,7 +926,7 @@
   "hello": {
    "intents": [
     {
-     "text": "Greeting",
+     "text": "A greeting message",
      "entities": []
     }
    ]
@@ -913,7 +934,7 @@
   "hold the extra amount they paid on the account instead of refunding": {
    "intents": [
     {
-     "text": "Hold the extra amount they paid on the account instead of refunding",
+     "text": "Hold the extra amount paid on the account instead of issuing a refund",
      "entities": []
     }
    ]
@@ -929,7 +950,7 @@
   "how many card requests are pending": {
    "intents": [
     {
-     "text": "Check how many card requests are pending",
+     "text": "Inquire about the number of pending card requests.",
      "entities": []
     }
    ]
@@ -937,7 +958,7 @@
   "how much does Ahmed Raza still owe": {
    "intents": [
     {
-     "text": "Check how much Ahmed Raza still owes",
+     "text": "Check the outstanding fees for Ahmed Raza",
      "entities": [
       "Ahmed Raza"
      ]
@@ -947,7 +968,7 @@
   "how much fee did we collect today": {
    "intents": [
     {
-     "text": "Tell me how much fee was collected today",
+     "text": "Check the total fee collected today",
      "entities": []
     }
    ]
@@ -955,7 +976,7 @@
   "in sab ko reminder bhej do": {
    "intents": [
     {
-     "text": "Send reminder to all",
+     "text": "Send a reminder to everyone",
      "entities": []
     }
    ]
@@ -971,7 +992,11 @@
   "is bill ki rakam hi ghalat hai aur kisi ne pay nahi kiya": {
    "intents": [
     {
-     "text": "The bill amount is wrong and has not been paid",
+     "text": "Report that the amount on this bill is incorrect",
+     "entities": []
+    },
+    {
+     "text": "Confirm that no one has paid this bill",
      "entities": []
     }
    ]
@@ -979,10 +1004,8 @@
   "is branch mein kaun kaun assign hai?": {
    "intents": [
     {
-     "text": "Find out who is assigned in this branch",
-     "entities": [
-      "this branch"
-     ]
+     "text": "List the staff assigned to this branch.",
+     "entities": []
     }
    ]
   },
@@ -1005,7 +1028,7 @@
   "is family ko fees ka reminder karo": {
    "intents": [
     {
-     "text": "Send a fees reminder to this family",
+     "text": "Send a fee reminder to this family",
      "entities": []
     }
    ]
@@ -1013,7 +1036,7 @@
   "is mahine ki wasooli kitni hui": {
    "intents": [
     {
-     "text": "Tell me how much money was collected this month",
+     "text": "Get the total fee collection amount for this month",
      "entities": []
     }
    ]
@@ -1029,7 +1052,7 @@
   "jin bachon ki fees reh gayi hai unke walidain ko SMS karo": {
    "intents": [
     {
-     "text": "Send SMS to parents of students with outstanding fees",
+     "text": "Send an SMS to the parents of children who have outstanding fees.",
      "entities": []
     }
    ]
@@ -1037,7 +1060,7 @@
   "jin ka fee overdue hai unhe chase karna hai, list do": {
    "intents": [
     {
-     "text": "Provide a list of families with overdue fees to chase",
+     "text": "Provide a list of families with overdue fees to follow up with",
      "entities": []
     }
    ]
@@ -1045,7 +1068,7 @@
   "jin ki fees baqaya hai unko reminder bhej do": {
    "intents": [
     {
-     "text": "Send a reminder to families with outstanding fees",
+     "text": "Send a reminder to families who have outstanding fees",
      "entities": []
     }
    ]
@@ -1053,7 +1076,7 @@
   "jinhon ne abhi tak fees jama nahi karwai unki list": {
    "intents": [
     {
-     "text": "Provide a list of those who have not yet paid their fees",
+     "text": "Generate a list of those who have not paid their fees yet",
      "entities": []
     }
    ]
@@ -1062,14 +1085,16 @@
    "intents": [
     {
      "text": "Waive the fine that was applied by mistake",
-     "entities": []
+     "entities": [
+      "jurmana"
+     ]
     }
    ]
   },
   "jurmana jama ho chuka hai, wapas karo": {
    "intents": [
     {
-     "text": "Refund or waive the fine because it has been paid",
+     "text": "Process the refund for the fine that has been paid",
      "entities": []
     }
    ]
@@ -1077,7 +1102,7 @@
   "kis kis ne fees nahi di?": {
    "intents": [
     {
-     "text": "Show me the list of defaulters who have not paid fees",
+     "text": "Identify which families have not paid their fees",
      "entities": []
     }
    ]
@@ -1085,7 +1110,7 @@
   "kis ne fees nahi di?": {
    "intents": [
     {
-     "text": "Show which families have not paid fees",
+     "text": "Identify who has not paid their fees",
      "entities": []
     }
    ]
@@ -1093,7 +1118,7 @@
   "kitne students enrolled hain?": {
    "intents": [
     {
-     "text": "Find out how many students are enrolled",
+     "text": "Count the number of students enrolled.",
      "entities": []
     }
    ]
@@ -1109,7 +1134,7 @@
   "late fee hata do, unka bank band tha": {
    "intents": [
     {
-     "text": "Waive the late fee because their bank was closed",
+     "text": "Waive the late fee because their bank was closed.",
      "entities": []
     }
    ]
@@ -1133,7 +1158,7 @@
   "list the families with outstanding balances in Grade 6": {
    "intents": [
     {
-     "text": "List the families with outstanding balances in Grade 6",
+     "text": "List the families with baqaya in Grade 6",
      "entities": [
       "Grade 6"
      ]
@@ -1143,7 +1168,7 @@
   "log a partial payment of 3000 against invoice INV/LHR/26-27/000031": {
    "intents": [
     {
-     "text": "Log a partial payment of 3000 against invoice INV/LHR/26-27/000031",
+     "text": "log a partial payment of 3000 against invoice INV/LHR/26-27/000031",
      "entities": [
       "INV/LHR/26-27/000031"
      ]
@@ -1153,7 +1178,7 @@
   "mahine ka hisaab kitaab kya hai": {
    "intents": [
     {
-     "text": "Provide the monthly accounts record",
+     "text": "Provide a report of the monthly accounts",
      "entities": []
     }
    ]
@@ -1161,7 +1186,7 @@
   "mark the September invoice for Hina Tariq as paid, 6500 by bank challan": {
    "intents": [
     {
-     "text": "Mark the September invoice for Hina Tariq as paid, 6500 by bank challan",
+     "text": "Mark the September invoice for Hina Tariq as paid with 6500 by bank challan",
      "entities": [
       "Hina Tariq"
      ]
@@ -1171,7 +1196,7 @@
   "message the over-90-day defaulters": {
    "intents": [
     {
-     "text": "Send a message to the defaulters with overdue fees of more than 90 days",
+     "text": "Send a message to all defaulters who have been overdue for over 90 days.",
      "entities": []
     }
    ]
@@ -1187,7 +1212,7 @@
   "mujhe kal chhutti chahiye": {
    "intents": [
     {
-     "text": "Request leave for tomorrow",
+     "text": "Request for leave for tomorrow",
      "entities": []
     }
    ]
@@ -1195,7 +1220,7 @@
   "nayi payment record karo": {
    "intents": [
     {
-     "text": "Record a new payment",
+     "text": "Record new payment",
      "entities": []
     }
    ]
@@ -1203,17 +1228,15 @@
   "nudge the parents who still owe for September": {
    "intents": [
     {
-     "text": "Send a reminder to parents who still owe fees for September",
-     "entities": [
-      "September"
-     ]
+     "text": "Send a reminder to parents who have outstanding fees for September",
+     "entities": []
     }
    ]
   },
   "paisa abhi tak nahi mila": {
    "intents": [
     {
-     "text": "Report that money has not been received yet",
+     "text": "Report that payment has not been received yet.",
      "entities": []
     }
    ]
@@ -1221,7 +1244,7 @@
   "paisa mila hai, record kar do": {
    "intents": [
     {
-     "text": "Record that money has been received",
+     "text": "Record the received money",
      "entities": []
     }
    ]
@@ -1229,7 +1252,7 @@
   "paisa record kar do": {
    "intents": [
     {
-     "text": "Record money payment",
+     "text": "Record the money",
      "entities": []
     }
    ]
@@ -1237,7 +1260,7 @@
   "paisay mil gaye hain Ayesha ke invoice ke": {
    "intents": [
     {
-     "text": "Record that money has been received for Ayesha's invoice",
+     "text": "Record that payment has been received for Ayesha invoice",
      "entities": [
       "Ayesha"
      ]
@@ -1247,7 +1270,7 @@
   "parents ko batao ke fees late ho gayi hai": {
    "intents": [
     {
-     "text": "Tell parents that fees are late.",
+     "text": "Inform parents that fees are late",
      "entities": []
     }
    ]
@@ -1255,7 +1278,7 @@
   "plan badal do, December wali qist January mein kar do": {
    "intents": [
     {
-     "text": "Change the payment plan to move the December installment to January",
+     "text": "Change the installment plan by moving the December payment to January.",
      "entities": []
     }
    ]
@@ -1263,11 +1286,7 @@
   "policy wapas bhej do, jurmana bohat zyada hai": {
    "intents": [
     {
-     "text": "Send the policy back",
-     "entities": []
-    },
-    {
-     "text": "The jurmana is too much",
+     "text": "Resend the policy because the jurmana is too high",
      "entities": []
     }
    ]
@@ -1275,7 +1294,7 @@
   "poora batch reverse kar do, galat period ka bill ban gaya tha": {
    "intents": [
     {
-     "text": "Reverse the entire batch because it was created for the wrong period",
+     "text": "Reverse the entire batch because the bill was generated for the wrong period.",
      "entities": []
     }
    ]
@@ -1283,7 +1302,7 @@
   "poore school ka outstanding batao": {
    "intents": [
     {
-     "text": "Show the outstanding fees for the whole school",
+     "text": "Report the outstanding fees for the entire school",
      "entities": []
     }
    ]
@@ -1293,8 +1312,7 @@
     {
      "text": "Preview the September invoices for Grade 4",
      "entities": [
-      "Grade 4",
-      "September"
+      "Grade 4"
      ]
     }
    ]
@@ -1304,8 +1322,7 @@
     {
      "text": "Print the challan for Ayesha's September invoice",
      "entities": [
-      "Ayesha",
-      "September"
+      "Ayesha"
      ]
     }
    ]
@@ -1313,7 +1330,7 @@
   "propose a write-off for Rehan's unpaid fees from 2024": {
    "intents": [
     {
-     "text": "Propose a write-off for Rehan's unpaid fees from 2024",
+     "text": "propose to waive the unpaid fees for Rehan for the year 2024",
      "entities": [
       "Rehan"
      ]
@@ -1323,7 +1340,7 @@
   "propose cancelling the whole batch we raised for the wrong period": {
    "intents": [
     {
-     "text": "Propose cancelling the whole batch we raised for the wrong period",
+     "text": "propose cancelling the whole batch raised for the wrong period",
      "entities": []
     }
    ]
@@ -1331,7 +1348,7 @@
   "propose writing off this debt, the family is untraceable": {
    "intents": [
     {
-     "text": "Propose writing off the debt because the family is untraceable",
+     "text": "propose waiving the debt for this family as they are untraceable",
      "entities": []
     }
    ]
@@ -1339,7 +1356,7 @@
   "put up the pickup barcode at the main gate, rotating daily": {
    "intents": [
     {
-     "text": "Put up the pickup barcode at the main gate, rotating daily",
+     "text": "Put up the pickup barcode at the main gate and rotate it daily",
      "entities": []
     }
    ]
@@ -1355,15 +1372,17 @@
   "raise a cancellation for this invoice — it was billed to the wrong student": {
    "intents": [
     {
-     "text": "Raise a cancellation for the invoice because it was billed to the wrong student",
-     "entities": []
+     "text": "Cancel invoice",
+     "entities": [
+      "invoice"
+     ]
     }
    ]
   },
   "raise a credit for the lab fee Maryam paid that she shouldn't have been charged": {
    "intents": [
     {
-     "text": "Raise a credit for the lab fee that Maryam paid but should not have been charged",
+     "text": "Raise a credit for the lab fee Maryam paid that she should not have been charged",
      "entities": [
       "Maryam"
      ]
@@ -1373,7 +1392,7 @@
   "raise a credit — we charged this family twice and they paid both": {
    "intents": [
     {
-     "text": "Raise a credit for a family who was charged twice and paid both amounts",
+     "text": "Issue a credit because the family was charged twice and paid both.",
      "entities": []
     }
    ]
@@ -1381,10 +1400,9 @@
   "raise a refund for the Khan family, they've left and hold 2,000 credit": {
    "intents": [
     {
-     "text": "Raise a refund of 2,000 credit for the Khan family who have left",
+     "text": "Process a refund of 2,000 for the Khan family because they have left the school",
      "entities": [
-      "Khan family",
-      "2,000"
+      "Khan"
      ]
     }
    ]
@@ -1392,7 +1410,7 @@
   "record 5000 cash received against Ayesha's September invoice today": {
    "intents": [
     {
-     "text": "Record 5000 cash received against Ayesha's September invoice today",
+     "text": "Record 5000 cash received for Ayesha September invoice today",
      "entities": [
       "Ayesha"
      ]
@@ -1402,7 +1420,7 @@
   "record a 25% tuition concession for this student, valid to the end of the session": {
    "intents": [
     {
-     "text": "Record a 25% tuition concession for this student, valid to the end of the session",
+     "text": "Record a 25% tuition concession for this student valid until the end of the session",
      "entities": []
     }
    ]
@@ -1410,7 +1428,7 @@
   "record a plan request for this family, they've asked to pay in three parts": {
    "intents": [
     {
-     "text": "Record a plan request for a family to pay fees in three installments",
+     "text": "Record a payment plan request for this family to pay in three parts",
      "entities": []
     }
    ]
@@ -1419,16 +1437,14 @@
    "intents": [
     {
      "text": "Record that I spoke to the transport contractor about the bus complaint",
-     "entities": [
-      "transport contractor"
-     ]
+     "entities": []
     }
    ]
   },
   "refund ka paisa de diya hai, mark kar do": {
    "intents": [
     {
-     "text": "Mark the refund as completed",
+     "text": "Mark the refund as paid",
      "entities": []
     }
    ]
@@ -1436,7 +1452,7 @@
   "refund wapas bhej do": {
    "intents": [
     {
-     "text": "Send a refund back",
+     "text": "Issue a refund",
      "entities": []
     }
    ]
@@ -1444,7 +1460,7 @@
   "remind the Class 5 Blue parents that their fees are overdue": {
    "intents": [
     {
-     "text": "Remind Class 5 Blue parents that their fees are overdue",
+     "text": "Send a reminder to the parents of Class 5 Blue about their overdue fees",
      "entities": [
       "Class 5 Blue"
      ]
@@ -1454,7 +1470,7 @@
   "remove the late fine from Danish's October invoice, the bank was closed": {
    "intents": [
     {
-     "text": "Remove the late fine from Danish's October invoice because the bank was closed",
+     "text": "Waive the late fine for Danish on the October invoice because the bank was closed",
      "entities": [
       "Danish"
      ]
@@ -1464,7 +1480,7 @@
   "request cancellation of the duplicate invoice for Hamza": {
    "intents": [
     {
-     "text": "Cancel the duplicate invoice for Hamza",
+     "text": "request cancellation of the duplicate invoice for Hamza",
      "entities": [
       "Hamza"
      ]
@@ -1474,7 +1490,7 @@
   "return this configuration, the threshold is wrong": {
    "intents": [
     {
-     "text": "Return this configuration, the threshold is wrong",
+     "text": "Return this configuration because the threshold is wrong",
      "entities": []
     }
    ]
@@ -1482,7 +1498,7 @@
   "return this correction, the charge is what's wrong not the payment": {
    "intents": [
     {
-     "text": "Correct a charge amount; the charge is wrong, not the payment",
+     "text": "Correct the charge amount instead of the payment",
      "entities": []
     }
    ]
@@ -1490,25 +1506,25 @@
   "return this credit — no money was received against that invoice": {
    "intents": [
     {
-     "text": "Return this credit because no money was received against that invoice",
-     "entities": []
+     "text": "Return the credit for invoice because no money was received",
+     "entities": [
+      "invoice"
+     ]
     }
    ]
   },
   "return this structure — the exam fee should be per term not annual": {
    "intents": [
     {
-     "text": "Change the exam fee to be per term instead of annual",
-     "entities": [
-      "exam fee"
-     ]
+     "text": "Change the exam fee structure from annual to per term",
+     "entities": []
     }
    ]
   },
   "return this write-off proposal, we haven't tried hard enough to recover it": {
    "intents": [
     {
-     "text": "Return this write-off proposal because we have not tried hard enough to recover it",
+     "text": "Return this tajweez for write-off because recovery efforts are insufficient",
      "entities": []
     }
    ]
@@ -1516,7 +1532,7 @@
   "saal bhar se 18000 mang rahe hain, ab nahi milenge": {
    "intents": [
     {
-     "text": "Note that 18000 has been demanded for the whole year and payment will not be possible now",
+     "text": "Declare that the 18000 requested for the whole year will not be paid.",
      "entities": []
     }
    ]
@@ -1532,7 +1548,7 @@
   "school ka aaj kya haal hai?": {
    "intents": [
     {
-     "text": "Ask how the school is doing today",
+     "text": "Inquire about the current status of the school",
      "entities": []
     }
    ]
@@ -1540,7 +1556,7 @@
   "school ki bus kitne baje aayegi?": {
    "intents": [
     {
-     "text": "Find out what time the school bus arrives",
+     "text": "Ask what time the school bus will arrive.",
      "entities": []
     }
    ]
@@ -1548,9 +1564,9 @@
   "section 3 yellow ke baqaya jaat dikha do": {
    "intents": [
     {
-     "text": "Show the outstanding fees record for section 3 yellow",
+     "text": "Show the outstanding fees for section 3 yellow",
      "entities": [
-      "section 3 yellow"
+      "3 yellow"
      ]
     }
    ]
@@ -1558,7 +1574,7 @@
   "send a reminder to everyone overdue in Grade 4": {
    "intents": [
     {
-     "text": "Send a reminder to everyone overdue in Grade 4",
+     "text": "send a reminder to everyone overdue in Grade 4",
      "entities": [
       "Grade 4"
      ]
@@ -1568,9 +1584,10 @@
   "send absence alerts for Grade 4 section B today": {
    "intents": [
     {
-     "text": "Send absence alerts for Grade 4 section B today",
+     "text": "send absence alerts for Grade 4 section B today",
      "entities": [
-      "Grade 4 section B"
+      "Grade 4",
+      "section B"
      ]
     }
    ]
@@ -1578,7 +1595,7 @@
   "send an SMS to every family in 7 Green who hasn't paid yet": {
    "intents": [
     {
-     "text": "Send an SMS to every family in 7 Green who hasn't paid yet",
+     "text": "Send an SMS to all families in 7 Green who have not paid their fees",
      "entities": [
       "7 Green"
      ]
@@ -1588,7 +1605,7 @@
   "show me everyone more than 60 days overdue": {
    "intents": [
     {
-     "text": "Show everyone with fees overdue for more than 60 days",
+     "text": "Show list of all students with fees overdue by more than 60 days",
      "entities": []
     }
    ]
@@ -1596,7 +1613,7 @@
   "show me the overdue list for Grade 4": {
    "intents": [
     {
-     "text": "Show the overdue fees list for Grade 4",
+     "text": "Show the list of students with outstanding fees for Grade 4",
      "entities": [
       "Grade 4"
      ]
@@ -1614,7 +1631,7 @@
   "shukriya": {
    "intents": [
     {
-     "text": "Staff member is thanking or expressing gratitude",
+     "text": "The user is expressing gratitude",
      "entities": []
     }
    ]
@@ -1622,7 +1639,7 @@
   "sibling discount nahi laga tha aur poori fees jama ho gayi": {
    "intents": [
     {
-     "text": "Apply the sibling discount that was not included when the full fees were paid in",
+     "text": "Report that sibling discount was not applied and full fees were paid",
      "entities": []
     }
    ]
@@ -1630,7 +1647,7 @@
   "sirf penalty hatani hai, asal fees wahi rahe": {
    "intents": [
     {
-     "text": "Waive the penalty only, keep the original fees unchanged",
+     "text": "Waive the penalty fine while keeping the original fee amount.",
      "entities": []
     }
    ]
@@ -1638,7 +1655,7 @@
   "subah ke numbers do": {
    "intents": [
     {
-     "text": "Give me the morning numbers",
+     "text": "Provide the attendance numbers for the morning session",
      "entities": []
     }
    ]
@@ -1646,7 +1663,7 @@
   "submit the Grade 4 structure for approval, effective 1 August": {
    "intents": [
     {
-     "text": "Submit the Grade 4 structure for approval, effective 1 August",
+     "text": "Submit the Grade 4 structure for approval effective 1 August",
      "entities": [
       "Grade 4"
      ]
@@ -1656,7 +1673,7 @@
   "teen mahine se zyada purana baqaya kitna hai?": {
    "intents": [
     {
-     "text": "Tell me how much outstanding fees are more than three months old",
+     "text": "Calculate the total overdue fees for longer than three months",
      "entities": []
     }
    ]
@@ -1664,7 +1681,7 @@
   "teen qisten bana do — 2000 har mahine, October se": {
    "intents": [
     {
-     "text": "Create three installments of 2000 each month starting from October",
+     "text": "Create a payment plan of 3 installments of 2000 each starting from October",
      "entities": []
     }
    ]
@@ -1682,7 +1699,7 @@
   "thanks, that's all for now": {
    "intents": [
     {
-     "text": "The user is saying goodbye and has no further requests at this time.",
+     "text": "acknowledge the end of the conversation",
      "entities": []
     }
    ]
@@ -1690,9 +1707,9 @@
   "the Khan family moved abroad and can't be reached, propose writing off their dues": {
    "intents": [
     {
-     "text": "Propose writing off the dues owed by the Khan family because they moved abroad and cannot be reached",
+     "text": "Propose writing off the dues for Khan family because they moved abroad",
      "entities": [
-      "Khan"
+      "Khan family"
      ]
     }
    ]
@@ -1700,7 +1717,7 @@
   "the bank stamped challan came back for Usman, 12,000 received on Monday": {
    "intents": [
     {
-     "text": "Record that the stamped challan for Usman came back with 12,000 received on Monday",
+     "text": "Record the receipt of 12,000 for Usman from the bank stamped challan on Monday",
      "entities": [
       "Usman"
      ]
@@ -1710,7 +1727,7 @@
   "the debt is real but uncollectable, send it to the principal for write-off": {
    "intents": [
     {
-     "text": "Send the debt to the principal for write-off because it is uncollectable",
+     "text": "Send the uncollectable debt to the principal for a write-off",
      "entities": []
     }
    ]
@@ -1718,7 +1735,7 @@
   "the family has appealed — record it": {
    "intents": [
     {
-     "text": "Record that the family has appealed.",
+     "text": "Record the appeal for the family",
      "entities": []
     }
    ]
@@ -1726,7 +1743,7 @@
   "the family paid a charge that was wrong, put the money on their account": {
    "intents": [
     {
-     "text": "Credit the family's account with money they paid for a wrong charge",
+     "text": "Correct the incorrect charge for the family and credit the amount to their account",
      "entities": []
     }
    ]
@@ -1734,15 +1751,23 @@
   "the invoice has the wrong billing period and is unpaid, raise a cancellation": {
    "intents": [
     {
-     "text": "Cancel the invoice because the billing period is wrong and it is unpaid",
-     "entities": []
+     "text": "Correct the billing period for the invoice",
+     "entities": [
+      "invoice"
+     ]
+    },
+    {
+     "text": "Cancel the unpaid invoice",
+     "entities": [
+      "invoice"
+     ]
     }
    ]
   },
   "the late fee was added even though they paid on the due date, take it off": {
    "intents": [
     {
-     "text": "Remove the late fee that was added even though the payment was made on the due date",
+     "text": "Waive the late fee because the payment was made on the due date",
      "entities": []
     }
    ]
@@ -1750,7 +1775,7 @@
   "the sibling discount was missed and they paid full fee, credit the difference": {
    "intents": [
     {
-     "text": "Credit the difference because the sibling discount was missed and they paid the full fee",
+     "text": "Credit the difference for the sibling discount that was missed",
      "entities": []
     }
    ]
@@ -1758,7 +1783,7 @@
   "they were overcharged by 2,000 and already paid, adjust it in the next bill": {
    "intents": [
     {
-     "text": "Adjust the next bill by 2,000 because the family was overcharged and already paid.",
+     "text": "Adjust the overcharged amount of 2,000 from the next bill.",
      "entities": []
     }
    ]
@@ -1766,7 +1791,7 @@
   "this invoice went to the wrong student and nobody has paid it, cancel it": {
    "intents": [
     {
-     "text": "Cancel the invoice that went to the wrong student and has not been paid",
+     "text": "Cancel the invoice that was sent to the wrong student",
      "entities": []
     }
    ]
@@ -1774,7 +1799,7 @@
   "this old balance will never be paid, the father passed away and there is no income": {
    "intents": [
     {
-     "text": "Waive an old balance because the father has passed away and there is no income",
+     "text": "Waive the outstanding balance because the father passed away and there is no income",
      "entities": []
     }
    ]
@@ -1782,7 +1807,7 @@
   "total outstanding for the branch right now": {
    "intents": [
     {
-     "text": "Show the total outstanding fees for the branch right now",
+     "text": "Provide the total outstanding fees for the branch",
      "entities": []
     }
    ]
@@ -1790,7 +1815,7 @@
   "umeedwar ne letter qubool kar liya hai": {
    "intents": [
     {
-     "text": "Notify that the candidate has accepted the letter",
+     "text": "Report that the candidate has accepted the letter",
      "entities": []
     }
    ]
@@ -1798,7 +1823,7 @@
   "unhon ne waqt par diya tha phir bhi late fee lag gayi": {
    "intents": [
     {
-     "text": "A late fee was charged even though the payment was made on time",
+     "text": "Check why a late fee was charged even though payment was made on time",
      "entities": []
     }
    ]
@@ -1806,7 +1831,7 @@
   "unko form ka link dobara bhejo, unko mila nahi": {
    "intents": [
     {
-     "text": "Send the form link again to them as they did not receive it",
+     "text": "Resend the form link to them because they did not receive it",
      "entities": []
     }
    ]
@@ -1814,7 +1839,7 @@
   "void the transport charge we added by mistake, the family hasn't paid it": {
    "intents": [
     {
-     "text": "Void the transport charge that was added by mistake and has not been paid by the family",
+     "text": "Waive the transport charge added by mistake for the family",
      "entities": []
     }
    ]
@@ -1822,9 +1847,9 @@
   "waive the 200 late fee on the September invoice": {
    "intents": [
     {
-     "text": "Waive the 200 late fee on the September invoice",
+     "text": "waive the 200 late fee on the September invoice",
      "entities": [
-      "September invoice"
+      "September"
      ]
     }
    ]
@@ -1832,7 +1857,7 @@
   "waive the 500 rupee late charge for the Qureshi family": {
    "intents": [
     {
-     "text": "Waive the 500 rupee late charge for the Qureshi family",
+     "text": "waive the 500 rupee late fee for the Qureshi family",
      "entities": [
       "Qureshi"
      ]
@@ -1842,15 +1867,17 @@
   "waive the late fee on this invoice, the family had a genuine reason": {
    "intents": [
     {
-     "text": "Waive the late fee on an invoice because the family had a genuine reason",
-     "entities": []
+     "text": "Waive the late fee on invoice",
+     "entities": [
+      "invoice"
+     ]
     }
    ]
   },
   "walid ka intiqal ho gaya, ye purana baqaya kabhi ada nahi hoga": {
    "intents": [
     {
-     "text": "Waive the outstanding fees because the guardian has passed away",
+     "text": "Report that the father has passed away and the old baqaya will never be paid.",
      "entities": []
     }
    ]
@@ -1858,7 +1885,7 @@
   "walid sahib ne October ki fees ada kar di": {
    "intents": [
     {
-     "text": "Record that walid sahib paid the October fees",
+     "text": "Record that walid sahib has paid the fees for October",
      "entities": [
       "walid sahib"
      ]
@@ -1868,10 +1895,9 @@
   "we billed Sara twice for August, the second one needs to go": {
    "intents": [
     {
-     "text": "Remove or cancel the second August bill for Sara",
+     "text": "Remove the duplicate billing for Sara for August",
      "entities": [
-      "Sara",
-      "August"
+      "Sara"
      ]
     }
    ]
@@ -1879,7 +1905,7 @@
   "we've tried for a year to recover 18,000 from this family, time to write it off": {
    "intents": [
     {
-     "text": "Write off 18,000 as uncollectible after one year of recovery attempts",
+     "text": "Write off 18,000 for this family",
      "entities": []
     }
    ]
@@ -1887,7 +1913,7 @@
   "what is my son's attendance percentage?": {
    "intents": [
     {
-     "text": "Get my son's attendance percentage",
+     "text": "Check the attendance percentage for my son",
      "entities": []
     }
    ]
@@ -1895,7 +1921,7 @@
   "what's the collection this month so far": {
    "intents": [
     {
-     "text": "Tell me what the collection is this month so far",
+     "text": "Get the total collection for this month so far.",
      "entities": []
     }
    ]
@@ -1903,7 +1929,7 @@
   "what's the total outstanding across the school": {
    "intents": [
     {
-     "text": "Get the total outstanding fees across the school",
+     "text": "Calculate the total baqaya for the entire school",
      "entities": []
     }
    ]
@@ -1911,15 +1937,17 @@
   "what's the weather in Lahore tomorrow?": {
    "intents": [
     {
-     "text": "Tell me what the weather will be in Lahore tomorrow",
-     "entities": []
+     "text": "Check the weather in Lahore tomorrow",
+     "entities": [
+      "Lahore"
+     ]
     }
    ]
   },
   "what's today's collection": {
    "intents": [
     {
-     "text": "Show today's collection",
+     "text": "Inquire about today's total fee collection",
      "entities": []
     }
    ]
@@ -1927,7 +1955,7 @@
   "which students have unpaid invoices over 10,000": {
    "intents": [
     {
-     "text": "Show which students have unpaid invoices over 10,000",
+     "text": "Identify students with unpaid invoices exceeding 10,000",
      "entities": []
     }
    ]
@@ -1935,7 +1963,7 @@
   "who did not get the emergency notice?": {
    "intents": [
     {
-     "text": "Find out who did not get the emergency notice",
+     "text": "Identify who did not receive the emergency notice",
      "entities": []
     }
    ]
@@ -1943,9 +1971,9 @@
   "who hasn't paid fees in class 5 blue": {
    "intents": [
     {
-     "text": "Find students who are defaulters in class 5 Blue",
+     "text": "List the students who have not paid fees in class 5 blue",
      "entities": [
-      "5 Blue"
+      "5 blue"
      ]
     }
    ]
@@ -1953,7 +1981,7 @@
   "who won the cricket match yesterday?": {
    "intents": [
     {
-     "text": "Answer a question about a cricket match",
+     "text": "Ask who won the cricket match yesterday",
      "entities": []
     }
    ]
@@ -1961,7 +1989,7 @@
   "withdraw this concession, the family's circumstances have improved": {
    "intents": [
     {
-     "text": "Withdraw the concession for the family because their circumstances have improved",
+     "text": "withdraw the concession for the family",
      "entities": []
     }
    ]
@@ -1969,7 +1997,7 @@
   "withholding tax ki configuration daal do — rate 5%, threshold 200,000": {
    "intents": [
     {
-     "text": "Set up withholding tax configuration with rate 5% and threshold 200,000",
+     "text": "Configure withholding tax with a rate of 5% and a threshold of 200,000",
      "entities": []
     }
    ]
@@ -1977,18 +2005,15 @@
   "write an email to the principal about the annual function": {
    "intents": [
     {
-     "text": "Write an email to the principal about the annual function",
-     "entities": [
-      "principal",
-      "annual function"
-     ]
+     "text": "Write an email to the principal regarding the annual function",
+     "entities": []
     }
    ]
   },
   "write off approve kar do": {
    "intents": [
     {
-     "text": "Approve a write-off",
+     "text": "Approve the write off",
      "entities": []
     }
    ]
@@ -1996,7 +2021,7 @@
   "write off raise karo": {
    "intents": [
     {
-     "text": "Create a proposal to waive or write off an amount",
+     "text": "Propose to waive a fee",
      "entities": []
     }
    ]
@@ -2004,7 +2029,7 @@
   "write off the remaining 4,200 — the family paid what they could": {
    "intents": [
     {
-     "text": "Write off the remaining 4,200",
+     "text": "Waive the remaining amount of 4,200",
      "entities": []
     }
    ]
@@ -2012,7 +2037,7 @@
   "ye bacha to chhod chuka tha, phir bhi bill ban gaya": {
    "intents": [
     {
-     "text": "A bill was created for a student who had already left the school",
+     "text": "Check why a bill was generated for a child who had already left",
      "entities": []
     }
    ]
@@ -2020,15 +2045,17 @@
   "ye baqaya wasool nahi hoga": {
    "intents": [
     {
-     "text": "Report that this outstanding fee cannot be collected",
-     "entities": []
+     "text": "Report that outstanding fees cannot be collected",
+     "entities": [
+      "baqaya"
+     ]
     }
    ]
   },
   "ye baqaya wasool nahi hoga, write off ki tajweez do": {
    "intents": [
     {
-     "text": "Make a proposal to write off the outstanding fees",
+     "text": "Declare that the baqaya cannot be collected and provide a tajweez to write it off",
      "entities": []
     }
    ]
@@ -2036,7 +2063,7 @@
   "ye bill galat student ke naam bana hai, cancel karwana hai": {
    "intents": [
     {
-     "text": "Cancel the bill that was created under the wrong student's name",
+     "text": "Cancel the incorrect bill issued for the student",
      "entities": []
     }
    ]
@@ -2044,7 +2071,7 @@
   "ye bill kam kar do": {
    "intents": [
     {
-     "text": "Reduce this bill",
+     "text": "Reduce the bill",
      "entities": []
     }
    ]
@@ -2052,7 +2079,7 @@
   "ye cancellation hona chahiye": {
    "intents": [
     {
-     "text": "Cancel this",
+     "text": "Cancel the requested item",
      "entities": []
     }
    ]
@@ -2060,7 +2087,7 @@
   "ye charge galat tha lekin family paisa de chuki hai, credit karo": {
    "intents": [
     {
-     "text": "Credit the family account because an incorrect charge was made but they have already paid the money",
+     "text": "The charge was incorrect but the family has already paid, so issue a credit.",
      "entities": []
     }
    ]
@@ -2068,7 +2095,7 @@
   "ye charge hi galat tha": {
    "intents": [
     {
-     "text": "This charge was wrong",
+     "text": "Report that the charge was incorrect",
      "entities": []
     }
    ]
@@ -2076,7 +2103,7 @@
   "ye credit hona chahiye": {
    "intents": [
     {
-     "text": "Credit this amount",
+     "text": "Record this credit",
      "entities": []
     }
    ]
@@ -2084,7 +2111,7 @@
   "ye debt maaf kar do": {
    "intents": [
     {
-     "text": "Waive this debt",
+     "text": "Waive the debt",
      "entities": []
     }
    ]
@@ -2092,7 +2119,7 @@
   "ye debt wasool nahi hoga, maaf kar do": {
    "intents": [
     {
-     "text": "Waive the debt",
+     "text": "Waive the debt as it will not be collected.",
      "entities": []
     }
    ]
@@ -2100,23 +2127,27 @@
   "ye family kitna deti hai?": {
    "intents": [
     {
-     "text": "Tell me how much this family pays",
-     "entities": []
+     "text": "Check how much the family pays.",
+     "entities": [
+      "family"
+     ]
     }
    ]
   },
   "ye invoice kisi aur bache ka hai aur abhi jama bhi nahi hua": {
    "intents": [
     {
-     "text": "This invoice is for another student and has not been paid in yet",
-     "entities": []
+     "text": "Report that this invoice belongs to another student and has not been paid yet",
+     "entities": [
+      "invoice"
+     ]
     }
    ]
   },
   "ye payment galat student ke against lag gayi hai": {
    "intents": [
     {
-     "text": "Correct a payment that was credited to the wrong student",
+     "text": "Correct the payment that was applied to the wrong student",
      "entities": []
     }
    ]
@@ -2124,7 +2155,7 @@
   "ye qarz doobne wala hai, write off ki tajweez tayyar karo": {
    "intents": [
     {
-     "text": "Prepare a write-off proposal for this bad debt",
+     "text": "Prepare a proposal to write off the debt as it is about to default.",
      "entities": []
     }
    ]

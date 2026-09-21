@@ -51,9 +51,8 @@ class Settings(BaseSettings):
     retrieval_rrf_k: int = Field(default=60, ge=1)
     retrieval_branch_limit: int = Field(default=50, ge=1)
 
-    # Model calls go through the Claude Code CLI on the owner's subscription. Empty path: use the
-    # newest CLI bundled with the Claude desktop app.
-    claude_cli_path: str = ""
+    # Model calls go to the Gemini API. Empty key: chat is off, and readiness says why.
+    gemini_api_key: SecretStr = SecretStr("")
     model_timeout_seconds: float = Field(default=120.0, gt=0)
     plan_max_steps: int = Field(default=3, ge=1, le=3)
 

@@ -1,4 +1,4 @@
-"""Decompose (model call 1, Haiku 4.5): one sentence into 1-3 English intents.
+"""Decompose (model call 1): one sentence into 1-3 English intents.
 
 Intents are what retrieval searches with, so they are always English (CLAUDE.md invariant 11),
 whatever mix of English and Roman Urdu the user typed. Names are copied, never translated, and each
@@ -22,8 +22,8 @@ from app.validation.problems import InvalidModelOutputError, Problem, normalise,
 
 MAX_INTENTS = 3
 PURPOSE = "decompose"
-# Copying names and translating into short English needs no reasoning. Thinking made this call take
-# 4-40 s (up to 3,500 hidden tokens for a one-line answer); without it the call is about 2 s.
+# Copying names and translating into short English needs no reasoning. On Haiku 4.5, thinking made
+# this call take 4-40 s (up to 3,500 hidden tokens for a one-line answer); without it, about 2 s.
 THINKING = False
 
 

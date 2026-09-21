@@ -1,29 +1,29 @@
 {
  "all": {
   "recall_at_30": 0.9542857142857143,
-  "plan_accuracy": 0.8857142857142857,
-  "refusal_correctness": 0.926530612244898,
+  "plan_accuracy": 0.9028571428571428,
+  "refusal_correctness": 0.9224489795918367,
   "validator_catch_rate": 1.0,
   "sentences": 175,
   "refusal_cases": 70,
-  "faults_applied": 600
+  "faults_applied": 584
  },
  "en": {
   "recall_at_30": 0.9682539682539683,
-  "plan_accuracy": 0.9365079365079365,
-  "refusal_correctness": 0.9693877551020408,
+  "plan_accuracy": 0.9206349206349206,
+  "refusal_correctness": 0.9387755102040817,
   "validator_catch_rate": 1.0,
   "sentences": 63,
   "refusal_cases": 35,
-  "faults_applied": 307
+  "faults_applied": 323
  },
  "ur-Latn": {
   "recall_at_30": 0.9464285714285714,
-  "plan_accuracy": 0.8571428571428571,
-  "refusal_correctness": 0.8979591836734694,
+  "plan_accuracy": 0.8928571428571429,
+  "refusal_correctness": 0.9115646258503401,
   "validator_catch_rate": 1.0,
   "sentences": 112,
   "refusal_cases": 35,
-  "faults_applied": 293
+  "faults_applied": 261
  }
 }

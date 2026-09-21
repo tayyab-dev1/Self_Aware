@@ -1,6 +1,6 @@
-"""Retrieval as it really runs: searching with Haiku's English intents, not the typed sentence.
+"""Retrieval as it really runs: searching with decompose's English intents, not the typed sentence.
 
-    make ai-eval     (records Haiku's answers in eval/recordings/ once, then replays them)
+    make ai-eval     (records decompose's answers in eval/recordings/ once, then replays them)
 
 Phase 4 measured English glosses as a stand-in for decompose (README decision 40). This replaces
 them with real intents, on the stress index, and holds them to the same gate. Writes
@@ -19,7 +19,7 @@ from app.capabilities.snapshot import load_snapshot
 from app.core.settings import Settings
 from app.decompose.decomposer import THINKING, system_prompt
 from app.embeddings.client import EmbeddingsClient
-from app.llm.claude_cli import ClaudeCliModel
+from app.llm.gemini import GeminiModel
 from app.llm.runner import DECOMPOSE_MODEL
 from app.retrieval.hybrid import CANDIDATE_CAP, HybridRetriever
 from domain.school.glossary import glossary_lines
@@ -51,7 +51,7 @@ async def intent_run(new_index: IndexFactory) -> AsyncIterator[IntentRun]:
     mode = mode_from_environment()
     system = system_prompt(glossary_lines())
     recordings = Recordings("decompose", DECOMPOSE_MODEL, system, mode=mode, thinking=THINKING)
-    model = ClaudeCliModel.from_settings(Settings()) if mode == "record" else None
+    model = GeminiModel.from_settings(Settings()) if mode == "record" else None
     decomposed = await decompose_all([s.text for s in sentences], recordings, model)
 
     client = EmbeddingsClient.from_settings(Settings())

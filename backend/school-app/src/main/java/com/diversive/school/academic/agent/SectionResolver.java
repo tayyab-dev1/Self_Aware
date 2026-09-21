@@ -43,6 +43,11 @@ public class SectionResolver implements EntityResolver {
     }
 
     @Override
+    public String lookup() {
+        return "the class and section together, e.g. class 5 blue, or only the section, e.g. blue";
+    }
+
+    @Override
     public String type() {
         return "section";
     }

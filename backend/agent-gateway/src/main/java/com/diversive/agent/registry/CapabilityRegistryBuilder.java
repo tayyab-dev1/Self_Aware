@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Builds the registry: scan the annotated handlers, apply every rule, then version each entry.
@@ -32,6 +33,21 @@ public final class CapabilityRegistryBuilder {
                                     Collection<String> preconditionCheckIds,
                                     Collection<String> affectedCountIds,
                                     Collection<String> entityResolverTypes) {
+        return build(handlerTypes, preconditionCheckIds, affectedCountIds, entityResolverTypes, Map.of());
+    }
+
+    /**
+     * As above, and each parameter a resolver looks up carries that resolver's {@code lookup()} text, so
+     * a changed description of what a resolver searches by changes the version of every capability using it.
+     *
+     * @param lookups what each resolver type searches by, from {@code EntityResolver#lookup()}; types that
+     *                say nothing are left out
+     */
+    public CapabilityRegistry build(Collection<Class<?>> handlerTypes,
+                                    Collection<String> preconditionCheckIds,
+                                    Collection<String> affectedCountIds,
+                                    Collection<String> entityResolverTypes,
+                                    Map<String, String> lookups) {
         List<String> problems = new ArrayList<>();
         List<RegisteredCapability> scanned = scan(handlerTypes, problems);
         problems.addAll(RegistryRules.check(scanned, List.copyOf(preconditionCheckIds), List.copyOf(affectedCountIds),
@@ -40,8 +56,16 @@ public final class CapabilityRegistryBuilder {
             throw new CapabilityRegistryException(problems);
         }
         return new CapabilityRegistry(scanned.stream()
-                .map(capability -> capability.withMetadata(
-                        capability.metadata().withVersion(CapabilityVersioner.version(capability.metadata()))))
+                .map(capability -> {
+                    CapabilityMetadata described = withLookups(capability.metadata(), lookups);
+                    return capability.withMetadata(described.withVersion(CapabilityVersioner.version(described)));
+                })
+                .toList());
+    }
+
+    private static CapabilityMetadata withLookups(CapabilityMetadata metadata, Map<String, String> lookups) {
+        return metadata.withParams(metadata.params().stream()
+                .map(param -> param.resolver() == null ? param : param.withLookup(lookups.get(param.resolver())))
                 .toList());
     }
 

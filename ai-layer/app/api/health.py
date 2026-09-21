@@ -63,7 +63,7 @@ async def ready(response: Response, resources: Resources) -> ReadinessResponse:
     if resources.sync is not None:
         checks["metadata_sync"] = _check_sync(resources.sync)
     if resources.chat is not None:
-        checks["chat"] = CheckResult(ok=True, detail="the Claude CLI was found; POST /chat is on")
+        checks["chat"] = CheckResult(ok=True, detail="a Gemini API key is set; POST /chat is on")
     elif resources.chat_problem is not None:
         checks["chat"] = CheckResult(
             ok=False, detail=f"POST /chat is off: {resources.chat_problem}"

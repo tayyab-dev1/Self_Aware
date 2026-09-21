@@ -8,7 +8,7 @@
 #   make db-up && make embeddings-up
 #   make backend-run      # terminal 1
 #   make ai-run           # terminal 2 (fills the capability index)
-#   make verify-phase5    # terminal 3 (calls Haiku and Sonnet through the Claude CLI)
+#   make verify-phase5    # terminal 3 (calls the real models through the Gemini API)
 #
 # Exit code is the number of failed checks (0 = Phase 5 is done).
 set -uo pipefail
@@ -61,7 +61,7 @@ report_lines() {
 
 printf '\033[1mPhase 5: Decompose and plan\033[0m\n'
 
-section "The whole pipeline on the running stack: decompose (Haiku) → retrieve → plan (Sonnet) → validate → preflight"
+section "The whole pipeline on the running stack: decompose → retrieve → plan (both Gemini) → validate → preflight"
 
 cat > "$LOG_DIR/live_checks.py" <<'PY'
 import asyncio
@@ -74,7 +74,7 @@ from app.embeddings.client import EmbeddingsClient
 from app.gateway.client import GatewayClient
 from app.gateway.errors import GatewayRejectedError
 from app.index.database import IndexDatabase
-from app.llm.claude_cli import ClaudeCliModel
+from app.llm.gemini import GeminiModel
 from app.planning.outcomes import PlannedSteps, Refusal
 from app.planning.planner import Planner
 from app.planning.service import SentencePlanner
@@ -106,7 +106,7 @@ class InjectedPlanner:
 async def main():
     settings = Settings()
     token = os.environ["BACKEND_DEV_USER_TOKEN"]
-    model = ClaudeCliModel.from_settings(settings)
+    model = GeminiModel.from_settings(settings)
     gateway = GatewayClient.from_settings(settings)
     index = await IndexDatabase.connect(settings)
     embeddings = EmbeddingsClient.from_settings(settings)
@@ -181,6 +181,7 @@ async def main():
         await embeddings.aclose()
         await index.close()
         await gateway.aclose()
+        await model.aclose()
 
 
 asyncio.run(main())
@@ -191,14 +192,14 @@ report_lines live bash -c 'cd ai-layer && PYTHONPATH=. uv run python "$0"' "$LOG
 section "The same four, as tests (validator rules with scripted models; the real models without retrieval)"
 
 run_check "validator: unknown, disallowed and non-candidate ids, invented and missing parameters, forms, types, quoted names and amounts, steps" unit \
-  bash -c 'cd ai-layer && uv run pytest -q -p no:cacheprovider tests/unit/test_plan_validator.py tests/unit/test_decomposer.py tests/unit/test_planning_service.py tests/unit/test_claude_cli.py'
+  bash -c 'cd ai-layer && uv run pytest -q -p no:cacheprovider tests/unit/test_plan_validator.py tests/unit/test_decomposer.py tests/unit/test_planning_service.py tests/unit/test_gemini.py'
 
-run_check "real Haiku and Sonnet: Roman Urdu plan, refusal, two steps in order (make ai-model-checks)" models \
+run_check "real models: Roman Urdu plan, refusal, two steps in order (make ai-model-checks)" models \
   bash -c 'cd ai-layer && uv run pytest -q -p no:cacheprovider tests/model_checks'
 
 section "Retrieval with real intents (the Phase 4 follow-up)"
 
-run_check "recall@30 > 90% on the 489-capability stress index when searching with Haiku's intents; clusters whole (make ai-eval)" eval-intents \
+run_check "recall@30 > 90% on the 489-capability stress index when searching with decompose's intents; clusters whole (make ai-eval)" eval-intents \
   bash -c 'cd ai-layer && uv run pytest -q -p no:cacheprovider eval'
 
 REPORT="ai-layer/eval/reports/retrieval_with_intents.md"

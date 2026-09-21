@@ -248,7 +248,7 @@ final class CapabilityScanner {
         }
 
         return new ParamMetadata(field.name(), field.type(), field.multiple(), field.required(),
-                normalizeSpace(param.meaning()), resolver, label, allowed, defaultValue);
+                normalizeSpace(param.meaning()), resolver, label, null, allowed, defaultValue);
     }
 
     private Map<String, RequestField> requestFields(Class<?> requestType, Consumer<String> problem) {

@@ -39,6 +39,11 @@ public record CapabilityMetadata(
         preconditions = List.copyOf(preconditions);
     }
 
+    public CapabilityMetadata withParams(List<ParamMetadata> newParams) {
+        return new CapabilityMetadata(id, version, module, readOnly, blastRadius, reverses,
+                description, disambiguateFrom, newParams, preconditions, effect);
+    }
+
     public CapabilityMetadata withVersion(String newVersion) {
         return new CapabilityMetadata(id, newVersion, module, readOnly, blastRadius, reverses,
                 description, disambiguateFrom, params, preconditions, effect);

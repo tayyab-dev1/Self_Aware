@@ -148,6 +148,26 @@ class PreflightIT extends PostgresIntegrationTest {
                         contains("Class 5 Green, admission no. 2026-0521", "Class 5 Blue, admission no. 2026-0501")));
     }
 
+    /** People add the class and section to a name; that narrows the search instead of finding nothing. */
+    @Test
+    void aNameWithTheStudentsClassAndSectionIsFoundAndNarrowed() throws Exception {
+        preflight(plan(step(1, "fee.overdue.list", Map.of("scope", value("student"), "student_id", raw("ahmed class 5 blue")))))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.steps[0].resolved[0].label").value("Ahmed Raza"));
+        preflight(plan(payment(raw("Ahmed Raza Class 5 Blue fees"), "2000")))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.steps[0].resolved[0].label")
+                        .value("Ahmed Raza's September 2026 invoice INV/LHR/26-27/000031"));
+
+        // The wrong section finds nothing, and words that name no student are not a lookup at all.
+        preflight(plan(payment(raw("Ahmed Raza class 6 blue"), "2000")))
+                .andExpect(jsonPath("$.code").value("NOT_FOUND"));
+        preflight(plan(payment(raw("class 5 blue fees"), "2000")))
+                .andExpect(jsonPath("$.code").value("NOT_FOUND"));
+        preflight(plan(step(1, "fee.overdue.list", Map.of("scope", value("student"), "student_id", raw("class 5 blue")))))
+                .andExpect(jsonPath("$.code").value("NOT_FOUND"));
+    }
+
     /** Invariant 7: another branch's records are simply not there, so "not yours" looks like "no such record". */
     @Test
     @Transactional

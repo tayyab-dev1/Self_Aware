@@ -87,11 +87,11 @@ These are not filtered at query time. They are never annotated as capabilities, 
 | Package manager | `uv` |
 | Database | Postgres 16 with the `vector` extension |
 | Migrations | Flyway (backend), plain SQL (AI layer's index table) |
-| LLM client | Claude Code CLI in headless mode (`claude -p`), behind an interface — two call shapes do not need a framework |
+| LLM client | The Gemini API through Google's Gen AI SDK (`google-genai`), behind an interface — two call shapes do not need a framework |
 | Embeddings | BGE-M3 at a pinned revision, served on CPU by Hugging Face Text Embeddings Inference in docker compose; the AI layer calls it over HTTP |
 | Validation | Pydantic, `extra="forbid"` everywhere |
-| Decompose model | Claude Haiku 4.5, pinned as `claude-haiku-4-5-20251001` |
-| Plan model | Claude Sonnet 5, pinned as `claude-sonnet-5` |
+| Decompose model | Gemini 3.1 Flash-Lite, pinned as `gemini-3.1-flash-lite` |
+| Plan model | Gemini 3.1 Flash-Lite, pinned as `gemini-3.1-flash-lite` (its own name, so it can move alone) |
 | Session state | In-memory dict for the POC. Redis later — keep it behind an interface |
 | Eval harness | pytest, imports the retrieval code directly |
 
@@ -99,14 +99,16 @@ These are not filtered at query time. They are never annotated as capabilities, 
 
 Pin model version strings. Never use a floating alias — a silent model update changes plan behaviour with no deploy.
 
-**On the Claude CLI.** Both model calls go through the Claude Code CLI, which runs on the owner's Claude Code subscription instead of an API key. Four consequences:
+**On the model calls.** Both model calls go to the Gemini API with Google's Gen AI SDK (`google-genai`), in `app/llm/gemini.py`, using an API key (`AI_LAYER_GEMINI_API_KEY`). README decision 69 records the move from the Claude CLI.
 
-- **The binary path is a setting.** The CLI ships inside the Claude desktop app at a path that changes with every version, and it is not on `PATH`.
-- **Run it as an async subprocess.** Use `--model <pinned id> --output-format json --json-schema <schema> --no-session-persistence`, give it no tools, and never block the event loop.
-- **There is no temperature control.** Sonnet 5 rejects sampling parameters anyway, so consistency comes from the declared schema, the validator and the plan cache.
-- **The CLI thinks by default.** A simple call sets `thinking=False` on its `ModelRequest`, which runs that subprocess with `MAX_THINKING_TOKENS=0`. Decompose does: it went from 4–40 s to a steady ~2 s at the API. The planner keeps thinking.
-- **The CLI tells the model today's real date.** A prompt with a different "today" conflicts with it, so real-model checks use the real date. Only replayed recordings may use a fixed date.
-- **Keep the runner behind an interface,** so switching to the `anthropic` SDK later touches one file.
+- **One client, async.** One SDK client serves every call, through `client.aio`, so no call blocks the event loop and connections are reused. Close it at shutdown.
+- **One request, one JSON object.** Each call sends the pinned model, the system prompt as the system instruction, the user-turn text as the only content, and the schema as `response_json_schema`. No tools, no chat history.
+- **Gemini takes a subset of JSON Schema.** The transport rewrites each schema into it (`gemini_schema`); never loosen a schema to suit a provider. The validator is what enforces it.
+- **There is no temperature setting.** Gemini 3 is left at its default of 1.0, as Google recommends. Consistency comes from the declared schema, the validator and the plan cache.
+- **Thinking is a level.** A simple call sets `thinking=False` on its `ModelRequest`, which asks for `minimal`; the planner keeps `thinking=True`, which asks for `high`. Changing a level changes answers, so it means re-recording.
+- **One timeout over the retries.** The SDK retries 408, 429 and 5xx (at most 3 attempts); `AI_LAYER_MODEL_TIMEOUT_SECONDS` bounds the whole call.
+- **Error text.** Google's error messages never repeat the prompt, so they may be logged and shown to a developer. Never log the prompt itself: it holds the user's sentence.
+- **Keep the runner behind an interface,** so changing provider touches one file.
 
 **On embeddings.** Current PyTorch and ONNX Runtime ship no Intel-Mac builds, so BGE-M3 runs in a Linux container (`make embeddings-up`) rather than in-process. Retrieval and the description-similarity check call the same service. The 0.92 threshold means something only for this exact model, so the client refuses a service that reports any other model or revision. The container needs about 3 GB of Docker's memory, and its batch is capped at 2048 tokens so warm-up fits.
 
@@ -114,7 +116,7 @@ Pin model version strings. Never use a floating alias — a silent model update 
 
 ## Repository layout
 
-Everything lives under `self_aware/`. Folders marked with a phase do not exist yet; they are created by that phase. `STRUCTURE.md` explains every file.
+Everything lives under `self_aware/`. Folders marked with a phase do not exist yet; they are created by that phase. README.md's "Where everything lives" explains every file.
 
 ```
 /backend                    Java, Spring Boot, port 8080. Maven, two modules
@@ -153,7 +155,7 @@ Everything lives under `self_aware/`. Folders marked with a phase do not exist y
     /capabilities           the metadata snapshot, and the description-similarity check
     /sync                   polls versions, re-embeds what changed, keeps the catalog
     /retrieval              dense + lexical, RRF, sibling expansion, allow-list, cap
-    /llm                    Claude CLI runner behind an interface; pinned model ids
+    /llm                    the Gemini runner behind an interface; pinned model ids
     /decompose              AI call 1: sentence → 1-3 English intents, names checked
     /planning               AI call 2, and the pipeline: decompose → retrieve → plan → validate
     /validation             deterministic checks on model output
@@ -161,7 +163,7 @@ Everything lives under `self_aware/`. Folders marked with a phase do not exist y
     /response               every reply the user reads: fixed wording around the backend's text
   /domain/school            school vocabulary: glossary (challan, haazri, baqaya), time zone
   /migrations               plain SQL for the capability index
-  /tests                    unit/; integration/ (Postgres); build_checks/ (embeddings); model_checks/ (CLI)
+  /tests                    unit/; integration/ (Postgres); build_checks/ (embeddings); model_checks/ (Gemini API)
   /eval                     labelled sentences, recorded model answers, the four numbers, reports
 
 /openapi                    agent-gateway.json: the contract, exported by the backend
@@ -366,12 +368,12 @@ its score, its dense and lexical ranks, and `sibling_of`.
 
 ## Decompose and plan
 
-**Decompose** (Haiku 4.5) turns the sentence into 1 to 3 English intents, in order.
+**Decompose** (model call 1) turns the sentence into 1 to 3 English intents, in order.
 
 - Each intent lists the names it carries, copied as the user wrote them.
 - The output is refused when a name is not in the sentence, a name is changed in its intent, or an intent still holds Urdu function words.
 
-**The planner** (Sonnet 5) gets the sentence as typed, the intents labelled "a retrieval aid, not the plan", today's date in the school's time zone, and the candidates with their parameters. A parameter with a resolver is marked `looked_up_from_words`. Version strings are never shown.
+**The planner** (model call 2) gets the sentence as typed, the intents labelled "a retrieval aid, not the plan", today's date in the school's time zone, and the candidates with their parameters. A parameter with a resolver is marked `looked_up_from_words`, with `looked_up_by`: the resolver's own `lookup()` text from the metadata, saying what the record is found by (for an invoice, the student's name, optionally the month, class and section, or the invoice number). The planner passes the user's words that fit it and adds none. The same text tells the user what to type when a name is not found. Version strings are never shown.
 
 It answers with exactly one of:
 - **a plan:** steps of capability id and parameters, each parameter as `words` (looked up), `value`, or `from_step` + `field`;
@@ -421,7 +423,7 @@ answers with one of `answer`, `question`, `confirmation` or `refusal`.
 
 `make measure` prints four numbers, for all sentences, for English and for Roman Urdu:
 
-- **recall@30:** the expected capability is among the candidates retrieved with Haiku's intents, on the stress index.
+- **recall@30:** the expected capability is among the candidates retrieved with decompose's intents, on the stress index.
 - **plan accuracy:** the planner's answer is one step, or a request for input, for the expected capability.
 - **refusal correctness:** the system acts exactly when it should, across the labelled sentences and a set it must refuse.
 - **validator catch rate:** faults injected into real planner answers that the validator refuses.
@@ -508,6 +510,6 @@ The AI layer branches on these, so they are part of the contract. `AgentErrorCod
 - Real model calls are marked `model` and stay out of `make ai-test`.
 
 **Both**
-- Every AI call: structured output against a declared schema, validated before use. There is no temperature setting to rely on (see "On the Claude CLI").
+- Every AI call: structured output against a declared schema, validated before use. There is no temperature setting to rely on (see "On the model calls").
 - Every log line for a request carries `plan_id` and `session_id`.
 - Never log a user token.

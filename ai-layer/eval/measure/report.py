@@ -69,8 +69,8 @@ def write_report(
         table(numbers, baseline),
         "```",
         "",
-        "- **recall@30**: the expected capability is among the candidates retrieved with Haiku's "
-        "intents.",
+        "- **recall@30**: the expected capability is among the candidates retrieved with "
+        "decompose's intents.",
         "- **plan accuracy**: the answer is exactly one step (or a request for input) for the "
         "expected capability.",
         "- **refusal correctness**: across both sets, the system acted exactly when it should: "

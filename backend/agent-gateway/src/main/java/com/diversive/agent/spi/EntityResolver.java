@@ -24,13 +24,32 @@ public interface EntityResolver {
      */
     List<EntityMatch> resolve(String raw, UserContext user);
 
+    /**
+     * What this resolver searches by, in plain words, e.g. "the student's name, optionally with the class and
+     * section, or the admission number". Published with every parameter that names this type, so the planner
+     * knows which of the user's words to pass, and the chat can say what to type when nothing matches. Null
+     * when there is nothing useful to say.
+     */
+    default String lookup() {
+        return null;
+    }
+
     static EntityResolver of(String type, BiFunction<String, UserContext, List<EntityMatch>> search) {
+        return of(type, null, search);
+    }
+
+    static EntityResolver of(String type, String lookup, BiFunction<String, UserContext, List<EntityMatch>> search) {
         Objects.requireNonNull(type, "type");
         Objects.requireNonNull(search, "search");
         return new EntityResolver() {
             @Override
             public String type() {
                 return type;
+            }
+
+            @Override
+            public String lookup() {
+                return lookup;
             }
 
             @Override

@@ -12,7 +12,7 @@ import pytest
 from app.capabilities.snapshot import load_snapshot
 from app.core import trace
 from app.decompose.decomposer import Decomposer
-from app.llm.runner import DECOMPOSE_MODEL, PLANNER_MODEL, ModelRequest
+from app.llm.runner import PLANNER_MODEL, ModelRequest
 from app.planning.outcomes import PlannedSteps, Refusal, RefusalReason
 from app.planning.planner import Planner, candidate_entry
 from app.planning.service import SentencePlanner
@@ -35,7 +35,8 @@ class ScriptedModels:
 
     async def generate(self, request: ModelRequest) -> dict[str, Any]:
         self.requests.append(request)
-        if request.model == DECOMPOSE_MODEL:
+        # By purpose, not model: both calls may use the same model.
+        if request.purpose == "decompose":
             return {"intents": [self.intent]}
         return self.plan
 
@@ -123,7 +124,7 @@ async def test_nothing_retrieved_is_refused_without_calling_the_planner() -> Non
     )
 
     assert understanding.outcome == Refusal(RefusalReason.NO_MATCHING_CAPABILITY)
-    assert [request.model for request in models.requests] == [DECOMPOSE_MODEL]
+    assert [request.purpose for request in models.requests] == ["decompose"]
 
 
 async def test_the_planner_cannot_reach_past_the_users_allow_list() -> None:
@@ -145,6 +146,8 @@ def test_a_candidate_shows_the_planner_what_it_needs_and_marks_looked_up_paramet
     assert entry["publishes"] == ["guardians", "total_outstanding"]
     section, channel = entry["parameters"]
     assert section["looked_up_from_words"] is True
+    assert section["looked_up_by"].startswith("the class and section together")  # from the backend
+    assert "looked_up_by" not in channel
     assert channel == {
         "name": "channel",
         "type": "string",
