@@ -1,8 +1,9 @@
 """Recorded model answers, so a measurement can run again without calling the models.
 
-Each model call (decompose, plan) gets its own file under ``eval/recordings/``. It holds the pinned
-model, a hash of the exact system prompt, ``"thinking": false`` when the call is made without
-extended thinking, and the raw answer for each sentence: before validation, so a changed validator
+Each model call (decompose, plan, and the chooser's choose) gets its own file under
+``eval/recordings/``. It holds the pinned model, a hash of the exact system prompt (for the chooser,
+its instructions), ``"thinking": false`` when the call is made without extended thinking, and the
+raw answer for each sentence: before validation, so a changed validator
 is measured against the same answers. Changing any of these starts a fresh file.
 
     record   (``make measure``)     answers already recorded are replayed; missing ones are asked
@@ -21,9 +22,11 @@ import asyncio
 import hashlib
 import json
 import os
+from collections.abc import Awaitable, Callable
 from pathlib import Path
-from typing import Any, Literal
+from typing import Any, Literal, Protocol
 
+from app.choosing.jev import DecisionModel, DecisionRequest
 from app.llm.runner import ModelOutputError, ModelRequest, StructuredModel
 
 RECORDINGS_DIR = Path(__file__).resolve().parents[1] / "recordings"
@@ -37,6 +40,19 @@ def mode_from_environment() -> Mode:
     if mode not in ("record", "replay"):
         raise ValueError(f"{MODE_VARIABLE} must be record or replay, not {mode!r}")
     return mode  # type: ignore[return-value]
+
+
+class Recordable(Protocol):
+    """A model call's request, as far as recordings care: ModelRequest or DecisionRequest."""
+
+    @property
+    def system(self) -> str: ...
+
+    @property
+    def thinking(self) -> bool: ...
+
+
+Ask = Callable[[], Awaitable[dict[str, Any]]]
 
 
 class MissingRecordingError(RuntimeError):
@@ -88,9 +104,11 @@ class Recordings:
         """A model answering this sentence's call from the recording, asking ``model`` if needed."""
         return _RecordedModel(self, sentence, model)
 
-    async def answer(
-        self, sentence: str, request: ModelRequest, model: StructuredModel | None
-    ) -> dict[str, Any]:
+    def decider_for(self, sentence: str, model: DecisionModel | None) -> DecisionModel:
+        """The same, for a System One call (the chooser's)."""
+        return _RecordedDecider(self, sentence, model)
+
+    async def answer(self, sentence: str, request: Recordable, ask: Ask | None) -> dict[str, Any]:
         if _sha256(request.system) != self._header["system_prompt_sha256"]:
             raise MissingRecordingError(f"{self._path.name} was opened for a different prompt")
         if request.thinking != self._thinking:
@@ -99,13 +117,13 @@ class Recordings:
             )
         if sentence in self._answers:
             return _replayed(self._answers[sentence])
-        if self.mode == "replay" or model is None:
+        if self.mode == "replay" or ask is None:
             raise MissingRecordingError(
                 f"{self._path.name} has no {self.purpose} answer for a sentence. "
                 "Re-record with `make measure`."
             )
         try:
-            stored: Any = await model.generate(request)
+            stored: Any = await ask()
         except ModelOutputError as exc:
             # The model answered badly: that is its behaviour, so it is recorded. An outage
             # (ModelUnavailableError) is not, and fails the run so the next one asks again.
@@ -150,4 +168,18 @@ class _RecordedModel:
         self._model = model
 
     async def generate(self, request: ModelRequest) -> dict[str, Any]:
-        return await self._recordings.answer(self._sentence, request, self._model)
+        model = self._model
+        ask = (lambda: model.generate(request)) if model is not None else None
+        return await self._recordings.answer(self._sentence, request, ask)
+
+
+class _RecordedDecider:
+    def __init__(self, recordings: Recordings, sentence: str, model: DecisionModel | None) -> None:
+        self._recordings = recordings
+        self._sentence = sentence
+        self._model = model
+
+    async def decide(self, request: DecisionRequest) -> dict[str, Any]:
+        model = self._model
+        ask = (lambda: model.decide(request)) if model is not None else None
+        return await self._recordings.answer(self._sentence, request, ask)

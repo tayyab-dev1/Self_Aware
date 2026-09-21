@@ -10,9 +10,11 @@ from typing import Any
 import pytest
 
 from app.capabilities.snapshot import load_snapshot
+from app.choosing.chooser import NONE, CapabilityChooser
+from app.choosing.jev import DecisionRequest
 from app.core import trace
 from app.decompose.decomposer import Decomposer
-from app.llm.runner import PLANNER_MODEL, ModelRequest
+from app.llm.runner import PLANNER_MODEL, ModelRequest, ModelUnavailableError
 from app.planning.outcomes import PlannedSteps, Refusal, RefusalReason
 from app.planning.planner import Planner, candidate_entry
 from app.planning.service import SentencePlanner
@@ -66,13 +68,46 @@ class Embedder:
         return [[1.0] for _ in texts]
 
 
-def pipeline(models: ScriptedModels, index: RankedIndex) -> SentencePlanner:
+class ScriptedJev:
+    """Answers the chooser with fixed probabilities for its one intent, or fails."""
+
+    def __init__(self, probabilities: Mapping[str, float] | None) -> None:
+        self.probabilities = probabilities
+        self.requests: list[DecisionRequest] = []
+
+    async def decide(self, request: DecisionRequest) -> dict[str, Any]:
+        self.requests.append(request)
+        probabilities = self.probabilities
+        if probabilities is None:
+            raise ModelUnavailableError("The choose call failed: 529 overloaded")
+        best = max(probabilities, key=lambda c: probabilities[c])
+        return {
+            "answers": {
+                "intent_1": {
+                    "type": "choice",
+                    "choice": best,
+                    "confidence": probabilities[best],
+                    "probabilities": dict(probabilities),
+                }
+            }
+        }
+
+
+def pipeline(
+    models: ScriptedModels, index: RankedIndex, jev: ScriptedJev | None = None
+) -> SentencePlanner:
     return SentencePlanner(
         Decomposer(models, glossary_lines()),
         HybridRetriever(index, Embedder()),
         Planner(models, max_steps=3, today=lambda: date(2026, 9, 14), time_zone="Asia/Karachi"),
         lambda: CATALOG,
+        CapabilityChooser(jev) if jev is not None else None,
     )
+
+
+def planner_candidates(models: ScriptedModels) -> list[str]:
+    plan = next(request for request in models.requests if request.purpose == "plan")
+    return [entry["id"] for entry in json.loads(plan.prompt.split("Candidates:\n", 1)[1])]
 
 
 REMINDER_PLAN = {
@@ -196,3 +231,53 @@ async def test_output_the_validator_rejects_is_a_failed_stage_with_the_broken_ru
     validate = collected.stages[-1]
     assert validate.key == "validate" and validate.status == "failed"
     assert validate.note is not None and "UNKNOWN_CAPABILITY" in validate.note
+
+
+async def test_with_the_chooser_the_planner_sees_only_its_shortlist() -> None:
+    models = ScriptedModels(REMINDER_PLAN, entities=["class 5 blue"])
+    jev = ScriptedJev({"fee.reminder.send": 0.97, "fee.overdue.list": 0.02, NONE: 0.01})
+    index = RankedIndex(["fee.reminder.send", "dashboard.main.read"])
+
+    with trace.collect() as collected:
+        understanding = await pipeline(models, index, jev).understand(
+            SENTENCE, allowed=list(CATALOG), session_id="s-1"
+        )
+
+    assert isinstance(understanding.outcome, PlannedSteps)
+    [asked] = jev.requests
+    assert set(asked.questions["intent_1"]["criteria"]) == {
+        "fee.reminder.send", "fee.overdue.list", "dashboard.main.read", NONE,
+    }  # fmt: skip
+    assert planner_candidates(models) == ["fee.reminder.send"]
+    assert understanding.candidates == (
+        "fee.reminder.send", "fee.overdue.list", "dashboard.main.read",
+    )  # fmt: skip
+    assert understanding.choice is not None
+    assert understanding.choice.shortlist == ("fee.reminder.send",)
+    stages = [stage.key for stage in collected.stages]
+    assert stages.index("fuse") < stages.index("choose") < stages.index("plan")
+
+
+async def test_when_the_chooser_finds_none_the_sentence_is_refused_without_the_planner() -> None:
+    models = ScriptedModels(REMINDER_PLAN, intent="Ask about tomorrow's weather")
+    jev = ScriptedJev({"fee.reminder.send": 0.05, "fee.overdue.list": 0.03, NONE: 0.92})
+
+    understanding = await pipeline(models, RankedIndex(["fee.reminder.send"]), jev).understand(
+        "kal ka mausam kaisa hoga", allowed=list(CATALOG), session_id="s-1"
+    )
+
+    assert understanding.outcome == Refusal(RefusalReason.NO_MATCHING_CAPABILITY)
+    assert [request.purpose for request in models.requests] == ["decompose"]
+
+
+async def test_when_the_chooser_is_down_the_planner_sees_every_candidate() -> None:
+    models = ScriptedModels(REMINDER_PLAN, entities=["class 5 blue"])
+    index = RankedIndex(["fee.reminder.send", "dashboard.main.read"])
+
+    understanding = await pipeline(models, index, ScriptedJev(None)).understand(
+        SENTENCE, allowed=list(CATALOG), session_id="s-1"
+    )
+
+    assert isinstance(understanding.outcome, PlannedSteps)
+    assert understanding.choice is None
+    assert planner_candidates(models) == list(understanding.candidates)

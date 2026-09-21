@@ -122,9 +122,13 @@ ai-eval: ## Retrieval eval: recall@30 gate, Roman Urdu, clusters; writes ai-laye
 measure: ## Print the four numbers (recall@30, plan accuracy, refusal correctness, validator catch rate); records missing model answers
 	$(UV) run pytest eval/test_measure.py -p no:cacheprovider -q
 
+.PHONY: measure-jev
+measure-jev: ## The chooser experiment: plan every eval sentence without and with Jev choosing first; records missing answers
+	$(UV) run pytest eval/test_measure_with_jev.py -p no:cacheprovider -q
+
 .PHONY: measure-ci
 measure-ci: ## The regression run: every eval from eval/recordings/ only, no model called (what CI runs)
-	cd ai-layer && EVAL_MODEL_CALLS=replay AI_LAYER_GEMINI_API_KEY= uv run pytest eval -p no:cacheprovider -q
+	cd ai-layer && EVAL_MODEL_CALLS=replay AI_LAYER_GEMINI_API_KEY= AI_LAYER_TYPESAFE_API_KEY= uv run pytest eval -p no:cacheprovider -q
 
 .PHONY: eval-corpus
 eval-corpus: ## Re-extract the eval's contract sentences and distractors from ../planning-contracts

@@ -375,6 +375,8 @@ its score, its dense and lexical ranks, and `sibling_of`.
 
 **The planner** (model call 2) gets the sentence as typed, the intents labelled "a retrieval aid, not the plan", today's date in the school's time zone, and the candidates with their parameters. A parameter with a resolver is marked `looked_up_from_words`, with `looked_up_by`: the resolver's own `lookup()` text from the metadata, saying what the record is found by (for an invoice, the student's name, optionally the month, class and section, or the invoice number). The planner passes the user's words that fit it and adds none. The same text tells the user what to type when a name is not found. Version strings are never shown.
 
+**The capability chooser** (an experiment, off by default, `AI_LAYER_CHOOSER_ENABLED`) sits between retrieval and the planner, in `app/choosing/`. TypeSafe's Jev (`jev-1.13.0`, pinned) gets one choice question per English intent, over the candidates plus "none", each described by what it does and needs; it answers with a probability per option and writes no text. The planner then sees only Jev's shortlist, and the validator holds it to that. An empty shortlist is a refusal; if Jev cannot be reached, the planner sees every candidate. `make measure-jev` compares both ways (README decision 72).
+
 It answers with exactly one of:
 - **a plan:** steps of capability id and parameters, each parameter as `words` (looked up), `value`, or `from_step` + `field`;
 - **`needs_input`:** the capability and the missing required parameter names;

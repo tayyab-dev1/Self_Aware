@@ -16,6 +16,8 @@ from typing import Protocol
 import httpx
 import structlog
 
+from app.choosing.chooser import CapabilityChooser
+from app.choosing.jev import JevModel
 from app.core.settings import Settings
 from app.decompose.decomposer import Decomposer
 from app.embeddings.client import EmbeddingsClient
@@ -67,6 +69,8 @@ class AppResources:
     chat: ChatOrchestrator | None = None
     # The model client chat calls; closed at shutdown.
     model: Closeable | None = None
+    # The capability chooser's client, when the chooser is on; closed at shutdown.
+    chooser_model: Closeable | None = None
     # Why chat is off while sync is on (for example, no Gemini API key); readiness reports it.
     chat_problem: str | None = None
     _sync_task: asyncio.Task[None] | None = field(default=None, init=False)
@@ -86,6 +90,8 @@ class AppResources:
                 await self.embeddings.aclose()
             if self.model is not None:
                 await self.model.aclose()
+            if self.chooser_model is not None:
+                await self.chooser_model.aclose()
             await self.gateway.aclose()
         finally:
             await self.index.close()
@@ -129,7 +135,8 @@ async def build_resources(
         rrf_k=settings.retrieval_rrf_k,
         branch_limit=settings.retrieval_branch_limit,
     )
-    chat, model, chat_problem = _build_chat(settings, gateway, retriever, sync)
+    chooser_model = _build_chooser_model(settings)
+    chat, model, chat_problem = _build_chat(settings, gateway, retriever, sync, chooser_model)
     return AppResources(
         index=index,
         gateway=gateway,
@@ -138,8 +145,20 @@ async def build_resources(
         retriever=retriever,
         chat=chat,
         model=model,
+        chooser_model=chooser_model,
         chat_problem=chat_problem,
     )
+
+
+def _build_chooser_model(settings: Settings) -> JevModel | None:
+    """The chooser's client when the chooser is on; without a key, chat plans without it."""
+    if not settings.chooser_enabled:
+        return None
+    try:
+        return JevModel.from_settings(settings)
+    except ModelUnavailableError as exc:
+        log.warning("chooser_off", reason=str(exc))
+        return None
 
 
 def _build_chat(
@@ -147,6 +166,7 @@ def _build_chat(
     gateway: GatewayClient,
     retriever: HybridRetriever,
     sync: MetadataSync | None,
+    chooser_model: JevModel | None = None,
 ) -> tuple[ChatOrchestrator | None, GeminiModel | None, str | None]:
     """Chat needs the catalog from sync and a model. Without sync, chat is simply off."""
     if sync is None:
@@ -167,6 +187,7 @@ def _build_chat(
             record_words=RECORD_WORDS,
         ),
         lambda: sync.catalog,
+        CapabilityChooser(chooser_model) if chooser_model is not None else None,
     )
     chat = ChatOrchestrator(
         gateway=gateway,

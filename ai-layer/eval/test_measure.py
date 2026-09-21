@@ -12,7 +12,6 @@ from __future__ import annotations
 
 import json
 import os
-from collections.abc import AsyncIterator
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -31,7 +30,7 @@ from app.planning.planner import system_prompt as planner_prompt
 from app.retrieval.hybrid import HybridRetriever
 from app.sync.metadata_sync import EMBEDDING_MODEL
 from domain.school.glossary import glossary_lines
-from eval.conftest import IndexFactory
+from eval.conftest import IndexFactory, StressIndex
 from eval.measure.faults import FaultTally, inject_faults
 from eval.measure.pipeline import MAX_STEPS, CaseResult, Pipeline, load_cases
 from eval.measure.recordings import Recordings, mode_from_environment
@@ -87,23 +86,7 @@ def model_or_none() -> GeminiModel | None:
 
 
 @pytest_asyncio.fixture(scope="module")
-async def stress(
-    new_index: IndexFactory,
-) -> AsyncIterator[tuple[HybridRetriever, list[str], CachingEmbedder]]:
-    client = EmbeddingsClient.from_settings(Settings())
-    try:
-        embedder = CachingEmbedder(client)
-        await embedder.require_expected_model()
-        index = await new_index()
-        await fill_poc_index(index, embedder)
-        await add_distractors(index, embedder, load_distractors())
-        yield HybridRetriever(index, embedder), sorted(await index.indexed_versions()), embedder
-    finally:
-        await client.aclose()
-
-
-@pytest_asyncio.fixture(scope="module")
-async def measurement(stress: tuple[HybridRetriever, list[str], CachingEmbedder]) -> Measurement:
+async def measurement(stress: StressIndex) -> Measurement:
     retriever, index_ids, _ = stress
     catalog = {capability.id: capability for capability in load_snapshot().capabilities}
     decompose_recordings, plan_recordings = recordings()

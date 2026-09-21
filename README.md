@@ -208,6 +208,35 @@ describe what was delivered and measured **with Claude**.
 - **Needs a key.** Set `AI_LAYER_GEMINI_API_KEY` in `.env`. Without it, chat is off and readiness
   says why. The Claude desktop app is no longer needed.
 
+### Experiment: Jev chooses the capability before the planner (branch `jev-chooser`, 21 Sep 2026)
+
+TypeSafe's Jev, a System One model that picks from given options with a probability for each and
+writes no text, chooses which candidates the planner sees (decision 72). It is off by default
+(`AI_LAYER_CHOOSER_ENABLED`). `make measure-jev` plans every eval sentence both ways from recorded
+answers and writes `ai-layer/eval/reports/measure_with_jev.md`.
+
+```
+                      all                       English                   Roman Urdu
+recall@30             95.4% -> 95.4% (+0.0)     96.8% -> 96.8% (+0.0)     94.6% -> 94.6% (+0.0)
+plan accuracy         90.3% -> 87.4% (-2.9)     92.1% -> 93.7% (+1.6)     89.3% -> 83.9% (-5.4)
+refusal correctness   92.2% -> 90.2% (-2.0)     93.9% -> 94.9% (+1.0)     91.2% -> 87.1% (-4.1)
+validator catch rate  100.0% -> 100.0% (+0.0)   100.0% -> 100.0% (+0.0)   100.0% -> 100.0% (+0.0)
+```
+
+- **Jev on its own** puts the expected capability in its shortlist for 93.5% of labelled sentences
+  (153 of 170 get a shortlist of one), and answers "none" for 86.4% of the sentences to refuse. Its
+  confidence is honest: picks at 0.9 or above are right 94.9% of the time, picks below 0.7 about 75%.
+- **Faster planning.** With only the shortlist, the planner's prompt is a quarter of the size and
+  its call took a median of 2.7 s instead of 4.9 s (16 sentences, live). Jev itself takes a median of
+  0.41 s, so a sentence is about 1.8 s faster. With 30 candidates in production the gap would be wider.
+- **Where it loses.** English gains, Roman Urdu loses. Every lost sentence is one Jev answered "none"
+  because decompose's English intent was wrong: "credit raise karo" became "Increase the credit
+  limit", and "unhon ne waqt par diya tha phir bhi late fee lag gayi" became "Check why a late fee
+  was charged…". The planner still reads the original message and recovers; Jev sees only the intent.
+  Giving Jev the original message as well did not help (it fixed one sentence and lost three refusals).
+- **Next.** The losses are decompose's, so better intents for short Roman Urdu requests would help
+  Jev and retrieval both. Until then the chooser stays off by default.
+
 ### What Phase 7 delivers
 
 One command prints the four numbers the POC is judged on, for all sentences, English and Roman Urdu:
@@ -884,6 +913,7 @@ curl -s -X POST http://127.0.0.1:8080/agent/execute -H "Authorization: Bearer lo
 | `make ai-test` | Every AI layer test except real model calls (integration needs Docker, build checks need `embeddings-up`) |
 | `make ai-test-unit` | AI layer unit tests only, no Docker, no embeddings service, no model calls |
 | `make measure` | The four numbers (recall@30, plan accuracy, refusal correctness, validator catch rate); records any missing model answer |
+| `make measure-jev` | The chooser experiment: every eval sentence planned without and with Jev choosing first; records any missing answer (needs `AI_LAYER_TYPESAFE_API_KEY` for those) |
 | `make measure-ci` | The regression run: every eval from the recorded answers, no model called; fails below the baseline (what CI runs) |
 | `make ai-model-checks` | The Phase 5 checks against the real models (Gemini API; needs `AI_LAYER_GEMINI_API_KEY`) |
 | `make plan Q="..."` | Every stage for a sentence: intents, candidates, the checked plan, and preflight's answer (nothing runs) |
@@ -929,6 +959,9 @@ The Makefile loads it into every command.
   - `AI_LAYER_MODEL_TIMEOUT_SECONDS` (default 120) limits one model call, the SDK's retries of
     408, 429 and 5xx included (at most 3 attempts).
   - `AI_LAYER_PLAN_MAX_STEPS` (default 3, and never more) caps a plan.
+  - `AI_LAYER_CHOOSER_ENABLED` (default false) puts Jev before the planner (decision 72). It needs
+    `AI_LAYER_TYPESAFE_API_KEY` (from console.typesafe.ai); without one the chooser stays off and
+    chat plans as before. `AI_LAYER_CHOOSER_TIMEOUT_SECONDS` (default 15) limits one call, retries included.
   - The model ids are pinned in code (`app/llm/runner.py`), not settings: changing a model is a deploy.
 - **Chat:**
   - `AI_LAYER_CHAT_SESSION_TTL_SECONDS` (default 1800) is how long an unanswered question or confirmation is kept.
@@ -1353,6 +1386,15 @@ Both folders share one numbering. Never edit a migration that has run; add a new
 | `gemini.py` | `GeminiModel`: one Gen AI SDK client for every call (pinned model, system instruction, JSON schema, no tools, thinking `minimal` or `high`, one timeout over the SDK's retries), and `gemini_schema`, which rewrites a schema into the JSON Schema subset Gemini accepts |
 
 
+`app/choosing/` — the capability chooser (an experiment, off by default)
+
+
+| File         | What it has |
+| ------------ | ----------- |
+| `jev.py`     | `JevModel`: TypeSafe's `POST /v1/systemone` over httpx, with the key as a bearer token; retries 429, 529 and 5xx with backoff, all within one timeout; `DecisionRequest` and the `DecisionModel` interface |
+| `chooser.py` | `CapabilityChooser.choose(intents, candidates)`: one choice question per intent (the candidates, each with what it does and needs, plus "none"), the answer checked, and the shortlist the planner sees. The model is pinned here (`jev-1.13.0`) |
+
+
 `app/decompose/` — model call 1
 
 
@@ -1370,7 +1412,7 @@ Both folders share one numbering. Never edit a migration that has run; add a new
 | `outcomes.py`      | What planning ends in (`PlannedSteps`, `NeedsInput`, `Refusal`) and the strict shape of the planner's answer, with its JSON schema                        |
 | `planner.py`       | `Planner.plan(...)`: builds the prompt (sentence, intents as a retrieval aid, today, candidates with their parameters and, for a looked-up one, what it is found by) and validates the answer           |
 | `system_prompt.md` | The planner's instructions                                                                                                                                |
-| `service.py`       | `SentencePlanner.understand(sentence, allowed, session_id)`: decompose → retrieve → plan → validate. No candidates means a refusal without a planner call |
+| `service.py`       | `SentencePlanner.understand(sentence, allowed, session_id)`: decompose → retrieve → (choose, when the chooser is on) → plan → validate. No candidates, or an empty shortlist, means a refusal without a planner call |
 | `__main__.py`      | `python -m app.planning "sentence"` shows every stage and the backend's preflight answer (`make plan Q="..."`)                                            |
 
 
@@ -1489,6 +1531,10 @@ recordings without calling a model. None of this is part of `make ai-test`.
 | `test_retrieval_with_intents.py`                    | Retrieval as it really runs: every sentence decomposed by the decompose model, the stress index searched with its intents, held to the same 90% gate                                                                        |
 | `retrieval/intents.py`                              | Decomposes every eval sentence with the decompose model, through the recordings                                                                                                                                             |
 | `test_measure.py`                                   | Phase 7: prints the four numbers (all, English, Roman Urdu) and fails if one fell below the baseline; the validator catches every injected fault; a deliberately broken description shows up as a recall drop |
+| `test_measure_with_jev.py`                          | The chooser experiment (decision 72): every case planned without and with Jev choosing first; checks every sentence got an outcome and the validator still catches every fault, and writes `reports/measure_with_jev.md` |
+| `measure/choose_report.py`                          | The comparison table, Jev on its own (right picks, shortlist sizes, time per call, confidence against accuracy) and every sentence whose result changed |
+| `recordings/choose.json`, `recordings/plan_after_choose.json` | Jev's recorded answers, and the planner's answers when it sees only Jev's shortlist |
+| `reports/measure_with_jev.md`                       | The latest chooser comparison                                                                                                                                                                                 |
 | `measure/pipeline.py`                               | Every case (175 labelled sentences, 70 to refuse) through decompose, retrieval on the stress index, the planner and the validator, keeping each stage's result                                                |
 | `measure/recordings.py`                             | Recorded model answers in `eval/recordings/`: record mode asks only for what is missing, replay mode never calls a model; a changed prompt invalidates the recording                                          |
 | `measure/faults.py`                                 | Thirteen ways to break a real planner answer (a made-up id, an invented parameter, a name the user never wrote, …) and the tally of what the validator caught                                                 |
@@ -1497,7 +1543,7 @@ recordings without calling a model. None of this is part of `make ai-test`.
 | `measure/baseline.json`                             | The numbers a run must not fall below (update with `EVAL_UPDATE_BASELINE=1 make measure`)                                                                                                                     |
 | `measure/data/refusal_sentences.jsonl`              | 60 requests the POC must refuse, labelled by the contracts as routing to capabilities it does not publish: every other fee intent, and one per other module (generated)                                       |
 | `measure/data/refusal_authored.jsonl`               | 10 non-requests and out-of-scope questions (greetings, weather, a joke), English and Roman Urdu                                                                                                               |
-| `recordings/decompose.json`, `recordings/plan.json` | The recorded model answers, before validation, committed so CI measures without a model. Each file names its model; today they still hold Claude's answers (see Status)                                                                                                            |
+| `recordings/decompose.json`, `recordings/plan.json` | The recorded model answers, before validation, committed so CI measures without a model. Each file names its model; they hold Gemini's answers (see Status)                                                                                                            |
 | `retrieval/data/contract_sentences.jsonl`           | 75 sentences labelled by the planning contracts: routing examples and near-misses for the 8 capabilities (generated)                                                                                          |
 | `retrieval/data/authored_sentences.jsonl`           | 100 sentences written for this eval, English and Roman Urdu with glosses, weighted towards the four fee corrections                                                                                           |
 | `retrieval/data/distractors.jsonl`                  | 481 other planning-contract intents' one-line summaries, for the stress index (generated)                                                                                                                     |
@@ -2069,12 +2115,35 @@ differently on each call ("Ahmed Raza Class 5 Blue fees", "Ahmed Raza in Class 5
 - **Measured with Gemini**, together with the move to Gemini (decision 69): recall 95.4%, plan accuracy
   90.3%, refusal correctness 92.2%, catch rate 100%. See Status for the comparison with Claude.
 
+**72. Try Jev to choose the capability before the planner (an experiment, off by default).** The planner does two
+jobs: choosing the capability and filling its parameters. TypeSafe's Jev (a System One model: typed choices with
+calibrated probabilities, no text, about 0.4 s) can do the first, so the planner only fills in.
+
+- **Where it sits.** Between retrieval and the planner, in `app/choosing/`. For each intent, Jev gets one choice
+  question. The options are the candidates plus "none". Each candidate says what it does and is not for, whether it
+  changes records, and what it needs: every parameter's meaning, and for a looked-up one what it is found by
+  (decision 71). Jev sees the English intents, not the original message.
+- **The shortlist.** Per intent, Jev's options are kept in order of probability until they hold 90% of the
+  probability that is not "none", at most 3. When "none" holds 0.6 or more, that intent adds nothing. The planner
+  sees only the shortlist, and the validator holds it to that (`NOT_A_CANDIDATE`). An empty shortlist is a refusal
+  with no planner call. If Jev cannot be reached, the planner sees every candidate, as with the chooser off.
+- **Two changes after the first measurement.** Jev at first answered "none" for requests that left out details
+  ("credit raise karo"), because the options list what they need. The instructions now say that missing details
+  are asked for later, but that a different action on the same thing (approving, returning or paying out instead
+  of proposing) does not fit. That took Jev from 153 to 158 right among the labelled sentences, and from 37 to 38
+  among those to refuse. From the recorded probabilities, "none" wins at 0.6 rather than 0.5: two more labelled
+  sentences, no refusal lost. Higher lets refusals through.
+- **Pinned and recorded like the models.** `jev-1.13.0`, never `jev-latest`. Its answers are recorded in
+  `eval/recordings/choose.json`, and the planner's answers after it in `plan_after_choose.json`, so `make
+  measure-ci` replays the comparison with no calls. `JevModel` retries 429, 529 and 5xx with backoff, within
+  `AI_LAYER_CHOOSER_TIMEOUT_SECONDS`.
+- **Result.** Faster (about 1.8 s per sentence) and better in English, but 2.9 points lower plan accuracy
+  overall, all from Roman Urdu sentences whose English intent was wrong. See Status.
+
 ## Open questions
 
-- **How well does Gemini 3.1 Flash-Lite plan?** Not measured yet. The four numbers in Status are
-  Claude's, and a Flash-Lite model, Google's lightest tier, now does the job Sonnet did. Recording its
-  answers with `make measure` settles it, English and Roman Urdu separately. If the planner falls
-  short, `PLANNER_MODEL` can move to a larger model alone.
+- **Should Jev choose the capability?** Faster, and better in English, but it loses Roman Urdu
+  sentences whose English intent is wrong (decision 72). Better intents from decompose would settle it.
 - **The free tier's terms.** On the free tier, Google may use requests to improve its products; on a
   paid tier it does not. Every sentence, with any student's name in it, goes into the prompt. Before
   real school data, the key needs a paid (billing-enabled) project, redaction (below), or both.

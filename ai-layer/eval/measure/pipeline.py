@@ -1,7 +1,9 @@
 """Every eval sentence through the real understanding pipeline, from the recorded model answers.
 
 Decompose, retrieve on the stress index, plan among the candidates the POC can run, validate: the
-same steps ``SentencePlanner`` takes, spelled out so each stage's result is kept for scoring. The
+same steps ``SentencePlanner`` takes, spelled out so each stage's result is kept for scoring. With
+``choose_recordings`` set, the capability chooser runs between retrieval and the planner, and the
+planner sees only its shortlist (``make measure-jev``). The
 user may use every published capability; today is fixed, so recorded dates stay valid.
 """
 
@@ -17,6 +19,8 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict
 
+from app.choosing.chooser import CapabilityChooser, Choice
+from app.choosing.jev import DecisionModel
 from app.decompose.decomposer import Decomposition, Intent
 from app.gateway.models import CapabilityMetadata
 from app.llm.runner import ModelError, StructuredModel
@@ -82,6 +86,8 @@ class CaseResult:
     capabilities: tuple[str, ...] = ()
     problems: tuple[str, ...] = ()
     raw_plan: Mapping[str, Any] | None = None
+    # With the chooser on: what it picked. ``plannable`` is then its shortlist.
+    choice: Choice | None = None
 
     @property
     def acted(self) -> bool:
@@ -109,6 +115,8 @@ class Pipeline:
     decompose_recordings: Recordings
     plan_recordings: Recordings
     model: StructuredModel | None
+    choose_recordings: Recordings | None = None
+    decider: DecisionModel | None = None
 
     async def run_all(self, cases: Sequence[Case]) -> list[CaseResult]:
         gate = asyncio.Semaphore(CONCURRENT_CASES)
@@ -130,6 +138,25 @@ class Pipeline:
         if not plannable:
             return CaseResult(case, decomposed.intents, candidates, (), "refusal")
 
+        choice: Choice | None = None
+        if self.choose_recordings is not None:
+            chooser = CapabilityChooser(self.choose_recordings.decider_for(case.text, self.decider))
+            try:
+                choice = await chooser.choose(
+                    decomposed.intents, [self.catalog[c] for c in plannable]
+                )
+            except (ModelCallFailedError, ModelError) as exc:
+                return CaseResult(
+                    case, decomposed.intents, candidates, plannable, "failed",
+                    problems=(f"CHOOSER_FAILED: {type(exc).__name__}",),
+                )  # fmt: skip
+            plannable = choice.shortlist
+            if not plannable:
+                return CaseResult(
+                    case, decomposed.intents, candidates, (), "refusal",
+                    problems=("chooser_found_none",), choice=choice,
+                )  # fmt: skip
+
         planner = Planner(
             self.plan_recordings.model_for(case.text, self.model),
             max_steps=MAX_STEPS,
@@ -138,7 +165,9 @@ class Pipeline:
             record_words=RECORD_WORDS,
         )
         decomposition = Decomposition(tuple(Intent(text, ()) for text in decomposed.intents))
-        found = functools.partial(CaseResult, case, decomposed.intents, candidates, plannable)
+        found = functools.partial(
+            CaseResult, case, decomposed.intents, candidates, plannable, choice=choice
+        )
         try:
             outcome = await planner.plan(
                 case.text,
