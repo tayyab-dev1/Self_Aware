@@ -9,7 +9,8 @@ from __future__ import annotations
 
 import asyncio
 import contextlib
-from collections.abc import Awaitable, Callable
+import time
+from collections.abc import Awaitable, Callable, Mapping
 from dataclasses import dataclass, field
 from typing import Protocol
 
@@ -25,7 +26,7 @@ from app.gateway.client import GatewayClient
 from app.gateway.models import AgentMetadataResponse
 from app.index.database import IndexDatabase, IndexProbe
 from app.llm.gemini import GeminiModel
-from app.llm.runner import ModelUnavailableError
+from app.llm.runner import DECOMPOSE_MODEL, ModelUnavailableError
 from app.orchestration.orchestrator import ChatOrchestrator
 from app.orchestration.plan_cache import PlanCache
 from app.orchestration.session import InMemorySessionStore
@@ -73,19 +74,26 @@ class AppResources:
     chooser_model: Closeable | None = None
     # Why chat is off while sync is on (for example, no Gemini API key); readiness reports it.
     chat_problem: str | None = None
+    # Cheap first calls to each outside service, run once in the background at startup, so the
+    # first chat turn does not pay for a cold embedding model or new connections.
+    warm_ups: Mapping[str, Callable[[], Awaitable[None]]] = field(default_factory=dict)
     _sync_task: asyncio.Task[None] | None = field(default=None, init=False)
+    _warm_up_task: asyncio.Task[None] | None = field(default=None, init=False)
 
     def start(self) -> None:
-        """Start background work: the metadata sync loop, when there is one."""
+        """Start background work: the metadata sync loop, when there is one, and the warm-ups."""
         if self.sync is not None and self._sync_task is None:
             self._sync_task = asyncio.create_task(self.sync.run_forever(), name="metadata-sync")
+        if self.warm_ups and self._warm_up_task is None:
+            self._warm_up_task = asyncio.create_task(warm_up(self.warm_ups), name="warm-up")
 
     async def aclose(self) -> None:
         try:
-            if self._sync_task is not None:
-                self._sync_task.cancel()
-                with contextlib.suppress(asyncio.CancelledError):
-                    await self._sync_task
+            for task in (self._sync_task, self._warm_up_task):
+                if task is not None:
+                    task.cancel()
+                    with contextlib.suppress(asyncio.CancelledError):
+                        await task
             if self.embeddings is not None:
                 await self.embeddings.aclose()
             if self.model is not None:
@@ -98,6 +106,21 @@ class AppResources:
 
 
 ResourcesFactory = Callable[[Settings], Awaitable[AppResources]]
+
+
+async def warm_up(calls: Mapping[str, Callable[[], Awaitable[None]]]) -> None:
+    """Run every warm-up at once. A failure is only logged: the real call will say what is wrong."""
+
+    async def one(name: str, call: Callable[[], Awaitable[None]]) -> None:
+        started = time.monotonic()
+        try:
+            await call()
+        except Exception as exc:  # a warm-up must never stop the service
+            log.warning("warm_up_failed", service=name, error=type(exc).__name__)
+            return
+        log.info("warmed_up", service=name, duration_ms=round((time.monotonic() - started) * 1000))
+
+    await asyncio.gather(*(one(name, call) for name, call in calls.items()))
 
 
 async def build_resources(
@@ -137,6 +160,11 @@ async def build_resources(
     )
     chooser_model = _build_chooser_model(settings)
     chat, model, chat_problem = _build_chat(settings, gateway, retriever, sync, chooser_model)
+    warm_ups: dict[str, Callable[[], Awaitable[None]]] = {"embeddings": embeddings.warm_up}
+    if model is not None:
+        warm_ups["gemini"] = lambda: model.warm_up(DECOMPOSE_MODEL)
+    if chooser_model is not None:
+        warm_ups["jev"] = chooser_model.warm_up
     return AppResources(
         index=index,
         gateway=gateway,
@@ -147,6 +175,7 @@ async def build_resources(
         model=model,
         chooser_model=chooser_model,
         chat_problem=chat_problem,
+        warm_ups=warm_ups,
     )
 
 

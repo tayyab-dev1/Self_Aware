@@ -161,6 +161,10 @@ class GeminiModel:
             ) from exc
         return _structured_output(request, response, time.monotonic() - started)
 
+    async def warm_up(self, model: str) -> None:
+        """Open the connection with a model lookup: no generate request, so no daily quota used."""
+        await self._client.aio.models.get(model=model)
+
     async def aclose(self) -> None:
         await self._client.aio.aclose()
 

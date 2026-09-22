@@ -62,6 +62,10 @@ class EmbeddingsClient:
         )
         return cls(http)
 
+    async def warm_up(self) -> None:
+        """Embed one short text, so the first real request does not wait for a cold model."""
+        await self.embed(["warm up"])
+
     async def model(self) -> ModelIdentity:
         """The model the service is running, as it reports it (`GET /info`)."""
         body = await self._request("GET", "/info")

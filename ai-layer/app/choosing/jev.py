@@ -132,6 +132,10 @@ class JevModel:
             await asyncio.sleep(RETRY_WAITS[attempt - 1])
         raise AssertionError("unreachable: the last attempt returns or raises")
 
+    async def warm_up(self) -> None:
+        """Open the connection (kept for KEEPALIVE_SECONDS). Any answer will do; none is billed."""
+        await self._client.get("/")
+
     async def aclose(self) -> None:
         await self._client.aclose()
 
