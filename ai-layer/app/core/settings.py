@@ -56,6 +56,9 @@ class Settings(BaseSettings):
     model_timeout_seconds: float = Field(default=120.0, gt=0)
     plan_max_steps: int = Field(default=3, ge=1, le=3)
 
+    # Groq's API: only for comparing other models with Gemini (eval scripts). Chat never uses it.
+    groq_api_key: SecretStr = SecretStr("")
+
     # The capability chooser (on by default, decision 75): TypeSafe's Jev picks which candidates the
     # planner sees. Without a key it stays off even when enabled, and chat plans as before.
     chooser_enabled: bool = True
