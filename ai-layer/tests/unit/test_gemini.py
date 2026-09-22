@@ -11,7 +11,7 @@ from google.genai import errors, types
 
 from app.core.settings import Settings
 from app.decompose.decomposer import SCHEMA as DECOMPOSE_SCHEMA
-from app.llm.gemini import GeminiModel, gemini_schema
+from app.llm.gemini import GeminiModel, gemini_schema, hide_key
 from app.llm.runner import DECOMPOSE_MODEL, ModelOutputError, ModelRequest, ModelUnavailableError
 from app.planning.outcomes import SCHEMA as PLANNER_SCHEMA
 
@@ -160,6 +160,34 @@ async def test_an_api_error_says_what_went_wrong_such_as_a_used_up_quota() -> No
 
     with pytest.raises(ModelUnavailableError, match="429 RESOURCE_EXHAUSTED: Quota exceeded"):
         await model.generate(REQUEST)
+
+
+async def test_a_key_named_in_googles_error_text_never_leaves_the_client() -> None:
+    key = "AQ.Ab8Rtestonlynotarealkey0123456789"
+    suspended = errors.ClientError(
+        403,
+        {
+            "error": {
+                "code": 403,
+                "status": "PERMISSION_DENIED",
+                "message": f"Permission denied: Consumer 'api_key:{key}' has been suspended.",
+            }
+        },
+    )
+    client = FakeClient(suspended)
+    model = GeminiModel(client, timeout_seconds=10, api_key=key)  # type: ignore[arg-type]
+
+    with pytest.raises(ModelUnavailableError) as raised:
+        await model.generate(REQUEST)
+
+    assert "api_key:[hidden]" in str(raised.value)
+    assert "Ab8R" not in str(raised.value)
+
+
+def test_a_key_is_hidden_even_when_only_its_label_gives_it_away() -> None:
+    hidden = hide_key("Consumer 'api_key:AQ.other' is off", "")
+    assert hidden == "Consumer 'api_key:[hidden]' is off"
+    assert hide_key("the key AIzaSecret leaked", "AIzaSecret") == "the key [hidden] leaked"
 
 
 async def test_an_unreachable_api_is_model_unavailable() -> None:

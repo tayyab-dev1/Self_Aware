@@ -8,8 +8,8 @@ probability, so a clear pick leaves the planner one candidate to fill in, and a 
 the two or three that are close. When "none" wins every intent the shortlist is empty and the
 sentence is refused without a planner call.
 
-The planner still decides the plan, and the validator still checks it against the shortlist. This
-is an experiment behind ``AI_LAYER_CHOOSER_ENABLED``; ``make measure-jev`` compares it with
+The planner still decides the plan, and the validator still checks it against the shortlist. It is
+on by default (``AI_LAYER_CHOOSER_ENABLED``, decision 75); ``make measure-jev`` compares it with
 planning from every candidate.
 """
 

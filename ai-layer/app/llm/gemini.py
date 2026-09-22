@@ -24,6 +24,7 @@ from __future__ import annotations
 
 import asyncio
 import json
+import re
 import time
 from collections.abc import Mapping
 from typing import Any, Self
@@ -69,6 +70,17 @@ _KEPT_KEYWORDS = frozenset(
     }
 )
 _LOCAL_REF_PREFIXES = ("#/$defs/", "#/definitions/")
+# Google's error text can name the key it refused ("Consumer 'api_key:AQ.Ab8R...' has been
+# suspended"). That text reaches logs, the chat trace and the reply, so the key is hidden first.
+_KEY_IN_TEXT = re.compile(r"(api_key:)[^\s'\"]+")
+HIDDEN = "[hidden]"
+
+
+def hide_key(text: str, api_key: str) -> str:
+    """The text with the API key, and anything Google labels ``api_key:``, replaced."""
+    if api_key:
+        text = text.replace(api_key, HIDDEN)
+    return _KEY_IN_TEXT.sub(rf"\g<1>{HIDDEN}", text)
 
 
 def gemini_schema(schema: Mapping[str, Any]) -> dict[str, Any]:
@@ -114,9 +126,10 @@ def _rewrite(
 
 
 class GeminiModel:
-    def __init__(self, client: genai.Client, *, timeout_seconds: float) -> None:
+    def __init__(self, client: genai.Client, *, timeout_seconds: float, api_key: str = "") -> None:
         self._client = client
         self._timeout = timeout_seconds
+        self._api_key = api_key
 
     @classmethod
     def from_settings(cls, settings: Settings) -> Self:
@@ -132,7 +145,7 @@ class GeminiModel:
                 retry_options=types.HttpRetryOptions(attempts=RETRY_ATTEMPTS),
             ),
         )
-        return cls(client, timeout_seconds=settings.model_timeout_seconds)
+        return cls(client, timeout_seconds=settings.model_timeout_seconds, api_key=api_key)
 
     def config(self, request: ModelRequest) -> types.GenerateContentConfig:
         return types.GenerateContentConfig(
@@ -157,8 +170,9 @@ class GeminiModel:
             ) from exc
         except errors.APIError as exc:
             # Google's error text says what to fix (a bad key, a used-up quota) and never
-            # repeats the prompt, so it is safe to pass on.
-            reason = f"{exc.code} {exc.status or ''}: {(exc.message or '')[:200]}".strip()
+            # repeats the prompt. It can name the key, so that is hidden before it goes anywhere.
+            message = hide_key(exc.message or "", self._api_key)
+            reason = f"{exc.code} {exc.status or ''}: {message[:200]}".strip()
             raise ModelUnavailableError(f"The {request.purpose} call failed: {reason}") from exc
         except httpx.HTTPError as exc:
             raise ModelUnavailableError(

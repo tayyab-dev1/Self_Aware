@@ -211,11 +211,11 @@ describe what was delivered and measured **with Claude**.
 - **Needs a key.** Set `AI_LAYER_GEMINI_API_KEY` in `.env`. Without it, chat is off and readiness
   says why. The Claude desktop app is no longer needed.
 
-### Experiment: Jev chooses the capability before the planner (branch `jev-chooser`, 21 Sep 2026)
+### Jev chooses the capability before the planner (branch `jev-chooser`, on since 22 Sep 2026)
 
 TypeSafe's Jev, a System One model that picks from given options with a probability for each and
-writes no text, chooses which candidates the planner sees (decision 72). It is off by default
-(`AI_LAYER_CHOOSER_ENABLED`). `make measure-jev` plans every eval sentence both ways from recorded
+writes no text, chooses which candidates the planner sees (decision 72). It is on by default
+when a TypeSafe key is set (`AI_LAYER_CHOOSER_ENABLED`, decision 75). `make measure-jev` plans every eval sentence both ways from recorded
 answers and writes `ai-layer/eval/reports/measure_with_jev.md`.
 
 ```
@@ -239,7 +239,8 @@ With decompose's intents before decision 73 the gap was -2.9 overall and -5.4 in
   fixed most of those. What is left is small and mixed: Jev still says "none" for a few payment
   sentences ("counter pe paisay jama hue hain"), and it now refuses three sentences the planner alone
   wrongly acted on. Giving Jev the original message as well did not help.
-- **Still off by default.** 1.1 points behind in plan accuracy, but about 1.8 s faster per sentence.
+- **On by default since 22 Sep 2026** (decision 75): 1.1 points behind in plan accuracy, but about
+  1.5-2 s faster per sentence.
 
 ### What Phase 7 delivers
 
@@ -963,7 +964,7 @@ The Makefile loads it into every command.
   - `AI_LAYER_MODEL_TIMEOUT_SECONDS` (default 120) limits one model call, the SDK's retries of
     408, 429 and 5xx included (at most 3 attempts).
   - `AI_LAYER_PLAN_MAX_STEPS` (default 3, and never more) caps a plan.
-  - `AI_LAYER_CHOOSER_ENABLED` (default false) puts Jev before the planner (decision 72). It needs
+  - `AI_LAYER_CHOOSER_ENABLED` (default true) puts Jev before the planner (decisions 72 and 75). It needs
     `AI_LAYER_TYPESAFE_API_KEY` (from console.typesafe.ai); without one the chooser stays off and
     chat plans as before. `AI_LAYER_CHOOSER_TIMEOUT_SECONDS` (default 15) limits one call, retries included.
   - The model ids are pinned in code (`app/llm/runner.py`), not settings: changing a model is a deploy.
@@ -1390,7 +1391,7 @@ Both folders share one numbering. Never edit a migration that has run; add a new
 | `gemini.py` | `GeminiModel`: one Gen AI SDK client for every call (pinned model, system instruction, JSON schema, no tools, thinking `minimal` or `high`, one timeout over the SDK's retries), and `gemini_schema`, which rewrites a schema into the JSON Schema subset Gemini accepts |
 
 
-`app/choosing/` — the capability chooser (an experiment, off by default)
+`app/choosing/` — the capability chooser (on by default when a TypeSafe key is set)
 
 
 | File         | What it has |
@@ -2183,10 +2184,21 @@ stage on 12 live turns, and each API called on its own:
 - **The free tier allows 15 requests a minute** per project and model, as well as 500 a day. A recording run at 6
   parallel calls hits it, and so can a chat turn made while one runs.
 
+**75. Jev is on by default, and a Gemini key never leaves the client in an error.**
+
+- **The chooser is on.** Chosen for speed: with Jev's shortlist the planner's call took a median of 2.7 s instead of
+  4.9 s, and Jev about 0.5 s, so a reply is about 1.5-2 s faster. The price is 1.1 points of plan accuracy (89.1%
+  against 90.3%), mostly Jev answering "none" for a request an action does fit. Without `AI_LAYER_TYPESAFE_API_KEY`
+  it stays off and chat plans from every candidate; `AI_LAYER_CHOOSER_ENABLED=false` turns it off with a key.
+- **The key leak.** Google's error text can name the key it refused ("Consumer 'api_key:AQ.…' has been
+  suspended"), and that text went into the error, and from there to logs, the chat trace and the reply.
+  `GeminiModel` now replaces the key, and anything Google labels `api_key:`, with `[hidden]` before the text goes
+  anywhere. Logging's own redaction only hides fields by name, so it could not catch this.
+
 ## Open questions
 
-- **Should Jev choose the capability?** About 1.8 s faster per sentence, 1.1 points behind in plan
-  accuracy after decision 73 (decision 72). The rest of the gap is a few sentences either way.
+- **Is Jev's accuracy cost worth it?** It is on for speed (decision 75), 1.1 points behind in plan
+  accuracy. Watch the requests it answers "none" for; `make measure-jev` shows them.
 - **The free tier's terms.** On the free tier, Google may use requests to improve its products; on a
   paid tier it does not. Every sentence, with any student's name in it, goes into the prompt. Before
   real school data, the key needs a paid (billing-enabled) project, redaction (below), or both.

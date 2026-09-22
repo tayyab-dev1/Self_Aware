@@ -56,9 +56,9 @@ class Settings(BaseSettings):
     model_timeout_seconds: float = Field(default=120.0, gt=0)
     plan_max_steps: int = Field(default=3, ge=1, le=3)
 
-    # The capability chooser (an experiment, off by default): TypeSafe's Jev picks which candidates
-    # the planner sees. Without a key it stays off even when enabled, and chat plans as before.
-    chooser_enabled: bool = False
+    # The capability chooser (on by default, decision 75): TypeSafe's Jev picks which candidates the
+    # planner sees. Without a key it stays off even when enabled, and chat plans as before.
+    chooser_enabled: bool = True
     typesafe_api_key: SecretStr = SecretStr("")
     typesafe_base_url: HttpUrl = HttpUrl("https://api.typesafe.ai")
     chooser_timeout_seconds: float = Field(default=15.0, gt=0)
