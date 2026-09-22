@@ -26,6 +26,7 @@ from app.embeddings.client import EmbeddingsClient
 from app.index.database import CapabilityRow
 from app.llm.gemini import GeminiModel
 from app.llm.runner import DECOMPOSE_MODEL, PLANNER_MODEL
+from app.planning.planner import THINKING as PLANNER_THINKING
 from app.planning.planner import system_prompt as planner_prompt
 from app.retrieval.hybrid import HybridRetriever
 from app.sync.metadata_sync import EMBEDDING_MODEL
@@ -77,7 +78,9 @@ def recordings() -> tuple[Recordings, Recordings]:
             mode=mode,
             thinking=DECOMPOSE_THINKING,
         ),
-        Recordings("plan", PLANNER_MODEL, planner_prompt(MAX_STEPS), mode=mode),
+        Recordings(
+            "plan", PLANNER_MODEL, planner_prompt(MAX_STEPS), mode=mode, thinking=PLANNER_THINKING
+        ),
     )
 
 

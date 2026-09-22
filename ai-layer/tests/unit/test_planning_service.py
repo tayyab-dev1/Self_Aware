@@ -143,6 +143,7 @@ async def test_a_roman_urdu_sentence_is_planned_from_its_english_intents_and_can
 
     _, plan = models.requests
     assert plan.model == PLANNER_MODEL
+    assert plan.thinking is True  # minimal thinking broke the answer rules (decision 74)
     assert f"Message:\n{SENTENCE}" in plan.prompt
     assert f"Intents (a retrieval aid, not the plan):\n1. {INTENT}" in plan.prompt
     assert "Today: 2026-09-14 (Asia/Karachi)" in plan.prompt

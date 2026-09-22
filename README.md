@@ -2164,6 +2164,23 @@ searched for the wrong thing.
 - **Recording.** Intents changed for 197 of 245 sentences, so only those sentences' planner and Jev answers were
   asked again. The free Gemini tier allows 500 requests a day per project; a full re-record uses most of that.
 
+**74. Where a chat turn's time goes, and what was changed.** A turn took 5-10 s, sometimes more. Timed stage by
+stage on 12 live turns, and each API called on its own:
+
+- **Almost all of it is the two Gemini calls.** Decompose took 1.5-4.2 s and the planner 2.0-5.3 s. Gemini answers a
+  two-word "ok" in 1.2-2.9 s, so that is its own response time; keeping its connection open longer changed nothing.
+  Our code outside the stages adds under 0.2 s; search, fuse and validate under 50 ms; the backend 0.03-0.46 s.
+- **Jev's connection was reopened on every turn (fixed).** httpx closes an idle connection after 5 s, and a new one to
+  TypeSafe costs 0.7-1 s (~330 ms round trip). Jev took 1.1-1.5 s after 10 s idle; kept open for 120 s, 0.44-0.57 s.
+- **The first turn after a restart was slow (fixed).** The embedding model was cold (3-5.5 s) and every connection new.
+  At startup the AI layer now embeds one text, looks up the Gemini model (no generate quota) and opens Jev's
+  connection, in the background; a failure is only logged.
+- **The planner's thinking stays "high".** "minimal" took the median planner call from 3.7 s to 2.2 s but plan accuracy
+  from 90.3% to 73.1% (refusal correctness 91.8% -> 78.0%): the planner broke the answer rules, 23 answers filling a
+  value and listing it as missing, 12 contradicting their outcome. Gemini also has "low" and "medium", not measured.
+- **The free tier allows 15 requests a minute** per project and model, as well as 500 a day. A recording run at 6
+  parallel calls hits it, and so can a chat turn made while one runs.
+
 ## Open questions
 
 - **Should Jev choose the capability?** About 1.8 s faster per sentence, 1.1 points behind in plan

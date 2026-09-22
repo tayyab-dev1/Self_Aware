@@ -22,6 +22,7 @@ from app.choosing.chooser import CHOOSER_MODEL, SPECIFICATION
 from app.choosing.jev import DecisionModel, DecisionRequest, JevModel
 from app.core.settings import Settings
 from app.llm.runner import PLANNER_MODEL
+from app.planning.planner import THINKING as PLANNER_THINKING
 from app.planning.planner import system_prompt as planner_prompt
 from eval.conftest import StressIndex
 from eval.measure.choose_report import comparison_table, write_choose_report
@@ -63,7 +64,11 @@ async def comparison(stress: StressIndex) -> Comparison:
     decompose_recordings, plan_recordings = recordings()
     choose_recordings = Recordings("choose", CHOOSER_MODEL, SPECIFICATION, mode=mode)
     plan_after_recordings = Recordings(
-        "plan_after_choose", PLANNER_MODEL, planner_prompt(MAX_STEPS), mode=mode
+        "plan_after_choose",
+        PLANNER_MODEL,
+        planner_prompt(MAX_STEPS),
+        mode=mode,
+        thinking=PLANNER_THINKING,
     )
     model = model_or_none()
     jev = JevModel.from_settings(Settings()) if mode == "record" else None

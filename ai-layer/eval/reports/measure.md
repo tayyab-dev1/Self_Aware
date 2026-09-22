@@ -1,6 +1,6 @@
 # Measure: the four numbers
 
-Generated 2026-09-21 13:07 UTC by `make measure`. Decompose `gemini-3.1-flash-lite`, planner `gemini-3.1-flash-lite`, answers from `eval/recordings/`, stress index of 489 capabilities, today fixed at 2026-09-14.
+Generated 2026-09-22 10:32 UTC by `make measure`. Decompose `gemini-3.1-flash-lite`, planner `gemini-3.1-flash-lite`, answers from `eval/recordings/`, stress index of 489 capabilities, today fixed at 2026-09-14.
 
 ```
                       all             English         Roman Urdu      

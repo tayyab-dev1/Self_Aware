@@ -22,6 +22,10 @@ from app.planning.outcomes import SCHEMA, NeedsInput, PlannedSteps, PlanOutcome
 from app.validation.plan_validator import validate_plan
 
 SYSTEM = (Path(__file__).parent / "system_prompt.md").read_text().strip()
+# Gemini's "high" thinking (the model decides how much). "minimal" took the median call from 3.7 s
+# to 2.2 s but plan accuracy from 90.3% to 73.1%: the planner then broke the answer rules (a value
+# both filled and listed as missing, an answer contradicting its outcome). README decision 74.
+THINKING = True
 
 
 def candidate_entry(capability: CapabilityMetadata) -> dict[str, Any]:
@@ -108,6 +112,7 @@ class Planner:
             ),
             schema=SCHEMA,
             purpose="plan",
+            thinking=THINKING,
         )
         with trace.stage(
             "plan",
