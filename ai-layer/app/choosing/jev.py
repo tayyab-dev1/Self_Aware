@@ -31,6 +31,10 @@ PATH = "/v1/systemone"
 RETRY_ATTEMPTS = 4
 RETRY_WAITS = (0.5, 1.0, 2.0)
 RETRY_STATUSES = frozenset({429, 500, 502, 503, 504, 529})
+# How long an idle connection is kept for the next call. httpx's default of 5 s closes it between
+# chat turns, and a new connection to TypeSafe costs 0.7-1 s (TLS over a ~330 ms round trip): a
+# call took 1.1-1.5 s after 10 s idle, and 0.44-0.48 s even after 60 s idle with this.
+KEEPALIVE_SECONDS = 120.0
 
 
 @dataclass(frozen=True, slots=True)
@@ -76,6 +80,7 @@ class JevModel:
             base_url=str(settings.typesafe_base_url).rstrip("/"),
             headers={"Authorization": f"Bearer {api_key}"},
             timeout=settings.chooser_timeout_seconds,
+            limits=httpx.Limits(keepalive_expiry=KEEPALIVE_SECONDS),
             transport=transport,
         )
         return cls(client, timeout_seconds=settings.chooser_timeout_seconds)
