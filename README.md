@@ -2177,7 +2177,9 @@ stage on 12 live turns, and each API called on its own:
   connection, in the background; a failure is only logged.
 - **The planner's thinking stays "high".** "minimal" took the median planner call from 3.7 s to 2.2 s but plan accuracy
   from 90.3% to 73.1% (refusal correctness 91.8% -> 78.0%): the planner broke the answer rules, 23 answers filling a
-  value and listing it as missing, 12 contradicting their outcome. Gemini also has "low" and "medium", not measured.
+  value and listing it as missing, 12 contradicting their outcome. "low" was no better: on the 169 labelled sentences
+  both recorded (the daily quota ran out 13 short), 77.5% right against 90.5% for "high", with 28 answers the validator
+  refused against 3. `ModelRequest.thinking` now takes "low" and "medium" as well as high (True) and minimal (False).
 - **The free tier allows 15 requests a minute** per project and model, as well as 500 a day. A recording run at 6
   parallel calls hits it, and so can a chat turn made while one runs.
 

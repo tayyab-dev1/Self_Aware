@@ -12,12 +12,17 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 from dataclasses import dataclass
-from typing import Any, Protocol
+from typing import Any, Literal, Protocol
 
 # Pinned, never an alias such as "-latest": a silent model update would change behaviour with no
 # deploy. Both calls use the same model for now; they stay two names so either can move alone.
 DECOMPOSE_MODEL = "gemini-3.1-flash-lite"
 PLANNER_MODEL = "gemini-3.1-flash-lite"
+
+
+# How much the model thinks before answering: True is "high" (the model decides how much), False
+# is "minimal" (as little as it allows), "low" and "medium" are in between.
+Thinking = bool | Literal["low", "medium"]
 
 
 @dataclass(frozen=True, slots=True)
@@ -28,10 +33,9 @@ class ModelRequest:
     schema: Mapping[str, Any]
     # For logs and metrics only; never the prompt, which holds the user's sentence.
     purpose: str
-    # False asks for an answer with as little thinking as the model allows: much faster and
-    # steadier, for a call simple enough not to need it. It changes what the model answers, so
-    # recordings keep it too.
-    thinking: bool = True
+    # Less thinking is faster, for a call simple enough not to need it. It changes what the model
+    # answers, so recordings keep it too.
+    thinking: Thinking = True
 
 
 class ModelError(Exception):

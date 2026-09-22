@@ -2,9 +2,9 @@
 
 Each model call (decompose, plan, and the chooser's choose) gets its own file under
 ``eval/recordings/``. It holds the pinned model, a hash of the exact system prompt (for the chooser,
-its instructions), ``"thinking": false`` when the call is made without extended thinking, and the
-raw answer for each sentence: before validation, so a changed validator
-is measured against the same answers. Changing any of these starts a fresh file.
+its instructions), the thinking level when it is not the default ``high`` (``false`` for minimal),
+and the raw answer for each sentence: before validation, so a changed validator is measured
+against the same answers. Changing any of these starts a fresh file.
 
     record   (``make measure``)     answers already recorded are replayed; missing ones are asked
                                    of the model and saved. A changed prompt starts a fresh file.
@@ -27,7 +27,7 @@ from pathlib import Path
 from typing import Any, Literal, Protocol
 
 from app.choosing.jev import DecisionModel, DecisionRequest
-from app.llm.runner import ModelOutputError, ModelRequest, StructuredModel
+from app.llm.runner import ModelOutputError, ModelRequest, StructuredModel, Thinking
 
 RECORDINGS_DIR = Path(__file__).resolve().parents[1] / "recordings"
 MODE_VARIABLE = "EVAL_MODEL_CALLS"
@@ -49,7 +49,7 @@ class Recordable(Protocol):
     def system(self) -> str: ...
 
     @property
-    def thinking(self) -> bool: ...
+    def thinking(self) -> Thinking: ...
 
 
 Ask = Callable[[], Awaitable[dict[str, Any]]]
@@ -73,7 +73,7 @@ class Recordings:
         system: str,
         *,
         mode: Mode,
-        thinking: bool = True,
+        thinking: Thinking = True,
         directory: Path = RECORDINGS_DIR,
     ) -> None:
         self.purpose = purpose
@@ -81,8 +81,8 @@ class Recordings:
         self._thinking = thinking
         self._path = directory / f"{purpose}.json"
         self._header: dict[str, Any] = {"model": model, "system_prompt_sha256": _sha256(system)}
-        if not thinking:
-            self._header["thinking"] = False
+        if thinking is not True:
+            self._header["thinking"] = thinking
         stored = json.loads(self._path.read_text()) if self._path.exists() else None
         if stored is not None and {k: stored.get(k) for k in self._header} == self._header:
             self._answers: dict[str, Any] = stored["answers"]

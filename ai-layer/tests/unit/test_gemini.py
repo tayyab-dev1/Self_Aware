@@ -89,14 +89,20 @@ async def test_the_call_sends_the_pinned_model_system_prompt_and_schema_and_retu
     assert config.tools is None  # a question and an answer, nothing else
 
 
-async def test_thinking_is_minimal_when_not_wanted_and_high_when_it_is() -> None:
+async def test_each_thinking_setting_asks_for_its_level() -> None:
     model, calls = model_answering(answer())
 
     await model.generate(REQUEST)
-    await model.generate(dataclasses.replace(REQUEST, thinking=False))
+    for thinking in (False, "low", "medium"):
+        await model.generate(dataclasses.replace(REQUEST, thinking=thinking))
 
     levels = [call["config"].thinking_config.thinking_level for call in calls.calls]
-    assert levels == [types.ThinkingLevel.HIGH, types.ThinkingLevel.MINIMAL]
+    assert levels == [
+        types.ThinkingLevel.HIGH,
+        types.ThinkingLevel.MINIMAL,
+        types.ThinkingLevel.LOW,
+        types.ThinkingLevel.MEDIUM,
+    ]
 
 
 def test_the_schema_is_rewritten_into_what_gemini_accepts() -> None:

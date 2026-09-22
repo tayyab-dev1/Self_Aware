@@ -7,9 +7,9 @@ reused instead of opened per call.
 
 ``thinking=False`` asks for ``minimal`` thinking, Gemini 3's lowest level. Google's docs say it
 matches "no thinking" for most requests but does not guarantee it. ``thinking=True`` asks for
-``high``, where the model decides how much to think, as the planner did before. Changing either
-level changes what the model answers, so it means re-recording (``make measure``). Temperature is
-left at Gemini 3's default of 1.0, as Google recommends.
+``high``, where the model decides how much to think; ``"low"`` and ``"medium"`` ask for those
+levels. Changing a level changes what the model answers, so it means re-recording (``make
+measure``). Temperature is left at Gemini 3's default of 1.0, as Google recommends.
 
 Gemini accepts a subset of JSON Schema, so ``gemini_schema`` rewrites the schema into it first
 (local ``$ref``s inlined, a list of types as ``anyOf``, undocumented keywords such as length limits
@@ -38,7 +38,12 @@ from app.llm.runner import ModelOutputError, ModelRequest, ModelUnavailableError
 
 log = structlog.get_logger(__name__)
 
-THINKING_LEVELS = {False: types.ThinkingLevel.MINIMAL, True: types.ThinkingLevel.HIGH}
+THINKING_LEVELS = {
+    False: types.ThinkingLevel.MINIMAL,
+    "low": types.ThinkingLevel.LOW,
+    "medium": types.ThinkingLevel.MEDIUM,
+    True: types.ThinkingLevel.HIGH,
+}
 # Attempts per call, the first included. The SDK's default of 5, with backoff up to 60 s, is too
 # patient for someone waiting in a chat.
 RETRY_ATTEMPTS = 3
