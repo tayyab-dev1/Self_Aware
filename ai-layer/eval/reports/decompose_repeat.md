@@ -1,10 +1,10 @@
 # Decompose: the same, right number of intents every time
 
-Generated 2026-09-23 06:12 UTC by `make decompose-repeat`. Model `gemini-3.1-flash-lite`, each sentence decomposed 3 times, answers from `eval/recordings/decompose_repeat.json`.
+Generated 2026-09-23 08:54 UTC by `make decompose-repeat`. Model `gemini-3.1-flash-lite`, each sentence decomposed 3 times, answers from `eval/recordings/decompose_repeat.json`.
 
-- **right number of intents in every run**: 30 of 33 sentences
-- **same number in every run**: 31 of 33
-- **known gaps** (decision 76, not yet fixed): 3
+- **right number of intents in every run**: 33 of 33 sentences
+- **same number in every run**: 33 of 33
+- **known gaps** (decision 76, not yet fixed): 0
 - **sentences by requests**: 1: 19, 2: 12, 3: 2
 
 | sentence | lang | requests | intents per run | right |
@@ -18,14 +18,14 @@ Generated 2026-09-23 06:12 UTC by `make decompose-repeat`. Model `gemini-3.1-fla
 | cancel Sara's duplicate August bill and credit the extra she paid to her account | en | 2 | 2, 2, 2 | yes |
 | write off the Khan family's old balance and send me the overdue list for class 4 | en | 2 | 2, 2, 2 | yes |
 | pehle class 5 ka baqaya dikhao, phir class 6 ka, phir class 7 ka | ur-Latn | 3 | 3, 3, 3 | yes |
-| Ahmed Raza ki fees 2000 aur Hamza ki 3000 cash mili | ur-Latn | 2 | 1, 1, 1 | **no**, known gap |
+| Ahmed Raza ki fees 2000 aur Hamza ki 3000 cash mili | ur-Latn | 2 | 2, 2, 2 | yes |
 | late fee hata do aur reminder bhi bhej do | ur-Latn | 2 | 2, 2, 2 | yes |
 | show the dashboard, list class 5 defaulters and remind class 5 blue by email | en | 3 | 3, 3, 3 | yes |
-| send reminders to class 5 blue and class 6 green | en | 2 | 1, 2, 2 | **no**, known gap |
+| send reminders to class 5 blue and class 6 green | en | 2 | 2, 2, 2 | yes |
 | Zain ka September ka bill cancel karo aur uske walid ko reminder bhejo | ur-Latn | 2 | 2, 2, 2 | yes |
 | bank band tha isliye late fee lag gayi, hata do | ur-Latn | 1 | 1, 1, 1 | yes |
 | the family paid twice for August, credit the second payment | en | 1 | 1, 1, 1 | yes |
-| Usman ki challan wapas aa gayi hai, 12000, record kar do | ur-Latn | 1 | 1, 1, broken | **no**, known gap |
+| Usman ki challan wapas aa gayi hai, 12000, record kar do | ur-Latn | 1 | 1, 1, 1 | yes |
 | Ayesha ki fees 5000 cash mili hai, record kar do | ur-Latn | 1 | 1, 1, 1 | yes |
 | ghar mein fotgi hui thi, jurmana na lagaen | ur-Latn | 1 | 1, 1, 1 | yes |
 | send a reminder to everyone overdue in Grade 4 | en | 1 | 1, 1, 1 | yes |
@@ -42,18 +42,3 @@ Generated 2026-09-23 06:12 UTC by `make decompose-repeat`. Model `gemini-3.1-fla
 | aaj kitne paisay aaye | ur-Latn | 1 | 1, 1, 1 | yes |
 | plan badal do, December wali qist January mein kar do | ur-Latn | 1 | 1, 1, 1 | yes |
 | jin ki fees baqaya hai unko reminder bhej do | ur-Latn | 1 | 1, 1, 1 | yes |
-
-## Intents for the sentences counted wrongly
-
-- Ahmed Raza ki fees 2000 aur Hamza ki 3000 cash mili — known gap: two payments for two students become one intent, every run
-  - run 1: ["Record the cash payment of 2000 for Ahmed Raza and 3000 for Hamza"]
-  - run 2: ["Record receipt of cash payment of 2000 for Ahmed Raza and 3000 for Hamza"]
-  - run 3: ["Record the cash receipt of 2000 for Ahmed Raza and 3000 for Hamza"]
-- send reminders to class 5 blue and class 6 green — known gap: two sections: one intent or two, depending on the run
-  - run 1: ["send reminders to class 5 blue and class 6 green"]
-  - run 2: ["send reminders to class 5 blue", "send reminders to class 6 green"]
-  - run 3: ["send reminders to class 5 blue", "send reminders to class 6 green"]
-- Usman ki challan wapas aa gayi hai, 12000, record kar do — known gap: one run left Urdu in the intent ("Usman ki challan"), which the NOT_ENGLISH check refuses
-  - run 1: ["The challan for Usman has returned for 12000, please record it"]
-  - run 2: ["Usman's challan for 12000 has returned, please record it"]
-  - run 3: []

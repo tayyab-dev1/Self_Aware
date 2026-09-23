@@ -18,12 +18,11 @@ from __future__ import annotations
 
 import asyncio
 import json
-import time
 from collections import Counter
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any, Literal
+from typing import Literal
 
 import pytest
 import pytest_asyncio
@@ -32,8 +31,9 @@ from pydantic import BaseModel, ConfigDict, Field
 from app.core.settings import Settings
 from app.decompose.decomposer import THINKING, system_prompt
 from app.llm.gemini import GeminiModel
-from app.llm.runner import DECOMPOSE_MODEL, ModelRequest, StructuredModel
+from app.llm.runner import DECOMPOSE_MODEL
 from domain.school.glossary import glossary_lines
+from eval.measure.pacing import Paced
 from eval.measure.recordings import Recordings, mode_from_environment
 from eval.retrieval.intents import decompose
 
@@ -47,17 +47,10 @@ CONCURRENT_CALLS = 2
 # time would go over. Live calls are spaced to stay under it; replayed answers are not slowed.
 LIVE_CALLS_PER_MINUTE = 12
 
-# What decompose gets wrong today (recorded 23 Sep 2026, README decision 76). Fixing them means a
-# new decompose prompt and re-recording every eval answer, so they are held here instead: the run
-# fails on any other sentence, and says so when one of these starts passing.
-KNOWN_GAPS = {
-    "Ahmed Raza ki fees 2000 aur Hamza ki 3000 cash mili":
-        "two payments for two students become one intent, every run",
-    "send reminders to class 5 blue and class 6 green":
-        "two sections: one intent or two, depending on the run",
-    "Usman ki challan wapas aa gayi hai, 12000, record kar do":
-        'one run left Urdu in the intent ("Usman ki challan"), which the NOT_ENGLISH check refuses',
-}  # fmt: skip
+# Sentences decompose still gets wrong, if any. Held here so the run fails on a new one and says
+# when one starts passing. The first three (README decision 76) were fixed by the prompt rule that
+# the same thing asked for two people, classes or sections is one intent each.
+KNOWN_GAPS: dict[str, str] = {}
 
 
 class RequestCount(BaseModel):
@@ -76,24 +69,6 @@ def load_request_counts() -> list[RequestCount]:
         for line in DATA.read_text().splitlines()
         if line.strip()
     ]
-
-
-class Paced:
-    """A model whose calls start at most ``per_minute`` times a minute."""
-
-    def __init__(self, model: StructuredModel, per_minute: int) -> None:
-        self._model = model
-        self._gap = 60 / per_minute
-        self._next = 0.0
-        self._lock = asyncio.Lock()
-
-    async def generate(self, request: ModelRequest) -> dict[str, Any]:
-        async with self._lock:
-            wait = self._next - time.monotonic()
-            if wait > 0:
-                await asyncio.sleep(wait)
-            self._next = time.monotonic() + self._gap
-        return await self._model.generate(request)
 
 
 def run_key(text: str, run: int) -> str:

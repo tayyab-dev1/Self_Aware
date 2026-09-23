@@ -25,7 +25,7 @@ from app.decompose.decomposer import system_prompt as decompose_prompt
 from app.embeddings.client import EmbeddingsClient
 from app.index.database import CapabilityRow
 from app.llm.gemini import GeminiModel
-from app.llm.runner import DECOMPOSE_MODEL, PLANNER_MODEL
+from app.llm.runner import DECOMPOSE_MODEL, PLANNER_MODEL, StructuredModel
 from app.planning.planner import THINKING as PLANNER_THINKING
 from app.planning.planner import system_prompt as planner_prompt
 from app.retrieval.hybrid import HybridRetriever
@@ -33,6 +33,7 @@ from app.sync.metadata_sync import EMBEDDING_MODEL
 from domain.school.glossary import glossary_lines
 from eval.conftest import IndexFactory, StressIndex
 from eval.measure.faults import FaultTally, inject_faults
+from eval.measure.pacing import paced
 from eval.measure.pipeline import MAX_STEPS, CaseResult, Pipeline, load_cases
 from eval.measure.recordings import Recordings, mode_from_environment
 from eval.measure.report import table, write_report
@@ -84,8 +85,11 @@ def recordings() -> tuple[Recordings, Recordings]:
     )
 
 
-def model_or_none() -> GeminiModel | None:
-    return GeminiModel.from_settings(Settings()) if mode_from_environment() == "record" else None
+def model_or_none() -> StructuredModel | None:
+    """The model for a recording run, spaced when EVAL_CALLS_PER_MINUTE says so; None on replay."""
+    if mode_from_environment() != "record":
+        return None
+    return paced(GeminiModel.from_settings(Settings()))
 
 
 @pytest_asyncio.fixture(scope="module")

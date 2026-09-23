@@ -190,14 +190,17 @@ describe what was delivered and measured **with Claude**.
 
   ```
                         all             English         Roman Urdu
-  recall@30              96.6%           96.8%           96.4%
-  plan accuracy          90.3%           92.1%           89.3%
-  refusal correctness    91.8%           92.9%           91.2%
+  recall@30              95.4%           98.4%           93.8%
+  plan accuracy          89.7%           92.1%           88.4%
+  refusal correctness    92.2%           94.9%           90.5%
   validator catch rate  100.0%          100.0%          100.0%
-  out of: 175 labelled sentences, 70 to refuse, 579 injected faults
+  out of: 175 labelled sentences, 70 to refuse, 578 injected faults
   ```
 
-  Before decision 73: recall 95.4% (Roman Urdu 94.6%), refusal correctness 92.2%.
+  Recorded after decision 76. The run before it read 96.6 / 90.3 / 91.8, and before decision 73,
+  95.4 / 90.3 / 92.2. Decompose rewords a sentence differently on nearly every run (decision 76), and
+  retrieval follows the wording, so one or two sentences move between runs: treat a point either way as
+  noise, not a change.
 
   Against Claude: recall is the same, even though only 28 of 245 decompose answers match word for word.
   Plan accuracy is 1.7 points higher (Roman Urdu +3.6, English -1.6). Refusal correctness is 0.4 lower:
@@ -220,17 +223,18 @@ answers and writes `ai-layer/eval/reports/measure_with_jev.md`.
 
 ```
                       all                       English                   Roman Urdu
-recall@30             96.6% -> 96.6% (+0.0)     96.8% -> 96.8% (+0.0)     96.4% -> 96.4% (+0.0)
-plan accuracy         90.3% -> 89.1% (-1.1)     92.1% -> 90.5% (-1.6)     89.3% -> 88.4% (-0.9)
-refusal correctness   91.8% -> 91.4% (-0.4)     92.9% -> 92.9% (+0.0)     91.2% -> 90.5% (-0.7)
+recall@30             95.4% -> 95.4% (+0.0)     98.4% -> 98.4% (+0.0)     93.8% -> 93.8% (+0.0)
+plan accuracy         89.7% -> 89.7% (+0.0)     92.1% -> 93.7% (+1.6)     88.4% -> 87.5% (-0.9)
+refusal correctness   92.2% -> 92.2% (+0.0)     94.9% -> 94.9% (+0.0)     90.5% -> 90.5% (+0.0)
 validator catch rate  100.0% -> 100.0% (+0.0)   100.0% -> 100.0% (+0.0)   100.0% -> 100.0% (+0.0)
 ```
 
-With decompose's intents before decision 73 the gap was -2.9 overall and -5.4 in Roman Urdu.
+The gap closed as decompose improved: -2.9 points overall before decision 73, -1.1 after it, none after
+decision 76. Jev now costs nothing measurable and still saves about 1.5-2 s a turn.
 
-- **Jev on its own** puts the expected capability in its shortlist for 93.7% of labelled sentences
-  (158 of 174 get a shortlist of one), and answers "none" for 86.0% of the sentences to refuse. Its
-  confidence is honest: picks at 0.9 or above are right 95.2% of the time.
+- **Jev on its own** puts the expected capability in its shortlist for 94.8% of labelled sentences
+  (155 of 172 get a shortlist of one), and answers "none" for 88.4% of the sentences to refuse. Its
+  confidence is honest: picks at 0.9 or above are right about 95% of the time.
 - **Faster planning.** With only the shortlist, the planner's prompt is a quarter of the size and
   its call took a median of 2.7 s instead of 4.9 s (16 sentences, live). Jev itself takes a median of
   0.41 s, so a sentence is about 1.8 s faster. With 30 candidates in production the gap would be wider.
@@ -239,8 +243,8 @@ With decompose's intents before decision 73 the gap was -2.9 overall and -5.4 in
   fixed most of those. What is left is small and mixed: Jev still says "none" for a few payment
   sentences ("counter pe paisay jama hue hain"), and it now refuses three sentences the planner alone
   wrongly acted on. Giving Jev the original message as well did not help.
-- **On by default since 22 Sep 2026** (decision 75): 1.1 points behind in plan accuracy, but about
-  1.5-2 s faster per sentence.
+- **On by default since 22 Sep 2026** (decision 75), and since decision 76 it costs no plan accuracy
+  at all while saving about 1.5-2 s per sentence.
 
 ### What Phase 7 delivers
 
@@ -2222,17 +2226,54 @@ between runs makes the same message behave differently. The rest of the eval has
   run its own recorded answer (`recordings/decompose_repeat.json`), and fails on any wrong count. `make
   measure-ci` replays it, so a changed decompose prompt or model has to pass it again. Live calls are paced to 12
   a minute, under the free tier's 15.
-- **What it found straight away** (30 of 33 right, 3 known gaps held in `KNOWN_GAPS` so the check fails on any
-  *new* wrong sentence and says when a gap starts passing):
+- **What it found straight away**, all three now fixed by the rules below (the check reported each one as it
+  started passing; `KNOWN_GAPS` is empty again):
   - "Ahmed Raza ki fees 2000 aur Hamza ki 3000 cash mili" becomes one intent every run, so one of the two
     payments would never be recorded;
   - "send reminders to class 5 blue and class 6 green" gave 1, 2, 2 intents in three runs;
   - "Usman ki challan wapas aa gayi hai, 12000, record kar do" left Urdu in one run's intent ("Usman ki
     challan"), which the NOT_ENGLISH check refuses.
 
-  Fixing them means a new decompose prompt, and that re-records every eval answer (about 600 calls, more than
-  the free tier's 500 a day), so they are recorded rather than fixed now.
+- **The fix.** Decompose now splits only for two different actions, or the same action on two different records
+  (two students, two classes, two sections, two invoices). A reason, a condition or a second fact about the same
+  record never becomes its own intent, and several facts about one record stay one problem. A first version of the
+  rule split a request from its reason ("jin ka fee overdue hai unhe chase karna hai, list do" became a list and a
+  reminder) and cost a point of plan accuracy, so it was tightened twice, each time against the sentences it had
+  to keep right. After it: **33 of 33 sentences right in all three runs**, and with Jev choosing first the gap to
+  the planner alone closed to nothing.
+- **What it cost.** Re-recording every answer: 245 decompose + 99 repeat runs + 150 planner + 190 planner-after-Jev,
+  spread over two days of the free tier's 500 calls a day, paced with `EVAL_CALLS_PER_MINUTE=12` so that refused
+  calls stop wasting quota.
 - **Comparing models.** `AI_LAYER_GROQ_API_KEY` is accepted for such comparisons; chat never uses it.
+
+**77. A plan cache by meaning would be unsafe; a Roman Urdu translator cannot replace decompose.** Two ways to
+save a model call, both measured with the embeddings service alone (no model quota), both rejected.
+
+- **Caching plans by meaning.** The words that decide the outcome are the ones a similarity score ignores. Pairs
+  that must never share a plan: August vs September invoice 0.954, WhatsApp vs SMS 0.946, class 5 vs class 6
+  0.938, 2000 vs 3000 0.937, "send" vs "do not send" 0.899. Pairs that safely could share one: 0.740 for the same
+  request worded differently, 0.856 Roman Urdu vs English, 0.858 a typo. The two groups overlap completely, so no
+  cut-off separates them. Of all 29,890 pairs of eval sentences only 2 are above 0.95. What is worth doing
+  instead: match the existing exact cache after lower-casing and trimming, answer a few fixed phrases in code
+  with no model call, and cache retrieval by meaning (safe: the planner still reads the real message).
+- **A translator in place of decompose** (hasyarshad/roman-urdu-translator, an 81M-parameter Roman Urdu <-> English
+  model, 0.2 s a sentence on this machine). recall@30 on the stress index, 175 labelled sentences:
+
+  | search query | all | English | Roman Urdu |
+  |---|---:|---:|---:|
+  | decompose's intents (today) | 96.6% | 98.4% | 95.5% |
+  | the translation, direction forced to English | 92.6% | 95.2% | 91.1% |
+  | the translation, direction left on auto | 88.6% | 95.2% | 84.8% |
+  | the sentence as typed | 82.3% | 95.2% | 75.0% |
+  | intents and the translation together | 96.6% | 96.8% | 96.4% |
+
+  The direction must be forced: left on auto, a mixed sentence is read as English and translated the wrong way
+  ("credit raise karo" -> "kridt oopar karen"), which cost 4 points on its own. Even forced, school words break:
+  "credit raise karo" -> "Increase credit", "cancellation raise karo" -> "Repeat the cancellation", "ye baqaya
+  wasool nahi hoga" -> "This remaining will not be accepted". Decompose also splits multiple requests and is
+  checked (no Urdu left, names from the sentence); a translator does neither. Adding the translation as a second
+  query gains nothing overall. It could serve as a fallback when the model is unreachable: 92.6% against the
+  82.3% of no English at all, with the direction forced and the school words mapped by hand.
 
 ## Open questions
 

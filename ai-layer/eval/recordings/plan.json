@@ -68,7 +68,7 @@
     "params": [
      {
       "name": "invoice_id",
-      "words": "Ali walon"
+      "words": "Ali family"
      },
      {
       "name": "reason",
@@ -91,7 +91,7 @@
     "params": [
      {
       "name": "invoice_id",
-      "words": "Ali duplicate invoice"
+      "words": "Ali's duplicate invoice"
      },
      {
       "name": "reason",
@@ -124,6 +124,32 @@
       {
        "name": "amount_received",
        "value": 5000
+      },
+      {
+       "name": "payment_date",
+       "value": "2026-09-14"
+      }
+     ]
+    }
+   ]
+  },
+  "Bilal ke abbu 9000 naqad de gaye hain, entry kar do": {
+   "outcome": "plan",
+   "steps": [
+    {
+     "capability_id": "fee.payment.record",
+     "params": [
+      {
+       "name": "invoice_id",
+       "words": "Bilal"
+      },
+      {
+       "name": "route",
+       "value": "cash"
+      },
+      {
+       "name": "amount_received",
+       "value": 9000
       },
       {
        "name": "payment_date",
@@ -167,11 +193,11 @@
      "params": [
       {
        "name": "late_fee_id",
-       "words": "Danish ke October ke bill"
+       "words": "Danish ke October ke bill ka jurmana"
       },
       {
        "name": "waiver_reason",
-       "value": "bank was closed"
+       "value": "bank band tha"
       }
      ]
     }
@@ -252,11 +278,14 @@
      {
       "name": "route",
       "value": "bank_challan"
+     },
+     {
+      "name": "payment_date",
+      "value": "2026-09-14"
      }
     ],
     "missing": [
-     "amount_received",
-     "payment_date"
+     "amount_received"
     ]
    }
   },
@@ -403,7 +432,7 @@
      "params": [
       {
        "name": "invoice_id",
-       "words": "Zain September bill"
+       "words": "Zain September"
       },
       {
        "name": "reason",
@@ -514,10 +543,6 @@
    "outcome": "refusal",
    "refusal": "not_a_request"
   },
-  "authorise the school-wide September run": {
-   "outcome": "refusal",
-   "refusal": "no_matching_capability"
-  },
   "bacha bina fees diye chala gaya, ab kuch nahi hoga": {
    "outcome": "needs_input",
    "needs_input": {
@@ -613,32 +638,14 @@
    "refusal": "no_matching_capability"
   },
   "cash kitna para hai?": {
-   "outcome": "plan",
-   "steps": [
-    {
-     "capability_id": "dashboard.main.read",
-     "params": []
-    }
-   ]
+   "outcome": "refusal",
+   "refusal": "no_matching_capability"
   },
   "charge galat tha, credit karo": {
    "outcome": "needs_input",
    "needs_input": {
     "capability_id": "fee.credit.raise",
-    "params": [
-     {
-      "name": "invoice_id"
-     },
-     {
-      "name": "amount"
-     },
-     {
-      "name": "reason"
-     },
-     {
-      "name": "description"
-     }
-    ],
+    "params": [],
     "missing": [
      "invoice_id",
      "amount",
@@ -721,26 +728,6 @@
      "params": []
     }
    ]
-  },
-  "concession lagni thi lekin nahi lagi, ab paisa wapas karna hai": {
-   "outcome": "needs_input",
-   "needs_input": {
-    "capability_id": "fee.credit.raise",
-    "params": [
-     {
-      "name": "reason",
-      "value": "concession_not_applied"
-     },
-     {
-      "name": "description",
-      "value": "concession lagni thi lekin nahi lagi, ab paisa wapas karna hai"
-     }
-    ],
-    "missing": [
-     "invoice_id",
-     "amount"
-    ]
-   }
   },
   "counter par 4500 wasool hue, raseed bana do": {
    "outcome": "needs_input",
@@ -1059,16 +1046,12 @@
    "outcome": "needs_input",
    "needs_input": {
     "capability_id": "fee.credit.raise",
-    "params": [
-     {
-      "name": "description",
-      "value": "family ne jo zyada diya"
-     }
-    ],
+    "params": [],
     "missing": [
      "invoice_id",
      "amount",
-     "reason"
+     "reason",
+     "description"
     ]
    }
   },
@@ -1076,12 +1059,19 @@
    "outcome": "needs_input",
    "needs_input": {
     "capability_id": "fee.credit.raise",
-    "params": [],
+    "params": [
+     {
+      "name": "reason",
+      "value": "wrong_amount_charged"
+     },
+     {
+      "name": "description",
+      "value": "family ne paisa de diya hai, phir bhi charge galat tha"
+     }
+    ],
     "missing": [
      "invoice_id",
-     "amount",
-     "reason",
-     "description"
+     "amount"
     ]
    }
   },
@@ -1210,11 +1200,11 @@
     "params": [
      {
       "name": "reason",
-      "value": "structure_applied_in_error"
+      "value": "other"
      },
      {
       "name": "description",
-      "value": "transport charge added by mistake"
+      "value": "Transport charge added by mistake"
      }
     ],
     "missing": [
@@ -1229,7 +1219,7 @@
     "params": [
      {
       "name": "description",
-      "value": "ghalat charge"
+      "value": "ghalat charge ka paisa aa chuka hai, agle bill se kaat lena"
      }
     ],
     "missing": [
@@ -1296,6 +1286,10 @@
     }
    ]
   },
+  "hello": {
+   "outcome": "refusal",
+   "refusal": "not_a_request"
+  },
   "hold the extra amount they paid on the account instead of refunding": {
    "outcome": "needs_input",
    "needs_input": {
@@ -1348,7 +1342,12 @@
    "outcome": "needs_input",
    "needs_input": {
     "capability_id": "fee.reminder.send",
-    "params": [],
+    "params": [
+     {
+      "name": "channel",
+      "value": "whatsapp"
+     }
+    ],
     "missing": [
      "section_id"
     ]
@@ -1378,7 +1377,7 @@
      },
      {
       "name": "description",
-      "value": "is bill ki rakam hi ghalat hai"
+      "value": "is bill ki rakam hi ghalat hai aur kisi ne pay nahi kiya"
      }
     ],
     "missing": [
@@ -1394,18 +1393,18 @@
    "outcome": "needs_input",
    "needs_input": {
     "capability_id": "fee.latefee.waive",
-    "params": [],
+    "params": [
+     {
+      "name": "late_fee_id",
+      "words": "is family"
+     }
+    ],
     "missing": [
-     "late_fee_id",
      "waiver_reason"
     ]
    }
   },
   "is family ka tax certificate jaari karo": {
-   "outcome": "refusal",
-   "refusal": "no_matching_capability"
-  },
-  "is family ko fees ka reminder karo": {
    "outcome": "refusal",
    "refusal": "no_matching_capability"
   },
@@ -1417,10 +1416,6 @@
      "params": []
     }
    ]
-  },
-  "is umeedwar ko rad kar do, wajah likh dein": {
-   "outcome": "refusal",
-   "refusal": "no_matching_capability"
   },
   "jin bachon ki fees reh gayi hai unke walidain ko SMS karo": {
    "outcome": "needs_input",
@@ -1471,21 +1466,6 @@
     }
    ]
   },
-  "jurmana galti se laga hai, wapas lo": {
-   "outcome": "needs_input",
-   "needs_input": {
-    "capability_id": "fee.latefee.waive",
-    "params": [
-     {
-      "name": "waiver_reason",
-      "value": "galti se laga hai"
-     }
-    ],
-    "missing": [
-     "late_fee_id"
-    ]
-   }
-  },
   "jurmana jama ho chuka hai, wapas karo": {
    "outcome": "needs_input",
    "needs_input": {
@@ -1512,18 +1492,14 @@
    ]
   },
   "kis ne fees nahi di?": {
-   "outcome": "plan",
-   "steps": [
-    {
-     "capability_id": "fee.overdue.list",
-     "params": [
-      {
-       "name": "scope",
-       "value": "school_wide"
-      }
-     ]
-    }
-   ]
+   "outcome": "needs_input",
+   "needs_input": {
+    "capability_id": "fee.overdue.list",
+    "params": [],
+    "missing": [
+     "scope"
+    ]
+   }
   },
   "kitne students enrolled hain?": {
    "outcome": "refusal",
@@ -1589,11 +1565,14 @@
      {
       "name": "amount_received",
       "value": 3000
+     },
+     {
+      "name": "payment_date",
+      "value": "2026-09-14"
      }
     ],
     "missing": [
-     "route",
-     "payment_date"
+     "route"
     ]
    }
   },
@@ -1613,7 +1592,7 @@
     "params": [
      {
       "name": "invoice_id",
-      "words": "Hina Tariq September"
+      "words": "Hina Tariq September invoice"
      },
      {
       "name": "route",
@@ -1630,8 +1609,19 @@
    }
   },
   "message the over-90-day defaulters": {
-   "outcome": "refusal",
-   "refusal": "no_matching_capability"
+   "outcome": "needs_input",
+   "needs_input": {
+    "capability_id": "fee.reminder.send",
+    "params": [
+     {
+      "name": "channel",
+      "value": "whatsapp"
+     }
+    ],
+    "missing": [
+     "section_id"
+    ]
+   }
   },
   "mujhe aaj ki summary dikhao": {
    "outcome": "plan",
@@ -1729,7 +1719,7 @@
     "params": [
      {
       "name": "waiver_reason",
-      "value": "jurmana bohat zyada hai"
+      "value": "late fee is too high"
      }
     ],
     "missing": [
@@ -1868,30 +1858,8 @@
    }
   },
   "raise a refund for the Khan family, they've left and hold 2,000 credit": {
-   "outcome": "plan",
-   "steps": [
-    {
-     "capability_id": "fee.credit.raise",
-     "params": [
-      {
-       "name": "invoice_id",
-       "words": "the Khan family"
-      },
-      {
-       "name": "amount",
-       "value": 2000
-      },
-      {
-       "name": "reason",
-       "value": "charge_should_not_have_been_raised"
-      },
-      {
-       "name": "description",
-       "value": "the Khan family, they've left and hold 2,000 credit"
-      }
-     ]
-    }
-   ]
+   "outcome": "refusal",
+   "refusal": "no_matching_capability"
   },
   "record 5000 cash received against Ayesha's September invoice today": {
    "outcome": "plan",
@@ -1979,7 +1947,7 @@
       },
       {
        "name": "description",
-       "value": "Requesting cancellation of the duplicate invoice for Hamza."
+       "value": "request cancellation of the duplicate invoice for Hamza"
       }
      ]
     }
@@ -1995,14 +1963,14 @@
     "capability_id": "fee.credit.raise",
     "params": [
      {
-      "name": "reason",
-      "value": "wrong_amount_charged"
+      "name": "description",
+      "value": "the charge is what's wrong not the payment"
      }
     ],
     "missing": [
      "invoice_id",
      "amount",
-     "description"
+     "reason"
     ]
    }
   },
@@ -2048,7 +2016,7 @@
      },
      {
       "name": "recovery_attempted",
-      "value": "saal bhar se mang rahe hain"
+      "value": "saal bhar se 18000 mang rahe hain"
      }
     ],
     "missing": [
@@ -2226,23 +2194,22 @@
    "refusal": "no_matching_capability"
   },
   "teen mahine se zyada purana baqaya kitna hai?": {
-   "outcome": "needs_input",
-   "needs_input": {
-    "capability_id": "fee.overdue.list",
-    "params": [
-     {
-      "name": "age_band",
-      "value": "over_90_days"
-     }
-    ],
-    "missing": [
-     "scope"
-    ]
-   }
-  },
-  "teen qisten bana do — 2000 har mahine, October se": {
-   "outcome": "refusal",
-   "refusal": "no_matching_capability"
+   "outcome": "plan",
+   "steps": [
+    {
+     "capability_id": "fee.overdue.list",
+     "params": [
+      {
+       "name": "scope",
+       "value": "school_wide"
+      },
+      {
+       "name": "age_band",
+       "value": "over_90_days"
+      }
+     ]
+    }
+   ]
   },
   "text all families with unpaid invoices in class 2 blue": {
    "outcome": "plan",
@@ -2253,10 +2220,6 @@
       {
        "name": "section_id",
        "words": "class 2 blue"
-      },
-      {
-       "name": "channel",
-       "value": "sms"
       }
      ]
     }
@@ -2336,7 +2299,7 @@
     "params": [
      {
       "name": "description",
-      "value": "the family paid a charge that was wrong, put the money on their account"
+      "value": "the family paid a charge that was wrong"
      }
     ],
     "missing": [
@@ -2372,7 +2335,7 @@
     "params": [
      {
       "name": "waiver_reason",
-      "value": "the late fee was added even though they paid on the due date"
+      "value": "they paid on the due date"
      }
     ],
     "missing": [
@@ -2391,7 +2354,7 @@
      },
      {
       "name": "description",
-      "value": "the sibling discount was missed and they paid full fee, credit the difference"
+      "value": "the sibling discount was missed and they paid full fee"
      }
     ],
     "missing": [
@@ -2415,7 +2378,7 @@
      },
      {
       "name": "description",
-      "value": "they were overcharged by 2,000 and already paid, adjust it in the next bill"
+      "value": "they were overcharged by 2,000 and already paid"
      }
     ],
     "missing": [
@@ -2446,11 +2409,15 @@
    "outcome": "needs_input",
    "needs_input": {
     "capability_id": "fee.writeoff.propose",
-    "params": [],
+    "params": [
+     {
+      "name": "reason",
+      "value": "family_unable_to_pay"
+     }
+    ],
     "missing": [
      "invoice_id",
      "amount",
-     "reason",
      "recovery_attempted"
     ]
    }
@@ -2479,22 +2446,23 @@
     ]
    }
   },
+  "unko form ka link dobara bhejo, unko mila nahi": {
+   "outcome": "refusal",
+   "refusal": "no_matching_capability"
+  },
   "void the transport charge we added by mistake, the family hasn't paid it": {
    "outcome": "needs_input",
    "needs_input": {
     "capability_id": "fee.cancellation.raise",
     "params": [
      {
-      "name": "reason",
-      "value": "other"
-     },
-     {
       "name": "description",
-      "value": "transport charge added by mistake, the family hasn't paid it"
+      "value": "The transport charge was added by mistake, the family hasn't paid it"
      }
     ],
     "missing": [
-     "invoice_id"
+     "invoice_id",
+     "reason"
     ]
    }
   },
@@ -2520,7 +2488,7 @@
     "params": [
      {
       "name": "late_fee_id",
-      "words": "Qureshi family 500 rupee late charge"
+      "words": "500 rupee late charge for the Qureshi family"
      }
     ],
     "missing": [
@@ -2613,7 +2581,7 @@
      },
      {
       "name": "recovery_attempted",
-      "value": "we've tried for a year to recover 18,000 from this family"
+      "value": "tried for a year to recover"
      }
     ],
     "missing": [
@@ -2635,13 +2603,8 @@
    "outcome": "plan",
    "steps": [
     {
-     "capability_id": "fee.overdue.list",
-     "params": [
-      {
-       "name": "scope",
-       "value": "school_wide"
-      }
-     ]
+     "capability_id": "dashboard.main.read",
+     "params": []
     }
    ]
   },
@@ -2671,6 +2634,10 @@
      ]
     }
    ]
+  },
+  "who did not get the emergency notice?": {
+   "outcome": "refusal",
+   "refusal": "no_matching_capability"
   },
   "who hasn't paid fees in class 5 blue": {
    "outcome": "plan",
@@ -2803,8 +2770,21 @@
    }
   },
   "ye bill kam kar do": {
-   "outcome": "refusal",
-   "refusal": "no_matching_capability"
+   "outcome": "needs_input",
+   "needs_input": {
+    "capability_id": "fee.credit.raise",
+    "params": [
+     {
+      "name": "description",
+      "value": "ye bill kam kar do"
+     }
+    ],
+    "missing": [
+     "invoice_id",
+     "amount",
+     "reason"
+    ]
+   }
   },
   "ye cancellation hona chahiye": {
    "outcome": "needs_input",
@@ -2824,14 +2804,17 @@
     "capability_id": "fee.credit.raise",
     "params": [
      {
+      "name": "reason",
+      "value": "other"
+     },
+     {
       "name": "description",
-      "value": "ye charge galat tha lekin family paisa de chuki hai"
+      "value": "ye charge galat tha lekin family paisa de chuki hai, credit karo"
      }
     ],
     "missing": [
      "invoice_id",
-     "amount",
-     "reason"
+     "amount"
     ]
    }
   },
@@ -2839,11 +2822,15 @@
    "outcome": "needs_input",
    "needs_input": {
     "capability_id": "fee.cancellation.raise",
-    "params": [],
+    "params": [
+     {
+      "name": "description",
+      "value": "ye charge hi galat tha"
+     }
+    ],
     "missing": [
      "invoice_id",
-     "reason",
-     "description"
+     "reason"
     ]
    }
   },
@@ -2902,23 +2889,26 @@
    }
   },
   "ye invoice kisi aur bache ka hai aur abhi jama bhi nahi hua": {
-   "outcome": "needs_input",
-   "needs_input": {
-    "capability_id": "fee.cancellation.raise",
-    "params": [
-     {
-      "name": "reason",
-      "value": "billed_to_wrong_student"
-     },
-     {
-      "name": "description",
-      "value": "ye invoice kisi aur bache ka hai aur abhi jama bhi nahi hua"
-     }
-    ],
-    "missing": [
-     "invoice_id"
-    ]
-   }
+   "outcome": "plan",
+   "steps": [
+    {
+     "capability_id": "fee.cancellation.raise",
+     "params": [
+      {
+       "name": "invoice_id",
+       "words": "ye invoice"
+      },
+      {
+       "name": "reason",
+       "value": "billed_to_wrong_student"
+      },
+      {
+       "name": "description",
+       "value": "The invoice is for a different student and has not been paid yet."
+      }
+     ]
+    }
+   ]
   },
   "ye payment galat student ke against lag gayi hai": {
    "outcome": "refusal",
