@@ -2257,23 +2257,25 @@ save a model call, both measured with the embeddings service alone (no model quo
   instead: match the existing exact cache after lower-casing and trimming, answer a few fixed phrases in code
   with no model call, and cache retrieval by meaning (safe: the planner still reads the real message).
 - **A translator in place of decompose** (hasyarshad/roman-urdu-translator, an 81M-parameter Roman Urdu <-> English
-  model, 0.2 s a sentence on this machine). recall@30 on the stress index, 175 labelled sentences:
+  model, 0.2 s a sentence on this machine, direction forced to English). It would remove one of the two Gemini
+  calls. Measured end to end, with the translation as the only search query and the planner still reading the
+  original message:
 
-  | search query | all | English | Roman Urdu |
+  | | recall@30 | plan accuracy | refusal correctness |
   |---|---:|---:|---:|
-  | decompose's intents (today) | 96.6% | 98.4% | 95.5% |
-  | the translation, direction forced to English | 92.6% | 95.2% | 91.1% |
-  | the translation, direction left on auto | 88.6% | 95.2% | 84.8% |
-  | the sentence as typed | 82.3% | 95.2% | 75.0% |
-  | intents and the translation together | 96.6% | 96.8% | 96.4% |
+  | decompose's intents (today) | 95.4% | 89.7% | 92.2% |
+  | the translator's sentence | 92.6% | 87.4% | 90.6% |
+  | the translation, direction left on auto | 88.6% | not measured | not measured |
+  | the sentence as typed, no English | 82.3% | not measured | not measured |
 
-  The direction must be forced: left on auto, a mixed sentence is read as English and translated the wrong way
-  ("credit raise karo" -> "kridt oopar karen"), which cost 4 points on its own. Even forced, school words break:
-  "credit raise karo" -> "Increase credit", "cancellation raise karo" -> "Repeat the cancellation", "ye baqaya
-  wasool nahi hoga" -> "This remaining will not be accepted". Decompose also splits multiple requests and is
-  checked (no Urdu left, names from the sentence); a translator does neither. Adding the translation as a second
-  query gains nothing overall. It could serve as a fallback when the model is unreachable: 92.6% against the
-  82.3% of no English at all, with the direction forced and the school words mapped by hand.
+  The planner recovers part of the loss (recall -2.9, plan accuracy -2.3) because it reads the Roman Urdu itself,
+  and **splitting turned out not to matter for retrieval**: with one query, every needed action was among the 30
+  candidates for 13 of 13 multi-request messages (decompose's intents managed 12). What the translator loses is
+  the school vocabulary: "credit raise karo" -> "Increase credit", "ye baqaya wasool nahi hoga" -> "This remaining
+  will not be accepted", and four write-off messages stopped reaching their capability. Replacing "baqaya",
+  "jurmana", "nadehindagan", "wasooli", "tajweez" and "raqam" in the translation before searching won two of them
+  back (recall 93.7%), still 1.7 points short. Kept as a fallback for when the model is unreachable, where 92.6%
+  beats refusing everything; not as a replacement, which would cost about one message in 45.
 
 ## Open questions
 
