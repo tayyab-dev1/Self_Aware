@@ -1,6 +1,6 @@
 # Measure: the capability chooser (Jev) before the planner
 
-Generated 2026-09-23 08:54 UTC by `make measure-jev`. Chooser `jev-1.13.0`, planner `gemini-3.1-flash-lite`, the same decompose answers and retrieval as `measure.md`, answers from `eval/recordings/` (`choose.json`, `plan_after_choose.json`).
+Generated 2026-09-23 09:16 UTC by `make measure-jev`. Chooser `jev-1.13.0`, planner `gemini-3.1-flash-lite`, the same decompose answers and retrieval as `measure.md`, answers from `eval/recordings/` (`choose.json`, `plan_after_choose.json`).
 
 Without the chooser the planner sees every candidate the POC can run; with it, only Jev's shortlist: per intent, the candidates holding 90% of the probability that is not "none" (at most 3), nothing when "none" holds 60% or more. An empty shortlist is a refusal with no planner call.
 
