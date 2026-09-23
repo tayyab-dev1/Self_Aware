@@ -2292,6 +2292,7 @@ English, and that one sentence is the only intent. Gemini still plans, still fro
 - **What is given up.** No splitting into intents, and no checks on the result (no "every name is in the message",
   no "no Urdu left"). Splitting costs retrieval nothing (13 of 13 multi-request messages still had every needed
   action among the 30 candidates), but nothing now catches a bad translation before it reaches search.
+- **The designs side by side**, with every measurement and how to run each one: `docs/translator-designs.md`.
 - **Where it lives.** `app/decompose/translator.py` implements the same `IntentSource` the planner already took,
   so the pipeline is unchanged; `TranslatorDecomposer` keeps its connection open and warms up at startup like the
   other clients. The service is hasyarshad/roman-urdu-translator (81M parameters, weights on Hugging Face, not in
