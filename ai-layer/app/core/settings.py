@@ -56,6 +56,13 @@ class Settings(BaseSettings):
     model_timeout_seconds: float = Field(default=120.0, gt=0)
     plan_max_steps: int = Field(default=3, ge=1, le=3)
 
+    # Where the English search query comes from: "gemini" asks the model for 1-3 intents,
+    # "translator" asks the local service for one sentence (faster and free, 2 points less
+    # accurate; README decision 77). Without the service reachable, chat says so at readiness.
+    decompose_source: Literal["gemini", "translator"] = "gemini"
+    translator_base_url: HttpUrl = HttpUrl("http://127.0.0.1:8099")
+    translator_timeout_seconds: float = Field(default=10.0, gt=0)
+
     # Groq's API: only for comparing other models with Gemini (eval scripts). Chat never uses it.
     groq_api_key: SecretStr = SecretStr("")
 

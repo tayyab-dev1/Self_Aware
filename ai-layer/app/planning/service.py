@@ -19,7 +19,7 @@ import structlog
 
 from app.choosing.chooser import CapabilityChooser, Choice
 from app.core import trace
-from app.decompose.decomposer import Decomposer, Decomposition
+from app.decompose.decomposer import Decomposition, IntentSource
 from app.gateway.models import CapabilityMetadata
 from app.llm.runner import ModelError, ModelUnavailableError
 from app.planning.outcomes import NeedsInput, PlannedSteps, PlanOutcome, Refusal, RefusalReason
@@ -47,7 +47,7 @@ class Understanding:
 class SentencePlanner:
     def __init__(
         self,
-        decomposer: Decomposer,
+        decomposer: IntentSource,
         retriever: CandidateRetriever,
         planner: Planner,
         catalog: Callable[[], Mapping[str, CapabilityMetadata]],

@@ -2277,6 +2277,26 @@ save a model call, both measured with the embeddings service alone (no model quo
   back (recall 93.7%), still 1.7 points short. Kept as a fallback for when the model is unreachable, where 92.6%
   beats refusing everything; not as a replacement, which would cost about one message in 45.
 
+**78. The search query can come from a local translator instead of a model call** (branch `translator-decompose`,
+23 Sep 2026). `AI_LAYER_DECOMPOSE_SOURCE=translator` replaces the Gemini decompose call with one HTTP call to a
+translator running beside the AI layer: it answers `{"text": ...}` with `{"english": ...}`, direction forced to
+English, and that one sentence is the only intent. Gemini still plans, still from the message as typed.
+
+- **Why.** It removes one of the two Gemini calls: measured on the same 10 messages within a minute of each other,
+  the Gemini English step took a median of 3.64 s and the translator 0.25 s. A whole turn with the translator and
+  the chooser measured 6.2 s median (translate 0.25, search 0.24, choose 0.45, plan 5.06; the backend adds
+  0.1-0.5), against about 10 s for the same work with the Gemini step. It also halves the model quota a message
+  uses, and it keeps working when the model is unreachable.
+- **What it costs.** Measured without the chooser (decision 77): recall@30 95.4% -> 92.6%, plan accuracy
+  89.7% -> 87.4%, refusal correctness 92.2% -> 90.6%. With the chooser the accuracy is not measured yet.
+- **What is given up.** No splitting into intents, and no checks on the result (no "every name is in the message",
+  no "no Urdu left"). Splitting costs retrieval nothing (13 of 13 multi-request messages still had every needed
+  action among the 30 candidates), but nothing now catches a bad translation before it reaches search.
+- **Where it lives.** `app/decompose/translator.py` implements the same `IntentSource` the planner already took,
+  so the pipeline is unchanged; `TranslatorDecomposer` keeps its connection open and warms up at startup like the
+  other clients. The service is hasyarshad/roman-urdu-translator (81M parameters, weights on Hugging Face, not in
+  this repo); readiness says which source is in use. Default stays `gemini`.
+
 ## Open questions
 
 - **Is Jev's accuracy cost worth it?** It is on for speed (decision 75), 1.1 points behind in plan

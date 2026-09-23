@@ -12,7 +12,7 @@ import re
 from collections.abc import Mapping
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
+from typing import Any, Protocol
 
 from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
@@ -134,6 +134,12 @@ class Decomposition:
     @property
     def texts(self) -> list[str]:
         return [intent.text for intent in self.intents]
+
+
+class IntentSource(Protocol):
+    """Whatever turns a message into the English intents retrieval searches with."""
+
+    async def decompose(self, sentence: str) -> Decomposition: ...
 
 
 def system_prompt(glossary: str) -> str:

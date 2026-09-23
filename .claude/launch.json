@@ -1,0 +1,25 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "backend",
+      "runtimeExecutable": "make",
+      "runtimeArgs": [
+        "-C",
+        "/Users/apple/Desktop/Diversive/school_management_software/self_aware",
+        "backend-run"
+      ],
+      "port": 8082
+    },
+    {
+      "name": "ai-layer",
+      "runtimeExecutable": "make",
+      "runtimeArgs": [
+        "-C",
+        "/Users/apple/Desktop/Diversive/school_management_software/self_aware",
+        "ai-run"
+      ],
+      "port": 8081
+    }
+  ]
+}

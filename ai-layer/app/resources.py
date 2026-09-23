@@ -20,7 +20,8 @@ import structlog
 from app.choosing.chooser import CapabilityChooser
 from app.choosing.jev import JevModel
 from app.core.settings import Settings
-from app.decompose.decomposer import Decomposer
+from app.decompose.decomposer import Decomposer, IntentSource
+from app.decompose.translator import TranslatorDecomposer
 from app.embeddings.client import EmbeddingsClient
 from app.gateway.client import GatewayClient
 from app.gateway.models import AgentMetadataResponse
@@ -72,6 +73,8 @@ class AppResources:
     model: Closeable | None = None
     # The capability chooser's client, when the chooser is on; closed at shutdown.
     chooser_model: Closeable | None = None
+    # The translator client, when it writes the search query instead of Gemini; closed at shutdown.
+    translator: Closeable | None = None
     # Why chat is off while sync is on (for example, no Gemini API key); readiness reports it.
     chat_problem: str | None = None
     # Cheap first calls to each outside service, run once in the background at startup, so the
@@ -100,6 +103,8 @@ class AppResources:
                 await self.model.aclose()
             if self.chooser_model is not None:
                 await self.chooser_model.aclose()
+            if self.translator is not None:
+                await self.translator.aclose()
             await self.gateway.aclose()
         finally:
             await self.index.close()
@@ -159,8 +164,17 @@ async def build_resources(
         branch_limit=settings.retrieval_branch_limit,
     )
     chooser_model = _build_chooser_model(settings)
-    chat, model, chat_problem = _build_chat(settings, gateway, retriever, sync, chooser_model)
+    translator = (
+        TranslatorDecomposer.from_settings(settings)
+        if settings.decompose_source == "translator"
+        else None
+    )
+    chat, model, chat_problem = _build_chat(
+        settings, gateway, retriever, sync, chooser_model, translator
+    )
     warm_ups: dict[str, Callable[[], Awaitable[None]]] = {"embeddings": embeddings.warm_up}
+    if translator is not None:
+        warm_ups["translator"] = translator.warm_up
     if model is not None:
         warm_ups["gemini"] = lambda: model.warm_up(DECOMPOSE_MODEL)
     if chooser_model is not None:
@@ -174,6 +188,7 @@ async def build_resources(
         chat=chat,
         model=model,
         chooser_model=chooser_model,
+        translator=translator,
         chat_problem=chat_problem,
         warm_ups=warm_ups,
     )
@@ -196,6 +211,7 @@ def _build_chat(
     retriever: HybridRetriever,
     sync: MetadataSync | None,
     chooser_model: JevModel | None = None,
+    translator: TranslatorDecomposer | None = None,
 ) -> tuple[ChatOrchestrator | None, GeminiModel | None, str | None]:
     """Chat needs the catalog from sync and a model. Without sync, chat is simply off."""
     if sync is None:
@@ -205,8 +221,9 @@ def _build_chat(
     except ModelUnavailableError as exc:
         log.warning("chat_unavailable", reason=str(exc))
         return None, None, str(exc)
+    intents: IntentSource = translator or Decomposer(model, glossary_lines())
     planner = SentencePlanner(
-        Decomposer(model, glossary_lines()),
+        intents,
         retriever,
         Planner(
             model,

@@ -64,9 +64,11 @@ async def ready(response: Response, resources: Resources) -> ReadinessResponse:
         checks["metadata_sync"] = _check_sync(resources.sync)
     if resources.chat is not None:
         chooser = "on" if resources.chooser_model is not None else "off"
+        english = "the local translator" if resources.translator is not None else "Gemini"
         checks["chat"] = CheckResult(
             ok=True,
-            detail=f"a Gemini API key is set; POST /chat is on; the chooser (Jev) is {chooser}",
+            detail=f"a Gemini API key is set; POST /chat is on; the chooser (Jev) is {chooser}; "
+            f"the search query comes from {english}",
         )
     elif resources.chat_problem is not None:
         checks["chat"] = CheckResult(
