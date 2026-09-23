@@ -1,6 +1,6 @@
 # Retrieval eval with real intents
 
-Generated 2026-09-22 11:49 UTC by `make ai-eval`. Every sentence was decomposed by `gemini-3.1-flash-lite`, and retrieval searched with its intents on the stress index (489 capabilities indexed). Model `BAAI/bge-m3@5617a9f61b028005a4858fdac845db406aefb181`, candidate cap 30.
+Generated 2026-09-23 06:13 UTC by `make ai-eval`. Every sentence was decomposed by `gemini-3.1-flash-lite`, and retrieval searched with its intents on the stress index (489 capabilities indexed). Model `BAAI/bge-m3@5617a9f61b028005a4858fdac845db406aefb181`, candidate cap 30.
 
 Decompose answered 174 of 175 sentences within the rules (174 intents; split into more than one: 0). 1 broke a rule and retrieve nothing here.
 

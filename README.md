@@ -918,6 +918,7 @@ curl -s -X POST http://127.0.0.1:8080/agent/execute -H "Authorization: Bearer lo
 | `make ai-test` | Every AI layer test except real model calls (integration needs Docker, build checks need `embeddings-up`) |
 | `make ai-test-unit` | AI layer unit tests only, no Docker, no embeddings service, no model calls |
 | `make measure` | The four numbers (recall@30, plan accuracy, refusal correctness, validator catch rate); records any missing model answer |
+| `make decompose-repeat` | Decompose every sentence in `request_counts.jsonl` 3 times: the right number of intents every time? Records missing runs |
 | `make measure-jev` | The chooser experiment: every eval sentence planned without and with Jev choosing first; records any missing answer (needs `AI_LAYER_TYPESAFE_API_KEY` for those) |
 | `make measure-ci` | The regression run: every eval from the recorded answers, no model called; fails below the baseline (what CI runs) |
 | `make ai-model-checks` | The Phase 5 checks against the real models (Gemini API; needs `AI_LAYER_GEMINI_API_KEY`) |
@@ -1536,6 +1537,9 @@ recordings without calling a model. None of this is part of `make ai-test`.
 | `test_retrieval_with_intents.py`                    | Retrieval as it really runs: every sentence decomposed by the decompose model, the stress index searched with its intents, held to the same 90% gate                                                                        |
 | `retrieval/intents.py`                              | Decomposes every eval sentence with the decompose model, through the recordings                                                                                                                                             |
 | `test_measure.py`                                   | Phase 7: prints the four numbers (all, English, Roman Urdu) and fails if one fell below the baseline; the validator catches every injected fault; a deliberately broken description shows up as a recall drop |
+| `test_decompose_repeat.py`                          | Decompose gives the right number of intents every time (decision 76): each sentence in `measure/data/request_counts.jsonl` decomposed 3 times, each run recorded; fails on any wrong count; writes `reports/decompose_repeat.md`. Needs no Docker or embeddings |
+| `measure/data/request_counts.jsonl`                 | 33 sentences with how many requests each makes: 14 asking for two or three things ("dikhao aur reminder bhej do"), 19 asking for one, English and Roman Urdu with glosses |
+| `recordings/decompose_repeat.json`                  | The recorded answers for those runs, one per sentence and run                                                                                                                                                 |
 | `test_measure_with_jev.py`                          | The chooser experiment (decision 72): every case planned without and with Jev choosing first; checks every sentence got an outcome and the validator still catches every fault, and writes `reports/measure_with_jev.md` |
 | `measure/choose_report.py`                          | The comparison table, Jev on its own (right picks, shortlist sizes, time per call, confidence against accuracy) and every sentence whose result changed |
 | `recordings/choose.json`, `recordings/plan_after_choose.json` | Jev's recorded answers, and the planner's answers when it sees only Jev's shortlist |
@@ -2194,6 +2198,41 @@ stage on 12 live turns, and each API called on its own:
   suspended"), and that text went into the error, and from there to logs, the chat trace and the reply.
   `GeminiModel` now replaces the key, and anything Google labels `api_key:`, with `[hidden]` before the text goes
   anywhere. Logging's own redaction only hides fields by name, so it could not catch this.
+
+**76. Decompose must give the same, right number of intents every time.** The number of intents is the plan's
+skeleton: each intent is searched on its own, the chooser picks one capability per intent, and the planner writes
+one step per request. A merge silently drops an action, a split adds one nobody asked for, and a count that changes
+between runs makes the same message behave differently. The rest of the eval has only single-request sentences
+(the 8 it used to split were one request each, merged by decision 73), so none of this could show up.
+
+- **Tested on 22 Sep 2026** with 33 sentences, 3 runs each, our exact prompt and checks. Temperature is Gemini's
+  default of 1.0, so the wording varies (only 1 of 15 single-request sentences came back word for word the same
+  three times); the count must not.
+
+  | model | same count in all 3 runs | right count in every run |
+  |---|---:|---:|
+  | `gemini-3.1-flash-lite` (ours) | 33 / 33 | 33 / 33 |
+  | `openai/gpt-oss-120b` (Groq) | 31 / 33 | 29 / 33 |
+  | `qwen/qwen3.8-27b` (Groq) | 27 / 33 | 21 / 33, and 13 calls failed |
+  | `gemini-3.5-flash-lite` (1 run) | — | 14 / 18 multi-request |
+
+  The others mostly merge: "Ahmed Raza ki fees 2000 aur Hamza ki 3000 cash mili" became one intent every time on
+  gpt-oss, so one payment would never be recorded.
+- **The check.** `eval/test_decompose_repeat.py` decomposes every sentence in `request_counts.jsonl` 3 times, each
+  run its own recorded answer (`recordings/decompose_repeat.json`), and fails on any wrong count. `make
+  measure-ci` replays it, so a changed decompose prompt or model has to pass it again. Live calls are paced to 12
+  a minute, under the free tier's 15.
+- **What it found straight away** (30 of 33 right, 3 known gaps held in `KNOWN_GAPS` so the check fails on any
+  *new* wrong sentence and says when a gap starts passing):
+  - "Ahmed Raza ki fees 2000 aur Hamza ki 3000 cash mili" becomes one intent every run, so one of the two
+    payments would never be recorded;
+  - "send reminders to class 5 blue and class 6 green" gave 1, 2, 2 intents in three runs;
+  - "Usman ki challan wapas aa gayi hai, 12000, record kar do" left Urdu in one run's intent ("Usman ki
+    challan"), which the NOT_ENGLISH check refuses.
+
+  Fixing them means a new decompose prompt, and that re-records every eval answer (about 600 calls, more than
+  the free tier's 500 a day), so they are recorded rather than fixed now.
+- **Comparing models.** `AI_LAYER_GROQ_API_KEY` is accepted for such comparisons; chat never uses it.
 
 ## Open questions
 

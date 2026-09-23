@@ -26,9 +26,14 @@ class DecomposedSentence:
 
 
 async def decompose(
-    sentence: str, recordings: Recordings, model: StructuredModel | None
+    sentence: str,
+    recordings: Recordings,
+    model: StructuredModel | None,
+    *,
+    key: str | None = None,
 ) -> DecomposedSentence:
-    decomposer = Decomposer(recordings.model_for(sentence, model), glossary_lines())
+    """``key`` records the answer under another name than the sentence (one per repeated run)."""
+    decomposer = Decomposer(recordings.model_for(key or sentence, model), glossary_lines())
     try:
         return DecomposedSentence(tuple((await decomposer.decompose(sentence)).texts))
     except InvalidModelOutputError as exc:

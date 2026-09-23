@@ -1,0 +1,1147 @@
+{
+ "model": "gemini-3.1-flash-lite",
+ "system_prompt_sha256": "f485a907da4bcc3ca1d9f5573500511fde844643466f384230f7d2fa01527b89",
+ "thinking": false,
+ "answers": {
+  "Ahmed Raza ki fees 2000 aur Hamza ki 3000 cash mili␟run 1": {
+   "intents": [
+    {
+     "text": "Record the cash payment of 2000 for Ahmed Raza and 3000 for Hamza",
+     "entities": [
+      "Ahmed Raza",
+      "Hamza"
+     ]
+    }
+   ]
+  },
+  "Ahmed Raza ki fees 2000 aur Hamza ki 3000 cash mili␟run 2": {
+   "intents": [
+    {
+     "text": "Record receipt of cash payment of 2000 for Ahmed Raza and 3000 for Hamza",
+     "entities": [
+      "Ahmed Raza",
+      "Hamza"
+     ]
+    }
+   ]
+  },
+  "Ahmed Raza ki fees 2000 aur Hamza ki 3000 cash mili␟run 3": {
+   "intents": [
+    {
+     "text": "Record the cash receipt of 2000 for Ahmed Raza and 3000 for Hamza",
+     "entities": [
+      "Ahmed Raza",
+      "Hamza"
+     ]
+    }
+   ]
+  },
+  "Ayesha ki fees 5000 cash mili hai, record kar do␟run 1": {
+   "intents": [
+    {
+     "text": "Record 5000 cash received for Ayesha's fees",
+     "entities": [
+      "Ayesha"
+     ]
+    }
+   ]
+  },
+  "Ayesha ki fees 5000 cash mili hai, record kar do␟run 2": {
+   "intents": [
+    {
+     "text": "Record the 5000 cash fee payment received for Ayesha",
+     "entities": [
+      "Ayesha"
+     ]
+    }
+   ]
+  },
+  "Ayesha ki fees 5000 cash mili hai, record kar do␟run 3": {
+   "intents": [
+    {
+     "text": "Record the 5000 cash payment received for Ayesha",
+     "entities": [
+      "Ayesha"
+     ]
+    }
+   ]
+  },
+  "Bilal ka jurmana maaf karo aur uski October ki fees 4000 naqad record karo␟run 1": {
+   "intents": [
+    {
+     "text": "Waive the fine for Bilal",
+     "entities": [
+      "Bilal"
+     ]
+    },
+    {
+     "text": "Record the October fees of 4000 as cash for Bilal",
+     "entities": [
+      "Bilal"
+     ]
+    }
+   ]
+  },
+  "Bilal ka jurmana maaf karo aur uski October ki fees 4000 naqad record karo␟run 2": {
+   "intents": [
+    {
+     "text": "Waive the fine for Bilal",
+     "entities": [
+      "Bilal"
+     ]
+    },
+    {
+     "text": "Record the October fees of 4000 as cash for Bilal",
+     "entities": [
+      "Bilal"
+     ]
+    }
+   ]
+  },
+  "Bilal ka jurmana maaf karo aur uski October ki fees 4000 naqad record karo␟run 3": {
+   "intents": [
+    {
+     "text": "Waive the fine for Bilal",
+     "entities": [
+      "Bilal"
+     ]
+    },
+    {
+     "text": "Record the October fees of 4000 as cash for Bilal",
+     "entities": [
+      "Bilal"
+     ]
+    }
+   ]
+  },
+  "Hamza ka duplicate bill nikal do␟run 1": {
+   "intents": [
+    {
+     "text": "Generate a duplicate bill for Hamza",
+     "entities": [
+      "Hamza"
+     ]
+    }
+   ]
+  },
+  "Hamza ka duplicate bill nikal do␟run 2": {
+   "intents": [
+    {
+     "text": "Generate a duplicate bill for Hamza",
+     "entities": [
+      "Hamza"
+     ]
+    }
+   ]
+  },
+  "Hamza ka duplicate bill nikal do␟run 3": {
+   "intents": [
+    {
+     "text": "Generate a duplicate bill for Hamza",
+     "entities": [
+      "Hamza"
+     ]
+    }
+   ]
+  },
+  "Usman ki challan wapas aa gayi hai, 12000, record kar do␟run 1": {
+   "intents": [
+    {
+     "text": "The challan for Usman has returned for 12000, please record it",
+     "entities": [
+      "Usman"
+     ]
+    }
+   ]
+  },
+  "Usman ki challan wapas aa gayi hai, 12000, record kar do␟run 2": {
+   "intents": [
+    {
+     "text": "Usman's challan for 12000 has returned, please record it",
+     "entities": [
+      "Usman"
+     ]
+    }
+   ]
+  },
+  "Usman ki challan wapas aa gayi hai, 12000, record kar do␟run 3": {
+   "intents": [
+    {
+     "text": "Usman ki challan for 12000 has been returned, record it",
+     "entities": [
+      "Usman"
+     ]
+    }
+   ]
+  },
+  "Zain ka September ka bill cancel karo aur uske walid ko reminder bhejo␟run 1": {
+   "intents": [
+    {
+     "text": "Cancel the September bill for Zain",
+     "entities": [
+      "Zain"
+     ]
+    },
+    {
+     "text": "Send a reminder to the father of Zain",
+     "entities": [
+      "Zain"
+     ]
+    }
+   ]
+  },
+  "Zain ka September ka bill cancel karo aur uske walid ko reminder bhejo␟run 2": {
+   "intents": [
+    {
+     "text": "Cancel the September bill for Zain",
+     "entities": [
+      "Zain"
+     ]
+    },
+    {
+     "text": "Send a reminder to the parents of Zain",
+     "entities": [
+      "Zain"
+     ]
+    }
+   ]
+  },
+  "Zain ka September ka bill cancel karo aur uske walid ko reminder bhejo␟run 3": {
+   "intents": [
+    {
+     "text": "Cancel the September bill for Zain",
+     "entities": [
+      "Zain"
+     ]
+    },
+    {
+     "text": "Send a reminder to the father of Zain",
+     "entities": [
+      "Zain"
+     ]
+    }
+   ]
+  },
+  "aaj kitne paisay aaye␟run 1": {
+   "intents": [
+    {
+     "text": "Report the total amount collected today",
+     "entities": []
+    }
+   ]
+  },
+  "aaj kitne paisay aaye␟run 2": {
+   "intents": [
+    {
+     "text": "Report the total amount of money received today",
+     "entities": []
+    }
+   ]
+  },
+  "aaj kitne paisay aaye␟run 3": {
+   "intents": [
+    {
+     "text": "Report how much money was received today",
+     "entities": []
+    }
+   ]
+  },
+  "approve the Grade 4 fee structure␟run 1": {
+   "intents": [
+    {
+     "text": "Approve the Grade 4 fee structure",
+     "entities": [
+      "Grade 4"
+     ]
+    }
+   ]
+  },
+  "approve the Grade 4 fee structure␟run 2": {
+   "intents": [
+    {
+     "text": "Approve the Grade 4 fee structure",
+     "entities": [
+      "Grade 4"
+     ]
+    }
+   ]
+  },
+  "approve the Grade 4 fee structure␟run 3": {
+   "intents": [
+    {
+     "text": "Approve the Grade 4 fee structure",
+     "entities": [
+      "Grade 4"
+     ]
+    }
+   ]
+  },
+  "assalam o alaikum␟run 1": {
+   "intents": [
+    {
+     "text": "Send a greeting",
+     "entities": []
+    }
+   ]
+  },
+  "assalam o alaikum␟run 2": {
+   "intents": [
+    {
+     "text": "Acknowledge the greeting",
+     "entities": []
+    }
+   ]
+  },
+  "assalam o alaikum␟run 3": {
+   "intents": [
+    {
+     "text": "A greeting from the staff member",
+     "entities": []
+    }
+   ]
+  },
+  "bank band tha isliye late fee lag gayi, hata do␟run 1": {
+   "intents": [
+    {
+     "text": "The bank was closed so a late fee was charged; remove it",
+     "entities": []
+    }
+   ]
+  },
+  "bank band tha isliye late fee lag gayi, hata do␟run 2": {
+   "intents": [
+    {
+     "text": "The late fee was applied because the bank was closed; remove it",
+     "entities": []
+    }
+   ]
+  },
+  "bank band tha isliye late fee lag gayi, hata do␟run 3": {
+   "intents": [
+    {
+     "text": "The bank was closed so a late fee was charged; remove it",
+     "entities": []
+    }
+   ]
+  },
+  "build a late fee policy — 200 after 7 days, 500 after 30, capped at 1,000␟run 1": {
+   "intents": [
+    {
+     "text": "Build a late fee policy with 200 after 7 days, 500 after 30, capped at 1,000",
+     "entities": []
+    }
+   ]
+  },
+  "build a late fee policy — 200 after 7 days, 500 after 30, capped at 1,000␟run 2": {
+   "intents": [
+    {
+     "text": "build a late fee policy with 200 after 7 days, 500 after 30, capped at 1,000",
+     "entities": []
+    }
+   ]
+  },
+  "build a late fee policy — 200 after 7 days, 500 after 30, capped at 1,000␟run 3": {
+   "intents": [
+    {
+     "text": "build a late fee policy with 200 after 7 days, 500 after 30, capped at 1,000",
+     "entities": []
+    }
+   ]
+  },
+  "cancel Sara's duplicate August bill and credit the extra she paid to her account␟run 1": {
+   "intents": [
+    {
+     "text": "The August bill for Sara is a duplicate; cancel it",
+     "entities": [
+      "Sara"
+     ]
+    },
+    {
+     "text": "Credit the extra amount paid by Sara to her account",
+     "entities": [
+      "Sara"
+     ]
+    }
+   ]
+  },
+  "cancel Sara's duplicate August bill and credit the extra she paid to her account␟run 2": {
+   "intents": [
+    {
+     "text": "The August bill for Sara is a duplicate; cancel it",
+     "entities": [
+      "Sara"
+     ]
+    },
+    {
+     "text": "Credit the extra amount paid by Sara to her account",
+     "entities": [
+      "Sara"
+     ]
+    }
+   ]
+  },
+  "cancel Sara's duplicate August bill and credit the extra she paid to her account␟run 3": {
+   "intents": [
+    {
+     "text": "Cancel Sara's duplicate August bill",
+     "entities": [
+      "Sara"
+     ]
+    },
+    {
+     "text": "Credit the extra she paid to Sara's account",
+     "entities": [
+      "Sara"
+     ]
+    }
+   ]
+  },
+  "class 5 blue ke defaulters dikhao aur unko whatsapp par reminder bhej do␟run 1": {
+   "intents": [
+    {
+     "text": "Show the defaulters of class 5 blue",
+     "entities": [
+      "class 5 blue"
+     ]
+    },
+    {
+     "text": "Send a reminder to the defaulters of class 5 blue on whatsapp",
+     "entities": [
+      "class 5 blue"
+     ]
+    }
+   ]
+  },
+  "class 5 blue ke defaulters dikhao aur unko whatsapp par reminder bhej do␟run 2": {
+   "intents": [
+    {
+     "text": "Show the defaulters for class 5 blue",
+     "entities": [
+      "5 blue"
+     ]
+    },
+    {
+     "text": "Send a reminder to the defaulters of class 5 blue on WhatsApp",
+     "entities": [
+      "5 blue"
+     ]
+    }
+   ]
+  },
+  "class 5 blue ke defaulters dikhao aur unko whatsapp par reminder bhej do␟run 3": {
+   "intents": [
+    {
+     "text": "Show the defaulters of class 5 blue",
+     "entities": [
+      "class 5 blue"
+     ]
+    },
+    {
+     "text": "Send a reminder to the defaulters of class 5 blue on WhatsApp",
+     "entities": [
+      "class 5 blue"
+     ]
+    }
+   ]
+  },
+  "dashboard dikhao, phir class 7 green ke defaulters ki list do␟run 1": {
+   "intents": [
+    {
+     "text": "Show the dashboard",
+     "entities": []
+    },
+    {
+     "text": "Provide the list of defaulters for class 7 green",
+     "entities": [
+      "class 7 green"
+     ]
+    }
+   ]
+  },
+  "dashboard dikhao, phir class 7 green ke defaulters ki list do␟run 2": {
+   "intents": [
+    {
+     "text": "Show the dashboard",
+     "entities": []
+    },
+    {
+     "text": "Provide the list of defaulters for class 7 green",
+     "entities": [
+      "7 green"
+     ]
+    }
+   ]
+  },
+  "dashboard dikhao, phir class 7 green ke defaulters ki list do␟run 3": {
+   "intents": [
+    {
+     "text": "Show the dashboard",
+     "entities": []
+    },
+    {
+     "text": "Provide the list of defaulters for class 7 green",
+     "entities": [
+      "7 green"
+     ]
+    }
+   ]
+  },
+  "find Ahmed Raza␟run 1": {
+   "intents": [
+    {
+     "text": "find Ahmed Raza",
+     "entities": [
+      "Ahmed Raza"
+     ]
+    }
+   ]
+  },
+  "find Ahmed Raza␟run 2": {
+   "intents": [
+    {
+     "text": "Find Ahmed Raza",
+     "entities": [
+      "Ahmed Raza"
+     ]
+    }
+   ]
+  },
+  "find Ahmed Raza␟run 3": {
+   "intents": [
+    {
+     "text": "find Ahmed Raza",
+     "entities": [
+      "Ahmed Raza"
+     ]
+    }
+   ]
+  },
+  "ghar mein fotgi hui thi, jurmana na lagaen␟run 1": {
+   "intents": [
+    {
+     "text": "There was a death in the family, waive the late fee",
+     "entities": []
+    }
+   ]
+  },
+  "ghar mein fotgi hui thi, jurmana na lagaen␟run 2": {
+   "intents": [
+    {
+     "text": "There was a death in the family, please do not apply the late fee",
+     "entities": []
+    }
+   ]
+  },
+  "ghar mein fotgi hui thi, jurmana na lagaen␟run 3": {
+   "intents": [
+    {
+     "text": "There was a death in the family, please do not apply the late fee",
+     "entities": []
+    }
+   ]
+  },
+  "jin ki fees baqaya hai unko reminder bhej do␟run 1": {
+   "intents": [
+    {
+     "text": "Send a reminder to those who have outstanding fees",
+     "entities": []
+    }
+   ]
+  },
+  "jin ki fees baqaya hai unko reminder bhej do␟run 2": {
+   "intents": [
+    {
+     "text": "Send a reminder to those with outstanding fees",
+     "entities": []
+    }
+   ]
+  },
+  "jin ki fees baqaya hai unko reminder bhej do␟run 3": {
+   "intents": [
+    {
+     "text": "Send a reminder to those who have outstanding fees",
+     "entities": []
+    }
+   ]
+  },
+  "late fee hata do aur reminder bhi bhej do␟run 1": {
+   "intents": [
+    {
+     "text": "Waive the late fee",
+     "entities": []
+    },
+    {
+     "text": "Send a reminder",
+     "entities": []
+    }
+   ]
+  },
+  "late fee hata do aur reminder bhi bhej do␟run 2": {
+   "intents": [
+    {
+     "text": "Remove the late fee",
+     "entities": []
+    },
+    {
+     "text": "Send a reminder",
+     "entities": []
+    }
+   ]
+  },
+  "late fee hata do aur reminder bhi bhej do␟run 3": {
+   "intents": [
+    {
+     "text": "Waive the late fee",
+     "entities": []
+    },
+    {
+     "text": "Send a reminder",
+     "entities": []
+    }
+   ]
+  },
+  "list who owes more than 10000 and remind them by sms␟run 1": {
+   "intents": [
+    {
+     "text": "List the defaulters who owe more than 10000",
+     "entities": []
+    },
+    {
+     "text": "Send an SMS reminder to those who owe more than 10000",
+     "entities": []
+    }
+   ]
+  },
+  "list who owes more than 10000 and remind them by sms␟run 2": {
+   "intents": [
+    {
+     "text": "List who owes more than 10000",
+     "entities": []
+    },
+    {
+     "text": "Remind who owes more than 10000 by sms",
+     "entities": []
+    }
+   ]
+  },
+  "list who owes more than 10000 and remind them by sms␟run 3": {
+   "intents": [
+    {
+     "text": "List who owes more than 10000",
+     "entities": []
+    },
+    {
+     "text": "Send an sms reminder to those who owe more than 10000",
+     "entities": []
+    }
+   ]
+  },
+  "pehle class 5 ka baqaya dikhao, phir class 6 ka, phir class 7 ka␟run 1": {
+   "intents": [
+    {
+     "text": "Show the outstanding fees for class 5",
+     "entities": [
+      "class 5"
+     ]
+    },
+    {
+     "text": "Show the outstanding fees for class 6",
+     "entities": [
+      "class 6"
+     ]
+    },
+    {
+     "text": "Show the outstanding fees for class 7",
+     "entities": [
+      "class 7"
+     ]
+    }
+   ]
+  },
+  "pehle class 5 ka baqaya dikhao, phir class 6 ka, phir class 7 ka␟run 2": {
+   "intents": [
+    {
+     "text": "Show the outstanding fees for class 5",
+     "entities": [
+      "class 5"
+     ]
+    },
+    {
+     "text": "Show the outstanding fees for class 6",
+     "entities": [
+      "class 6"
+     ]
+    },
+    {
+     "text": "Show the outstanding fees for class 7",
+     "entities": [
+      "class 7"
+     ]
+    }
+   ]
+  },
+  "pehle class 5 ka baqaya dikhao, phir class 6 ka, phir class 7 ka␟run 3": {
+   "intents": [
+    {
+     "text": "Show the outstanding fees for class 5",
+     "entities": [
+      "class 5"
+     ]
+    },
+    {
+     "text": "Show the outstanding fees for class 6",
+     "entities": [
+      "class 6"
+     ]
+    },
+    {
+     "text": "Show the outstanding fees for class 7",
+     "entities": [
+      "class 7"
+     ]
+    }
+   ]
+  },
+  "plan badal do, December wali qist January mein kar do␟run 1": {
+   "intents": [
+    {
+     "text": "Change the plan and move the December installment to January",
+     "entities": []
+    }
+   ]
+  },
+  "plan badal do, December wali qist January mein kar do␟run 2": {
+   "intents": [
+    {
+     "text": "Change the plan and move the December installment to January",
+     "entities": []
+    }
+   ]
+  },
+  "plan badal do, December wali qist January mein kar do␟run 3": {
+   "intents": [
+    {
+     "text": "Change the payment plan for the December installment to January",
+     "entities": []
+    }
+   ]
+  },
+  "poora batch reverse kar do, galat period ka bill ban gaya tha␟run 1": {
+   "intents": [
+    {
+     "text": "Reverse the entire batch because the bill was created for the wrong period",
+     "entities": []
+    }
+   ]
+  },
+  "poora batch reverse kar do, galat period ka bill ban gaya tha␟run 2": {
+   "intents": [
+    {
+     "text": "The bill for the wrong period was created; reverse the entire batch",
+     "entities": []
+    }
+   ]
+  },
+  "poora batch reverse kar do, galat period ka bill ban gaya tha␟run 3": {
+   "intents": [
+    {
+     "text": "Reverse the bill for the entire batch as it was created for the wrong period",
+     "entities": []
+    }
+   ]
+  },
+  "record 3000 cash for Hamza's August invoice and waive his late fee␟run 1": {
+   "intents": [
+    {
+     "text": "Record 3000 cash for Hamza's August invoice",
+     "entities": [
+      "Hamza"
+     ]
+    },
+    {
+     "text": "Waive Hamza's late fee",
+     "entities": [
+      "Hamza"
+     ]
+    }
+   ]
+  },
+  "record 3000 cash for Hamza's August invoice and waive his late fee␟run 2": {
+   "intents": [
+    {
+     "text": "record 3000 cash for Hamza's August invoice",
+     "entities": [
+      "Hamza"
+     ]
+    },
+    {
+     "text": "waive the late fee for Hamza",
+     "entities": [
+      "Hamza"
+     ]
+    }
+   ]
+  },
+  "record 3000 cash for Hamza's August invoice and waive his late fee␟run 3": {
+   "intents": [
+    {
+     "text": "Record 3000 cash for Hamza's August invoice",
+     "entities": [
+      "Hamza"
+     ]
+    },
+    {
+     "text": "Waive Hamza's late fee",
+     "entities": [
+      "Hamza"
+     ]
+    }
+   ]
+  },
+  "send a reminder to everyone overdue in Grade 4␟run 1": {
+   "intents": [
+    {
+     "text": "send a reminder to everyone with outstanding fees in Grade 4",
+     "entities": [
+      "Grade 4"
+     ]
+    }
+   ]
+  },
+  "send a reminder to everyone overdue in Grade 4␟run 2": {
+   "intents": [
+    {
+     "text": "send a reminder to everyone overdue in Grade 4",
+     "entities": [
+      "Grade 4"
+     ]
+    }
+   ]
+  },
+  "send a reminder to everyone overdue in Grade 4␟run 3": {
+   "intents": [
+    {
+     "text": "send a reminder to everyone overdue in Grade 4",
+     "entities": [
+      "Grade 4"
+     ]
+    }
+   ]
+  },
+  "send reminders to class 5 blue and class 6 green␟run 1": {
+   "intents": [
+    {
+     "text": "send reminders to class 5 blue and class 6 green",
+     "entities": [
+      "class 5 blue",
+      "class 6 green"
+     ]
+    }
+   ]
+  },
+  "send reminders to class 5 blue and class 6 green␟run 2": {
+   "intents": [
+    {
+     "text": "send reminders to class 5 blue",
+     "entities": [
+      "class 5 blue"
+     ]
+    },
+    {
+     "text": "send reminders to class 6 green",
+     "entities": [
+      "class 6 green"
+     ]
+    }
+   ]
+  },
+  "send reminders to class 5 blue and class 6 green␟run 3": {
+   "intents": [
+    {
+     "text": "send reminders to class 5 blue",
+     "entities": [
+      "class 5 blue"
+     ]
+    },
+    {
+     "text": "send reminders to class 6 green",
+     "entities": [
+      "class 6 green"
+     ]
+    }
+   ]
+  },
+  "show me everyone more than 60 days overdue␟run 1": {
+   "intents": [
+    {
+     "text": "Show me everyone more than 60 days overdue",
+     "entities": []
+    }
+   ]
+  },
+  "show me everyone more than 60 days overdue␟run 2": {
+   "intents": [
+    {
+     "text": "Show me everyone more than 60 days overdue",
+     "entities": []
+    }
+   ]
+  },
+  "show me everyone more than 60 days overdue␟run 3": {
+   "intents": [
+    {
+     "text": "Show me everyone more than 60 days overdue",
+     "entities": []
+    }
+   ]
+  },
+  "show the dashboard, list class 5 defaulters and remind class 5 blue by email␟run 1": {
+   "intents": [
+    {
+     "text": "Show the dashboard",
+     "entities": []
+    },
+    {
+     "text": "List class 5 defaulters",
+     "entities": [
+      "class 5"
+     ]
+    },
+    {
+     "text": "Remind class 5 blue by email",
+     "entities": [
+      "class 5 blue"
+     ]
+    }
+   ]
+  },
+  "show the dashboard, list class 5 defaulters and remind class 5 blue by email␟run 2": {
+   "intents": [
+    {
+     "text": "Show the dashboard",
+     "entities": []
+    },
+    {
+     "text": "List class 5 defaulters",
+     "entities": [
+      "class 5"
+     ]
+    },
+    {
+     "text": "Remind class 5 blue by email",
+     "entities": [
+      "class 5 blue"
+     ]
+    }
+   ]
+  },
+  "show the dashboard, list class 5 defaulters and remind class 5 blue by email␟run 3": {
+   "intents": [
+    {
+     "text": "show the dashboard",
+     "entities": []
+    },
+    {
+     "text": "list class 5 defaulters",
+     "entities": [
+      "class 5"
+     ]
+    },
+    {
+     "text": "remind class 5 blue by email",
+     "entities": [
+      "class 5 blue"
+     ]
+    }
+   ]
+  },
+  "show today's collection and then list the defaulters in class 6␟run 1": {
+   "intents": [
+    {
+     "text": "Show today's collection",
+     "entities": []
+    },
+    {
+     "text": "List the defaulters in class 6",
+     "entities": [
+      "6"
+     ]
+    }
+   ]
+  },
+  "show today's collection and then list the defaulters in class 6␟run 2": {
+   "intents": [
+    {
+     "text": "Show today's collection",
+     "entities": []
+    },
+    {
+     "text": "List the defaulters in class 6",
+     "entities": [
+      "class 6"
+     ]
+    }
+   ]
+  },
+  "show today's collection and then list the defaulters in class 6␟run 3": {
+   "intents": [
+    {
+     "text": "Show today's collection",
+     "entities": []
+    },
+    {
+     "text": "List the defaulters in class 6",
+     "entities": [
+      "class 6"
+     ]
+    }
+   ]
+  },
+  "subah ke numbers do␟run 1": {
+   "intents": [
+    {
+     "text": "Provide the numbers for subah",
+     "entities": [
+      "subah"
+     ]
+    }
+   ]
+  },
+  "subah ke numbers do␟run 2": {
+   "intents": [
+    {
+     "text": "Provide the numbers for the morning",
+     "entities": []
+    }
+   ]
+  },
+  "subah ke numbers do␟run 3": {
+   "intents": [
+    {
+     "text": "provide the morning attendance numbers",
+     "entities": []
+    }
+   ]
+  },
+  "the debt is real but uncollectable, send it to the principal for write-off␟run 1": {
+   "intents": [
+    {
+     "text": "The debt is uncollectable so send it to the principal for write-off",
+     "entities": []
+    }
+   ]
+  },
+  "the debt is real but uncollectable, send it to the principal for write-off␟run 2": {
+   "intents": [
+    {
+     "text": "The debt is uncollectable so send it to the principal for write-off",
+     "entities": []
+    }
+   ]
+  },
+  "the debt is real but uncollectable, send it to the principal for write-off␟run 3": {
+   "intents": [
+    {
+     "text": "The debt is real but uncollectable, send the proposal to the principal to write it off",
+     "entities": []
+    }
+   ]
+  },
+  "the family paid twice for August, credit the second payment␟run 1": {
+   "intents": [
+    {
+     "text": "The family paid twice for August, credit the second payment",
+     "entities": []
+    }
+   ]
+  },
+  "the family paid twice for August, credit the second payment␟run 2": {
+   "intents": [
+    {
+     "text": "The family paid twice for August; credit the second payment",
+     "entities": []
+    }
+   ]
+  },
+  "the family paid twice for August, credit the second payment␟run 3": {
+   "intents": [
+    {
+     "text": "The family paid twice for August; credit the second payment",
+     "entities": []
+    }
+   ]
+  },
+  "who won the cricket match yesterday?␟run 1": {
+   "intents": [
+    {
+     "text": "Identify who won the cricket match yesterday",
+     "entities": []
+    }
+   ]
+  },
+  "who won the cricket match yesterday?␟run 2": {
+   "intents": [
+    {
+     "text": "Identify who won the cricket match yesterday",
+     "entities": []
+    }
+   ]
+  },
+  "who won the cricket match yesterday?␟run 3": {
+   "intents": [
+    {
+     "text": "Identify who won the cricket match yesterday",
+     "entities": []
+    }
+   ]
+  },
+  "write off the Khan family's old balance and send me the overdue list for class 4␟run 1": {
+   "intents": [
+    {
+     "text": "Waive the outstanding fees for the Khan family",
+     "entities": [
+      "Khan"
+     ]
+    },
+    {
+     "text": "Send me the list of defaulters for class 4",
+     "entities": [
+      "class 4"
+     ]
+    }
+   ]
+  },
+  "write off the Khan family's old balance and send me the overdue list for class 4␟run 2": {
+   "intents": [
+    {
+     "text": "Write off the Khan family's old balance",
+     "entities": [
+      "Khan"
+     ]
+    },
+    {
+     "text": "Send me the overdue list for class 4",
+     "entities": [
+      "class 4"
+     ]
+    }
+   ]
+  },
+  "write off the Khan family's old balance and send me the overdue list for class 4␟run 3": {
+   "intents": [
+    {
+     "text": "Write off the Khan family's old balance",
+     "entities": [
+      "Khan family"
+     ]
+    },
+    {
+     "text": "Send the overdue list for class 4",
+     "entities": [
+      "class 4"
+     ]
+    }
+   ]
+  }
+ }
+}

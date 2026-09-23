@@ -122,6 +122,10 @@ ai-eval: ## Retrieval eval: recall@30 gate, Roman Urdu, clusters; writes ai-laye
 measure: ## Print the four numbers (recall@30, plan accuracy, refusal correctness, validator catch rate); records missing model answers
 	$(UV) run pytest eval/test_measure.py -p no:cacheprovider -q
 
+.PHONY: decompose-repeat
+decompose-repeat: ## Decompose each sentence in request_counts.jsonl 3 times: the right number of intents every time? Records missing runs
+	$(UV) run pytest eval/test_decompose_repeat.py -p no:cacheprovider -q
+
 .PHONY: measure-jev
 measure-jev: ## The chooser experiment: plan every eval sentence without and with Jev choosing first; records missing answers
 	$(UV) run pytest eval/test_measure_with_jev.py -p no:cacheprovider -q
