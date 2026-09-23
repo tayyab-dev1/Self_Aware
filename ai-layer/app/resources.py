@@ -233,7 +233,9 @@ def _build_chat(
             record_words=RECORD_WORDS,
         ),
         lambda: sync.catalog,
-        CapabilityChooser(chooser_model) if chooser_model is not None else None,
+        CapabilityChooser(chooser_model, with_message=translator is not None)
+        if chooser_model is not None
+        else None,
     )
     chat = ChatOrchestrator(
         gateway=gateway,

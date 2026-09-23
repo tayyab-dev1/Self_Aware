@@ -2297,6 +2297,27 @@ English, and that one sentence is the only intent. Gemini still plans, still fro
   other clients. The service is hasyarshad/roman-urdu-translator (81M parameters, weights on Hugging Face, not in
   this repo); readiness says which source is in use. Default stays `gemini`.
 
+**79. The chooser reads the message as typed when the intents are a translation, and the fast combination still
+costs too much** (branch `translator-decompose`). Jev sees only the English, so a weak translation ends the turn:
+with the translator's sentence it answered "none" for 20 of 169 labelled messages, against 9 of 172 with
+decompose's intents. Giving it the message as well (`CapabilityChooser(with_message=True)`, set when
+`AI_LAYER_DECOMPOSE_SOURCE=translator`) takes it back to keeping the expected action for 92.9% of them, from 87.6%.
+
+Measured end to end, all four ways:
+
+| | plan accuracy | refusal correctness |
+|---|---:|---:|
+| Gemini's intents + Jev (the default) | 89.7% | 92.2% |
+| the translator, no chooser | 87.4% | 90.6% |
+| the translator + Jev, with the message | 85.1% | 87.8% |
+| the translator + Jev, translation only | 81.1% | 85.7% |
+
+The errors compound: the translator loses 2.3 points on its own, and what it hands Jev loses 2.3 more. The
+fastest setup (6.2 s a turn measured, against about 10 s with a slow Gemini) is 4.6 points behind the default, so
+the default stays Gemini's intents. The branch keeps the translator for a fallback, and as the starting point if
+the translation quality improves: a hand-written map for school words already won back a point of recall
+(decision 77).
+
 ## Open questions
 
 - **Is Jev's accuracy cost worth it?** It is on for speed (decision 75), 1.1 points behind in plan

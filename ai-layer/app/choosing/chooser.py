@@ -33,16 +33,28 @@ NONE_MEANING = (
     "None of the other options carries out this request: the school system cannot do it here, or "
     "it is not a request at all."
 )
-INSTRUCTIONS = (
-    'A school office staff member asked: "{intent}". Which option does exactly the action asked '
+ASKED = 'A school office staff member asked: "{intent}".'
+# When the intent is a plain translation it can be wrong, so the message as typed is given too
+# (decision 79): Jev then keeps the expected action for 92.9% of labelled messages, not 87.6%.
+TYPED = (
+    'A school office staff member typed the message in "message", usually Urdu written in Latin '
+    'letters. A translator turned it into: "{intent}", which can be wrong, so read both.'
+)
+REST = (
+    " Which option does exactly the action asked "
     "for? Judge by what each option does and what it says it is not for. The request may leave out "
     "details the option needs, such as which student, class, invoice or amount: those are asked "
     "for later, so the option still fits. But an option that does a different action on the same "
     "thing does not fit (proposing something is not approving, rejecting, returning or paying it "
     'out). Choose "none" when no option does the action asked for, or it is not a request.'
 )
+INSTRUCTIONS = ASKED + REST
+INSTRUCTIONS_WITH_MESSAGE = TYPED + REST
 # Changing how a question or an option is written changes what Jev answers: recordings hash this.
 SPECIFICATION = "\n".join([INSTRUCTIONS, NONE_MEANING, "options: does, kind, needs (v2)"])
+SPECIFICATION_WITH_MESSAGE = "\n".join(
+    [INSTRUCTIONS_WITH_MESSAGE, NONE_MEANING, "options: does, kind, needs (v2)"]
+)
 
 # An intent whose "none" holds at least this much adds nothing to the shortlist.
 NONE_WINS_AT = 0.6
@@ -147,23 +159,31 @@ def question_id(number: int) -> str:
 
 
 def decision_request(
-    intents: Sequence[str], candidates: Sequence[CapabilityMetadata]
+    intents: Sequence[str],
+    candidates: Sequence[CapabilityMetadata],
+    message: str | None = None,
 ) -> DecisionRequest:
+    """``message`` is given when the intents are a plain translation, which can be wrong."""
     criteria: dict[str, Any] = {candidate.id: option(candidate) for candidate in candidates}
     criteria[NONE] = NONE_MEANING
+    state: dict[str, Any] = {"requests": list(intents)}
+    instructions, specification = INSTRUCTIONS, SPECIFICATION
+    if message is not None:
+        state = {"message": message, **state}
+        instructions, specification = INSTRUCTIONS_WITH_MESSAGE, SPECIFICATION_WITH_MESSAGE
     return DecisionRequest(
         model=CHOOSER_MODEL,
-        state={"requests": list(intents)},
+        state=state,
         questions={
             question_id(n): {
                 "type": "choice",
-                "instructions": INSTRUCTIONS.format(intent=intent),
+                "instructions": instructions.format(intent=intent),
                 "criteria": criteria,
             }
             for n, intent in enumerate(intents, start=1)
         },
         purpose="choose",
-        system=SPECIFICATION,
+        system=specification,
     )
 
 
@@ -191,14 +211,20 @@ def parse_choice(
 
 
 class CapabilityChooser:
-    def __init__(self, model: DecisionModel) -> None:
+    def __init__(self, model: DecisionModel, *, with_message: bool = False) -> None:
         self._model = model
+        # True when the intents are a translation rather than checked intents: Jev then reads the
+        # message as typed as well, because a translation can be wrong (decision 79).
+        self._with_message = with_message
 
     async def choose(
-        self, intents: Sequence[str], candidates: Sequence[CapabilityMetadata]
+        self,
+        intents: Sequence[str],
+        candidates: Sequence[CapabilityMetadata],
+        message: str | None = None,
     ) -> Choice:
         """Raises ``ModelError`` when the call fails or its answer breaks a rule."""
-        request = decision_request(intents, candidates)
+        request = decision_request(intents, candidates, message if self._with_message else None)
         with trace.stage(
             "choose",
             "Choose the capability",

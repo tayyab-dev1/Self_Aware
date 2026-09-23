@@ -117,6 +117,8 @@ class Pipeline:
     model: StructuredModel | None
     choose_recordings: Recordings | None = None
     decider: DecisionModel | None = None
+    # True when the intents are a translation: Jev reads the message as typed too (decision 79).
+    chooser_reads_the_message: bool = False
 
     async def run_all(self, cases: Sequence[Case]) -> list[CaseResult]:
         gate = asyncio.Semaphore(CONCURRENT_CASES)
@@ -140,10 +142,13 @@ class Pipeline:
 
         choice: Choice | None = None
         if self.choose_recordings is not None:
-            chooser = CapabilityChooser(self.choose_recordings.decider_for(case.text, self.decider))
+            chooser = CapabilityChooser(
+                self.choose_recordings.decider_for(case.text, self.decider),
+                with_message=self.chooser_reads_the_message,
+            )
             try:
                 choice = await chooser.choose(
-                    decomposed.intents, [self.catalog[c] for c in plannable]
+                    decomposed.intents, [self.catalog[c] for c in plannable], case.text
                 )
             except (ModelCallFailedError, ModelError) as exc:
                 return CaseResult(

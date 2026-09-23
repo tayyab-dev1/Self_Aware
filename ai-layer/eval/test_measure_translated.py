@@ -22,6 +22,9 @@ import pytest
 import pytest_asyncio
 
 from app.capabilities.snapshot import load_snapshot
+from app.choosing.chooser import CHOOSER_MODEL, SPECIFICATION_WITH_MESSAGE
+from app.choosing.jev import JevModel
+from app.core.settings import Settings
 from app.llm.runner import PLANNER_MODEL
 from app.planning.planner import THINKING as PLANNER_THINKING
 from app.planning.planner import system_prompt as planner_prompt
@@ -66,8 +69,10 @@ def translations() -> dict[str, str]:
 class Comparison:
     with_intents: list[CaseResult]
     with_translation: list[CaseResult]
+    with_both: list[CaseResult]
     numbers_intents: dict[str, FourNumbers]
     numbers_translation: dict[str, FourNumbers]
+    numbers_both: dict[str, FourNumbers]
 
 
 @pytest_asyncio.fixture(scope="module")
@@ -104,11 +109,41 @@ async def comparison(
         retriever, index_ids, catalog, decompose_recordings, translated_plan, model
     ).run_all(cases)
 
+    # The same again with the chooser, as chat runs it: Jev narrows, then the planner fills in.
+    choose_recordings = Recordings(
+        "choose_from_translation", CHOOSER_MODEL, SPECIFICATION_WITH_MESSAGE, mode=mode
+    )
+    plan_after_choose = Recordings(
+        "plan_from_translation_with_jev",
+        PLANNER_MODEL,
+        planner_prompt(MAX_STEPS),
+        mode=mode,
+        thinking=PLANNER_THINKING,
+    )
+    jev = JevModel.from_settings(Settings()) if mode == "record" else None
+    try:
+        with_both = await Pipeline(
+            retriever,
+            index_ids,
+            catalog,
+            decompose_recordings,
+            plan_after_choose,
+            model,
+            choose_recordings,
+            jev,
+            chooser_reads_the_message=True,
+        ).run_all(cases)
+    finally:
+        if jev is not None:
+            await jev.aclose()
+
     return Comparison(
         with_intents,
         with_translation,
+        with_both,
         four_numbers(with_intents, inject_faults(with_intents, catalog)),
         four_numbers(with_translation, inject_faults(with_translation, catalog)),
+        four_numbers(with_both, inject_faults(with_both, catalog)),
     )
 
 
@@ -118,6 +153,8 @@ def test_the_four_numbers_with_a_translator_instead_of_decompose(
     with capsys.disabled():
         print("\n\ndecompose's intents -> the translator's sentence\n")  # noqa: T201
         print(comparison_table(comparison.numbers_intents, comparison.numbers_translation))  # noqa: T201
+        print("\n\nthe translator alone -> the translator with Jev choosing\n")  # noqa: T201
+        print(comparison_table(comparison.numbers_translation, comparison.numbers_both))  # noqa: T201
         changed = [
             (new.case.text, old.outcome, new.outcome, new.capabilities)
             for old, new in zip(comparison.with_intents, comparison.with_translation, strict=True)

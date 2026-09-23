@@ -70,7 +70,7 @@ class SentencePlanner:
         candidates = [catalog[c] for c in retrieval.capability_ids if c in catalog]
         retrieved = tuple(c.id for c in candidates)
 
-        choice = await self._choose(decomposition.texts, candidates, session_id)
+        choice = await self._choose(sentence, decomposition.texts, candidates, session_id)
         if choice is not None:
             by_id = {c.id: c for c in candidates}
             candidates = [by_id[c] for c in choice.shortlist]
@@ -118,13 +118,17 @@ class SentencePlanner:
         return Understanding(decomposition, retrieved, outcome, choice)
 
     async def _choose(
-        self, intents: Sequence[str], candidates: Sequence[CapabilityMetadata], session_id: str
+        self,
+        sentence: str,
+        intents: Sequence[str],
+        candidates: Sequence[CapabilityMetadata],
+        session_id: str,
     ) -> Choice | None:
         """The chooser's pick, or None when it is off, has nothing to choose from, or failed."""
         if self._chooser is None or not candidates:
             return None
         try:
-            return await self._chooser.choose(intents, candidates)
+            return await self._chooser.choose(intents, candidates, sentence)
         except ModelError as exc:
             # The planner can still choose among every candidate, as it does with the chooser off.
             log.warning(
