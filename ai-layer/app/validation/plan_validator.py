@@ -143,12 +143,11 @@ class _Checker:
         if unknown:
             self.fail("NOT_A_MISSING_PARAMETER", f"not required without a default: {unknown}")
             return None
-        if given & set(answer.missing):
-            self.fail(
-                "MISSING_BUT_GIVEN", f"{sorted(given & set(answer.missing))} both given and missing"
-            )
-            return None
-        partial = StepOutput(capability_id=answer.capability_id, params=answer.params)
+        # A parameter can be both: "the class is Grade 4, but I still need the section". What the
+        # planner knew is kept out of the step, because the user is about to be asked for it.
+        both = given & set(answer.missing)
+        kept = [param for param in answer.params if param.name not in both]
+        partial = StepOutput(capability_id=answer.capability_id, params=kept)
         step = self.step(1, partial, [partial], still_missing=set(answer.missing))
         if step is None or self.problems:
             return None

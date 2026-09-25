@@ -236,10 +236,17 @@ def test_a_request_for_input_must_name_real_required_parameters() -> None:
     asks = {"capability_id": "fee.reminder.send", "params": [], "missing": ["channel", "text"]}
     assert codes({"outcome": "needs_input", "needs_input": asks}) == ["NOT_A_MISSING_PARAMETER"]
 
-    given_and_missing = {**payment(), "missing": ["route"]}
-    assert codes({"outcome": "needs_input", "needs_input": given_and_missing}) == [
-        "MISSING_BUT_GIVEN"
-    ]
+    # A parameter that is both filled and named as missing is what the planner half knows: it is
+    # asked for, and what it filled is left out of the step.
+    half_known = {
+        "capability_id": "fee.reminder.send",
+        "params": [{"name": "section_id", "lookup": {"class": "class 5"}}],
+        "missing": ["section_id"],
+    }
+    needs = validate({"outcome": "needs_input", "needs_input": half_known})
+    assert isinstance(needs, NeedsInput)
+    assert needs.missing == ("section_id",)
+    assert set(needs.step.params) == set()
 
     also_incomplete = {**payment(route=None, amount_received=None), "missing": ["route"]}
     assert codes({"outcome": "needs_input", "needs_input": also_incomplete}) == [
