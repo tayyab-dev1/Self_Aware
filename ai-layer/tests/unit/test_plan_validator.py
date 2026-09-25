@@ -20,7 +20,7 @@ SENTENCE = (
 
 def payment(**overrides: Any) -> dict[str, Any]:
     params = {
-        "invoice_id": {"words": "Ahmed Raza ki September ki fees"},
+        "invoice_id": {"lookup": {"student_name": "Ahmed Raza", "month": "September"}},
         "route": {"value": "cash"},
         "amount_received": {"value": 5000},
         "payment_date": {"value": "2026-09-14"},
@@ -36,7 +36,7 @@ OVERDUE = {
     "capability_id": "fee.overdue.list",
     "params": [
         {"name": "scope", "value": "section"},
-        {"name": "section_id", "words": "class 5 blue"},
+        {"name": "section_id", "lookup": {"class": "class 5", "section": "blue"}},
     ],
 }
 
@@ -72,9 +72,11 @@ def test_a_good_two_step_plan_becomes_the_gateway_plan_with_versions_from_the_me
         (2, "fee.overdue.list"),
     ]
     assert plan.steps[0].capability_version == CATALOG["fee.payment.record"].version
-    assert plan.steps[0].params["invoice_id"].raw == "Ahmed Raza ki September ki fees"
+    invoice = plan.steps[0].params["invoice_id"]
+    assert invoice.lookup == {"student_name": "Ahmed Raza", "month": "September"}
+    assert invoice.raw == "Ahmed Raza September"  # the words the chat shows and the audit keeps
     assert plan.steps[0].params["amount_received"].value == 5000
-    assert plan.steps[1].params["section_id"].raw == "class 5 blue"
+    assert plan.steps[1].params["section_id"].lookup == {"class": "class 5", "section": "blue"}
 
 
 def test_a_hallucinated_capability_id_is_caught() -> None:
@@ -104,7 +106,7 @@ def test_invented_duplicate_and_missing_parameters_are_caught() -> None:
 def test_a_parameter_with_a_default_may_be_left_out() -> None:
     reminder = {
         "capability_id": "fee.reminder.send",
-        "params": [{"name": "section_id", "words": "class 5 blue"}],
+        "params": [{"name": "section_id", "lookup": {"class": "class 5", "section": "blue"}}],
     }
 
     outcome = validate({"outcome": "plan", "steps": [reminder]})
@@ -117,7 +119,11 @@ def test_a_parameter_with_a_default_may_be_left_out() -> None:
     ("override", "code"),
     [
         ({"invoice_id": {"value": 31}}, "WRONG_FORM"),
-        ({"invoice_id": {"words": "Ahmed Raza Khan's invoice"}}, "WORDS_NOT_IN_SENTENCE"),
+        ({"invoice_id": {"lookup": {"student_name": "Ahmed Raza Khan"}}}, "WORDS_NOT_IN_SENTENCE"),
+        ({"invoice_id": {"words": "Ahmed Raza ki September ki fees"}}, "WRONG_FORM"),
+        ({"invoice_id": {"lookup": {"student": "Ahmed Raza"}}}, "UNKNOWN_LOOKUP_PART"),
+        ({"invoice_id": {"lookup": {"month": "September"}}}, "LOOKUP_NAMES_NOTHING"),
+        ({"invoice_id": {"lookup": {"student_name": " "}}}, "MALFORMED_PARAMETER"),
         ({"route": {"words": "cash"}}, "WRONG_FORM"),
         ({"route": {"value": "cheque"}}, "NOT_AN_ALLOWED_VALUE"),
         ({"amount_received": {"value": 9000}}, "VALUE_NOT_IN_SENTENCE"),
@@ -137,7 +143,7 @@ def test_a_lookup_phrase_may_rearrange_the_users_words_but_never_add_a_name() ->
     cancel: dict[str, Any] = {
         "capability_id": "fee.cancellation.raise",
         "params": [
-            {"name": "invoice_id", "words": "Zain's September bill"},
+            {"name": "invoice_id", "lookup": {"student_name": "Zain", "month": "September"}},
             {"name": "reason", "value": "student_had_left"},
             {"name": "description", "value": "Zain left in July but was billed for September."},
         ],
@@ -151,7 +157,7 @@ def test_a_lookup_phrase_may_rearrange_the_users_words_but_never_add_a_name() ->
     invented = {
         **cancel,
         "params": [
-            {**cancel["params"][0], "words": "Zain Ahmed's September bill"},
+            {"name": "invoice_id", "lookup": {"student_name": "Zain Ahmed", "month": "September"}},
             *cancel["params"][1:],
         ],
     }
@@ -160,7 +166,10 @@ def test_a_lookup_phrase_may_rearrange_the_users_words_but_never_add_a_name() ->
     ]
     only_connectors = {
         **cancel,
-        "params": [{**cancel["params"][0], "words": "the invoice"}, *cancel["params"][1:]],
+        "params": [
+            {"name": "invoice_id", "lookup": {"student_name": "the invoice"}},
+            *cancel["params"][1:],
+        ],
     }
     assert codes(
         {"outcome": "plan", "steps": [only_connectors]}, sentence=sentence, record_words=["invoice"]

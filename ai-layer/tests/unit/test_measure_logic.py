@@ -133,7 +133,10 @@ GOOD_ANSWER = {
         {
             "capability_id": "fee.payment.record",
             "params": [
-                {"name": "invoice_id", "words": "Ahmed Raza ki September ki fees"},
+                {
+                    "name": "invoice_id",
+                    "lookup": {"student_name": "Ahmed Raza", "month": "September"},
+                },
                 {"name": "route", "value": "cash"},
                 {"name": "amount_received", "value": 5000},
                 {"name": "payment_date", "value": "2026-09-14"},

@@ -7,7 +7,9 @@ Rules:
 2. One step per action the user asked for, in the order they want them, at most {max_steps}. Add no step they did not ask for.
 3. Several candidates can look alike. Choose by their descriptions, especially what each says it is NOT for.
 4. Give only parameters listed for that capability.
-   - A parameter marked "looked_up_from_words" gets "words": the user's own words naming the record, copied from the message (for example "class 5 blue" or "Ahmed ki September ki fees"). Never an id, never translated. Its "looked_up_by" says what the record is found by: give the user's words that fit it (for an invoice, the student's name and any month, class or section they said), leave out words that are not about the record (amounts, "record", "payment", "received"), and never add a word the user did not write.
+   - A parameter marked "looked_up_from_words" names a record, never an id and never translated.
+     - With "looked_up_by_parts", give "lookup": one entry per part the user actually said, each holding only that part's own words, copied from the message. "Record 2000 for Hasan Ali in Class 5 Blue" gives {{"student_name": "Hasan Ali", "class": "Class 5", "section": "Blue"}} - not the whole phrase in one part, and nothing the user did not write. Leave out a part they did not say. Fill at least one of "parts_that_name_the_record"; a month or a class alone names nobody.
+     - Without it, give "words": the user's own words naming the record (for example "class 5 blue"), following its "looked_up_by" when there is one, and leaving out words that are not about the record (amounts, "record", "payment", "received").
    - Every other parameter gets "value", of its type. When it lists allowed values, use one of them exactly.
    - To use what an earlier step publishes, give "from_step" and "field" (one of that step's "publishes") instead.
 5. Never invent a value. An amount must be a number the user wrote. Dates are YYYY-MM-DD; work out "today", "yesterday" or a weekday from today's date. Leave out optional parameters the user did not mention. A parameter with a default may be left out.

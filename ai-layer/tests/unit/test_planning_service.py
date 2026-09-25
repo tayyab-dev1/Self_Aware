@@ -116,7 +116,7 @@ REMINDER_PLAN = {
         {
             "capability_id": "fee.reminder.send",
             "params": [
-                {"name": "section_id", "words": "class 5 blue"},
+                {"name": "section_id", "lookup": {"class": "class 5", "section": "blue"}},
                 {"name": "channel", "value": "whatsapp"},
             ],
         }
@@ -133,7 +133,8 @@ async def test_a_roman_urdu_sentence_is_planned_from_its_english_intents_and_can
     )
 
     assert isinstance(understanding.outcome, PlannedSteps)
-    assert understanding.outcome.plan.steps[0].params["section_id"].raw == "class 5 blue"
+    section = understanding.outcome.plan.steps[0].params["section_id"]
+    assert section.lookup == {"class": "class 5", "section": "blue"}
     assert index.queries == [INTENT]  # retrieval searched with the English intent
     assert understanding.candidates == (
         "fee.reminder.send",
@@ -182,8 +183,14 @@ def test_a_candidate_shows_the_planner_what_it_needs_and_marks_looked_up_paramet
     assert entry["publishes"] == ["guardians", "total_outstanding"]
     section, channel = entry["parameters"]
     assert section["looked_up_from_words"] is True
-    assert section["looked_up_by"].startswith("the class and section together")  # from the backend
-    assert "looked_up_by" not in channel
+    # The parts come from the backend, with the ones that can name a section on their own.
+    assert section["looked_up_by_parts"] == {
+        "section": "the section's name on its own, e.g. blue",
+        "class": "the class the section is in, e.g. class 5"
+        + " (only narrows down what is already named)",
+    }
+    assert section["parts_that_name_the_record"] == ["section"]
+    assert "looked_up_by_parts" not in channel
     assert channel == {
         "name": "channel",
         "type": "string",

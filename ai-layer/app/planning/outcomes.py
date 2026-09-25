@@ -59,6 +59,9 @@ class ParamOutput(BaseModel):
     name: str = Field(min_length=1, max_length=64)
     value: Scalar | None = None
     words: str | None = Field(default=None, min_length=1, max_length=200)
+    # The parts of a looked-up record, when its resolver declares them: {"student_name": "Hasan
+    # Ali", "class": "Class 5"}. Each part is the user's own words for that part alone.
+    lookup: dict[str, str] | None = Field(default=None, min_length=1, max_length=10)
     from_step: StrictInt | None = None
     field: str | None = Field(default=None, min_length=1, max_length=64)
 
@@ -101,6 +104,7 @@ SCHEMA: dict[str, Any] = {
                     "name": {"type": "string"},
                     "value": _SCALAR_SCHEMA,
                     "words": {"type": "string"},
+                    "lookup": {"type": "object", "additionalProperties": {"type": "string"}},
                     "from_step": {"type": "integer"},
                     "field": {"type": "string"},
                 },

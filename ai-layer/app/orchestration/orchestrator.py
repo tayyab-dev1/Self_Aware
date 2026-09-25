@@ -355,8 +355,11 @@ class _Turn:
                 chosen = choose(turn.message, pending.options)
             if chosen is None or chosen not in {option.id for option in pending.options}:
                 return await self.ask_pending(again=True)
-            words = step.params[pending.param].raw
-            step.params[pending.param] = ParamValue(raw=words, chosen_id=chosen)
+            named = step.params[pending.param]
+            # The same words and parts as before, so the choice is checked against the same matches.
+            step.params[pending.param] = ParamValue(
+                raw=named.raw, lookup=named.lookup, chosen_id=chosen
+            )
             session.pending = None
             return await self.preflight()
 

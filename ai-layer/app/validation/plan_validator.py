@@ -199,7 +199,7 @@ class _Checker:
             name
             for name, present in (
                 ("value", given.value is not None),
-                ("words", given.words is not None),
+                ("words", given.words is not None or given.lookup is not None),
                 ("from_step", given.from_step is not None or given.field is not None),
             )
             if present
@@ -213,17 +213,43 @@ class _Checker:
         if forms == ["from_step"]:
             return self.earlier_step(number, param, given, all_steps)
         if param.resolver is not None:
-            if given.words is None:
-                self.fail("WRONG_FORM", f"{param.name} is looked up from the user's words", number)
-                return None
-            if not only_users_words(self.sentence, given.words, self.record_words):
-                self.fail("WORDS_NOT_IN_SENTENCE", f"{param.name} words are not the user's", number)
-                return None
-            return ParamValue(raw=given.words.strip())
-        if given.words is not None:
-            self.fail("WRONG_FORM", f"{param.name} takes a value, not words", number)
+            return self.looked_up(number, param, given)
+        if given.words is not None or given.lookup is not None:
+            self.fail("WRONG_FORM", f"{param.name} takes a value, not a lookup", number)
             return None
         return self.value(number, param, given.value)
+
+    def looked_up(self, number: int, param: ParamMetadata, given: ParamOutput) -> ParamValue | None:
+        """A record named by its parts, when the resolver declares them, or by the user's words."""
+        declared = {field.name: field for field in param.lookup_fields or []}
+        if declared:
+            if given.lookup is None:
+                self.fail("WRONG_FORM", f"{param.name} is looked up from its parts", number)
+                return None
+            parts: dict[str, str] = {}
+            for name, part in given.lookup.items():
+                if name not in declared:
+                    self.fail("UNKNOWN_LOOKUP_PART", f"{param.name} has no part {name!r}", number)
+                    return None
+                if not part.strip():
+                    self.fail("MALFORMED_PARAMETER", f"{param.name} part {name!r} is empty", number)
+                    return None
+                if not only_users_words(self.sentence, part, self.record_words):
+                    problem = f"{param.name} part {name!r} is not the user's"
+                    self.fail("WORDS_NOT_IN_SENTENCE", problem, number)
+                    return None
+                parts[name] = part.strip()
+            if not any(declared[name].identifies for name in parts):
+                self.fail("LOOKUP_NAMES_NOTHING", f"{param.name} parts name no record", number)
+                return None
+            return ParamValue(raw=" ".join(parts.values()), lookup=parts)
+        if given.words is None:
+            self.fail("WRONG_FORM", f"{param.name} is looked up from the user's words", number)
+            return None
+        if not only_users_words(self.sentence, given.words, self.record_words):
+            self.fail("WORDS_NOT_IN_SENTENCE", f"{param.name} words are not the user's", number)
+            return None
+        return ParamValue(raw=given.words.strip())
 
     def value(self, number: int, param: ParamMetadata, value: object) -> ParamValue | None:
         ok = {

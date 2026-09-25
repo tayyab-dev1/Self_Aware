@@ -40,7 +40,16 @@ def candidate_entry(capability: CapabilityMetadata) -> dict[str, Any]:
         }
         if param.resolver is not None:
             entry["looked_up_from_words"] = True
-            if param.lookup:
+            if param.lookup_fields:
+                entry["looked_up_by_parts"] = {
+                    field.name: field.meaning
+                    + ("" if field.identifies else " (only narrows down what is already named)")
+                    for field in param.lookup_fields
+                }
+                entry["parts_that_name_the_record"] = [
+                    field.name for field in param.lookup_fields if field.identifies
+                ]
+            elif param.lookup:
                 entry["looked_up_by"] = param.lookup
         if param.allowed:
             entry["allowed"] = param.allowed

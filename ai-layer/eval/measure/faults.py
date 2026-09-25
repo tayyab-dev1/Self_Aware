@@ -96,10 +96,17 @@ def wrong_type(answer: Answer, catalog: Mapping[str, CapabilityMetadata]) -> Bro
 def words_not_from_the_user(
     answer: Answer, catalog: Mapping[str, CapabilityMetadata]
 ) -> Broken | None:
-    given = _param_where(answer, catalog, lambda p, g: p.resolver is not None and "words" in g)
+    given = _param_where(
+        answer, catalog, lambda p, g: p.resolver is not None and ("words" in g or "lookup" in g)
+    )
     if given is None:
         return None
-    given["words"] = "Zubair Qureshi of Class 9 Purple"
+    if "lookup" in given:
+        # The same fault in the parts form: one part holds a name the user never wrote.
+        part = next(iter(given["lookup"]))
+        given["lookup"][part] = "Zubair Qureshi"
+    else:
+        given["words"] = "Zubair Qureshi of Class 9 Purple"
     return Broken(answer, "WORDS_NOT_IN_SENTENCE")
 
 
@@ -126,10 +133,10 @@ def value_outside_allowed(
 def forward_step_reference(
     answer: Answer, catalog: Mapping[str, CapabilityMetadata]
 ) -> Broken | None:
-    given = _param_where(answer, catalog, lambda _, g: "value" in g or "words" in g)
+    given = _param_where(answer, catalog, lambda _, g: bool({"value", "words", "lookup"} & set(g)))
     if given is None:
         return None
-    for form in ("value", "words"):
+    for form in ("value", "words", "lookup"):
         given.pop(form, None)
     given.update({"from_step": 2, "field": "receipt_number"})
     return Broken(answer, "BAD_STEP_REFERENCE")
