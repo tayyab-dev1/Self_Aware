@@ -239,8 +239,10 @@ class _Checker:
                     return None
                 parts[name] = part.strip()
             if not any(declared[name].identifies for name in parts):
-                self.fail("LOOKUP_NAMES_NOTHING", f"{param.name} parts name no record", number)
-                return None
+                # Only narrowing parts, as in "everyone overdue in Grade 4": these name no section
+                # on their own. Sent as plain words, so the backend offers the sections to choose
+                # from, which is what the words form did before the parts existed (decision 78).
+                return ParamValue(raw=" ".join(parts.values()))
             return ParamValue(raw=" ".join(parts.values()), lookup=parts)
         if given.words is None:
             self.fail("WRONG_FORM", f"{param.name} is looked up from the user's words", number)

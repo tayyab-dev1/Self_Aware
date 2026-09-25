@@ -1,6 +1,6 @@
 # Decompose: the same, right number of intents every time
 
-Generated 2026-09-23 10:13 UTC by `make decompose-repeat`. Model `gemini-3.1-flash-lite`, each sentence decomposed 3 times, answers from `eval/recordings/decompose_repeat.json`.
+Generated 2026-09-25 08:17 UTC by `make decompose-repeat`. Model `gemini-3.1-flash-lite`, each sentence decomposed 3 times, answers from `eval/recordings/decompose_repeat.json`.
 
 - **right number of intents in every run**: 33 of 33 sentences
 - **same number in every run**: 33 of 33

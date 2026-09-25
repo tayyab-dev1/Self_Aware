@@ -1,6 +1,6 @@
 # Measure: the capability chooser (Jev) before the planner
 
-Generated 2026-09-23 10:14 UTC by `make measure-jev`. Chooser `jev-1.13.0`, planner `gemini-3.1-flash-lite`, the same decompose answers and retrieval as `measure.md`, answers from `eval/recordings/` (`choose.json`, `plan_after_choose.json`).
+Generated 2026-09-25 08:18 UTC by `make measure-jev`. Chooser `jev-1.13.0`, planner `gemini-3.1-flash-lite`, the same decompose answers and retrieval as `measure.md`, answers from `eval/recordings/` (`choose.json`, `plan_after_choose.json`).
 
 Without the chooser the planner sees every candidate the POC can run; with it, only Jev's shortlist: per intent, the candidates holding 90% of the probability that is not "none" (at most 3), nothing when "none" holds 60% or more. An empty shortlist is a refusal with no planner call.
 
@@ -9,8 +9,8 @@ Without the chooser the planner sees every candidate the POC can run; with it, o
 ```
                       all                       English                   Roman Urdu                
 recall@30             95.4% -> 95.4% (+0.0)     98.4% -> 98.4% (+0.0)     93.8% -> 93.8% (+0.0)
-plan accuracy         89.7% -> 89.7% (+0.0)     92.1% -> 93.7% (+1.6)     88.4% -> 87.5% (-0.9)
-refusal correctness   92.2% -> 92.2% (+0.0)     94.9% -> 94.9% (+0.0)     90.5% -> 90.5% (+0.0)
+plan accuracy         89.1% -> 86.9% (-2.3)     90.5% -> 92.1% (+1.6)     88.4% -> 83.9% (-4.5)
+refusal correctness   91.0% -> 91.8% (+0.8)     93.9% -> 95.9% (+2.0)     89.1% -> 89.1% (+0.0)
 validator catch rate  100.0% -> 100.0% (+0.0)   100.0% -> 100.0% (+0.0)   100.0% -> 100.0% (+0.0)
 ```
 
@@ -39,12 +39,14 @@ Every sentence that reached Jev, by the confidence of its first intent's pick.
 
 | sentence | lang | expected | planner alone | with Jev | Jev picked |
 |---|---|---|---|---|---|
-| ye bill kam kar do | ur-Latn | `fee.credit.raise` | right: fee.credit.raise | wrong: fee.cancellation.raise | fee.cancellation.raise 0.49 |
+| family ne paisa de diya hai, wo wapas karo | ur-Latn | `fee.credit.raise` | right: fee.credit.raise | wrong: refusal (no_matching_capability) | none 0.49 |
+| ye bill kam kar do | ur-Latn | `fee.credit.raise` | right: fee.credit.raise | wrong: refusal (no_matching_capability) | fee.cancellation.raise 0.49 |
+| jin ka fee overdue hai unhe chase karna hai, list do | ur-Latn | `fee.overdue.list` | right: fee.overdue.list | wrong: fee.reminder.send | fee.overdue.list 1.00; fee.reminder.send 1.00 |
 | what's the total outstanding across the school | en | `fee.overdue.list` | wrong: dashboard.main.read | right: fee.overdue.list | fee.overdue.list 0.75 |
-| message the over-90-day defaulters | en | `fee.reminder.send` | right: fee.reminder.send | wrong: refusal (no_matching_capability) | fee.reminder.send 0.96 |
-| show me everyone more than 60 days overdue | en | `fee.overdue.list` | wrong: fee.overdue.list, fee.overdue.list | right: fee.overdue.list | fee.overdue.list 1.00 |
+| do mahine se purane defaulters dikhao | ur-Latn | `fee.overdue.list` | right: fee.overdue.list | wrong: fee.overdue.list, fee.overdue.list | fee.overdue.list 1.00 |
 | mahine ka hisaab kitaab kya hai | ur-Latn | `dashboard.main.read` | right: dashboard.main.read | wrong: refusal (chooser_found_none) | none 0.49 |
-| Ali walon ne duplicate bill bhi bhar diya, agle mahine mein adjust karo | ur-Latn | `fee.credit.raise` | wrong: invalid (WORDS_NOT_IN_SENTENCE) | right: fee.credit.raise | fee.credit.raise 0.98 |
+| cancellation wapas bhej do, wajah saaf nahi hai | ur-Latn | `refuse` | wrong: fee.cancellation.raise | right: refusal (chooser_found_none) | none 0.93 |
 | return this credit — no money was received against that invoice | en | `refuse` | wrong: fee.cancellation.raise | right: refusal (chooser_found_none) | none 0.54 |
 | policy wapas bhej do, jurmana bohat zyada hai | ur-Latn | `refuse` | wrong: fee.latefee.waive | right: refusal (chooser_found_none) | none 0.85 |
-| ye payment galat student ke against lag gayi hai | ur-Latn | `refuse` | right: refusal (no_matching_capability) | wrong: fee.credit.raise | none 0.43 |
+| ye payment galat student ke against lag gayi hai | ur-Latn | `refuse` | wrong: fee.credit.raise | right: refusal (no_matching_capability) | none 0.43 |
+| return this correction, the charge is what's wrong not the payment | en | `refuse` | wrong: fee.credit.raise | right: refusal (no_matching_capability) | fee.cancellation.raise 0.51 |

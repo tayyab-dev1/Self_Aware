@@ -191,8 +191,8 @@ describe what was delivered and measured **with Claude**.
   ```
                         all             English         Roman Urdu
   recall@30              95.4%           98.4%           93.8%
-  plan accuracy          89.7%           92.1%           88.4%
-  refusal correctness    92.2%           94.9%           90.5%
+  plan accuracy          89.1%           90.5%           88.4%
+  refusal correctness    91.0%           93.9%           89.1%
   validator catch rate  100.0%          100.0%          100.0%
   out of: 175 labelled sentences, 70 to refuse, 578 injected faults
   ```
@@ -224,13 +224,15 @@ answers and writes `ai-layer/eval/reports/measure_with_jev.md`.
 ```
                       all                       English                   Roman Urdu
 recall@30             95.4% -> 95.4% (+0.0)     98.4% -> 98.4% (+0.0)     93.8% -> 93.8% (+0.0)
-plan accuracy         89.7% -> 89.7% (+0.0)     92.1% -> 93.7% (+1.6)     88.4% -> 87.5% (-0.9)
-refusal correctness   92.2% -> 92.2% (+0.0)     94.9% -> 94.9% (+0.0)     90.5% -> 90.5% (+0.0)
+plan accuracy         89.1% -> 86.9% (-2.3)     90.5% -> 92.1% (+1.6)     88.4% -> 83.9% (-4.5)
+refusal correctness   91.0% -> 91.8% (+0.8)     93.9% -> 95.9% (+2.0)     89.1% -> 89.1% (+0.0)
 validator catch rate  100.0% -> 100.0% (+0.0)   100.0% -> 100.0% (+0.0)   100.0% -> 100.0% (+0.0)
 ```
 
 The gap closed as decompose improved: -2.9 points overall before decision 73, -1.1 after it, none after
-decision 76. Jev now costs nothing measurable and still saves about 1.5-2 s a turn.
+decision 76. With the lookup parts (decision 78) it is -2.3 again, all of it Roman Urdu (-4.5) while English
+gains 1.6 and refusals improve; the planner's answers on this path were recorded afresh, so part of that is
+the run-to-run variation of decision 76. Jev still saves about 1.5-2 s a turn.
 
 - **Jev on its own** puts the expected capability in its shortlist for 94.8% of labelled sentences
   (155 of 172 get a shortlist of one), and answers "none" for 88.4% of the sentences to refuse. Its
@@ -2341,7 +2343,10 @@ those words appears in the record. Any extra word (and, at times, the whole sent
   Grade 4, but I still need the section"), so the rule changed instead. What it half knows is kept out of the step and
   the user is asked.
 - **Measured** (recorded 25 Sep 2026): plan accuracy 89.7% -> 89.1%, refusal correctness 92.2% -> 91.0%, recall
-  unchanged at 95.4%, validator catch rate 100%. Inside the run-to-run variation of decision 76, and no sentence
+  unchanged at 95.4%, validator catch rate 100%. With Jev choosing first, 86.9% (see Status).
+- **Parts that name nothing are sent as words.** "everyone overdue in Grade 4" fills only the class, which names no
+  section. Refusing that lost a sentence the words form handled, so those parts now travel as plain words and the
+  backend offers the sections to choose from. Inside the run-to-run variation of decision 76, and no sentence
   failed on a malformed or unknown part.
 - **What it does not fix.** "Hasan" for "Hassan" still finds nothing: that is how names are compared, not which box
   they are in. Close-spelling matching (`pg_trgm`, `fuzzystrmatch`, both available in our Postgres) is the next step,

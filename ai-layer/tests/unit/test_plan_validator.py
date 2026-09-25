@@ -122,7 +122,6 @@ def test_a_parameter_with_a_default_may_be_left_out() -> None:
         ({"invoice_id": {"lookup": {"student_name": "Ahmed Raza Khan"}}}, "WORDS_NOT_IN_SENTENCE"),
         ({"invoice_id": {"words": "Ahmed Raza ki September ki fees"}}, "WRONG_FORM"),
         ({"invoice_id": {"lookup": {"student": "Ahmed Raza"}}}, "UNKNOWN_LOOKUP_PART"),
-        ({"invoice_id": {"lookup": {"month": "September"}}}, "LOOKUP_NAMES_NOTHING"),
         ({"invoice_id": {"lookup": {"student_name": " "}}}, "MALFORMED_PARAMETER"),
         ({"route": {"words": "cash"}}, "WRONG_FORM"),
         ({"route": {"value": "cheque"}}, "NOT_AN_ALLOWED_VALUE"),
@@ -136,6 +135,20 @@ def test_a_parameter_with_a_default_may_be_left_out() -> None:
 )
 def test_parameter_forms_types_and_quotes_are_checked(override: dict[str, Any], code: str) -> None:
     assert codes({"outcome": "plan", "steps": [payment(**override)]}) == [code]
+
+
+def test_parts_that_name_no_record_are_sent_as_words_so_the_user_can_choose() -> None:
+    """ "class 5" names no section: the backend offers its sections rather than refusing."""
+    reminder = {
+        "capability_id": "fee.reminder.send",
+        "params": [{"name": "section_id", "lookup": {"class": "class 5"}}],
+    }
+
+    outcome = validate({"outcome": "plan", "steps": [reminder]})
+
+    assert isinstance(outcome, PlannedSteps)
+    section = outcome.plan.steps[0].params["section_id"]
+    assert (section.raw, section.lookup) == ("class 5", None)
 
 
 def test_a_lookup_phrase_may_rearrange_the_users_words_but_never_add_a_name() -> None:
