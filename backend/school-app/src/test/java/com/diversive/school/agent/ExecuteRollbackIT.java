@@ -52,7 +52,7 @@ class ExecuteRollbackIT {
             UserContext user = new UserContext("1", Set.of("accounts_officer"), Map.of("branch_id", "1"));
             Plan plan = new Plan("plan-rollback", "session-rollback", List.of(new PlanStep(1, MiscountingReminders.CAPABILITY,
                     registry.find(MiscountingReminders.CAPABILITY).orElseThrow().metadata().version(),
-                    Map.of("section_id", new ParamValue(null, "class 5 blue", null, null, null)))));
+                    Map.of("section_id", new ParamValue(null, "class 5 blue", null, null, null, null)))));
 
             String token = backend.getBean(PreflightService.class).preflight(plan, user).token();
             ExecuteResponse response = backend.getBean(ExecuteService.class)

@@ -20,9 +20,9 @@ public interface EntityResolver {
      * Every record the user may see that the name could mean. Preflight treats no match as
      * {@code NOT_FOUND}, one as resolved, and several as {@code AMBIGUOUS_ENTITY}.
      *
-     * @param raw the user's own words for the record, e.g. "class 5 blue"
+     * @param lookup the user's own words for the record, and the parts the plan split them into
      */
-    List<EntityMatch> resolve(String raw, UserContext user);
+    List<EntityMatch> resolve(Lookup lookup, UserContext user);
 
     /**
      * What this resolver searches by, in plain words, e.g. "the student's name, optionally with the class and
@@ -34,11 +34,22 @@ public interface EntityResolver {
         return null;
     }
 
-    static EntityResolver of(String type, BiFunction<String, UserContext, List<EntityMatch>> search) {
+    /**
+     * The labelled parts this resolver searches by, e.g. {@code student_name}, {@code month},
+     * {@code class}, {@code section}. Published with every parameter that names this type, so the
+     * planner fills parts instead of one line the resolver has to take apart. Empty when this
+     * resolver takes only the words as typed.
+     */
+    default List<LookupField> fields() {
+        return List.of();
+    }
+
+    static EntityResolver of(String type, BiFunction<Lookup, UserContext, List<EntityMatch>> search) {
         return of(type, null, search);
     }
 
-    static EntityResolver of(String type, String lookup, BiFunction<String, UserContext, List<EntityMatch>> search) {
+    static EntityResolver of(String type, String lookup,
+            BiFunction<Lookup, UserContext, List<EntityMatch>> search) {
         Objects.requireNonNull(type, "type");
         Objects.requireNonNull(search, "search");
         return new EntityResolver() {
@@ -53,8 +64,8 @@ public interface EntityResolver {
             }
 
             @Override
-            public List<EntityMatch> resolve(String raw, UserContext user) {
-                return search.apply(raw, user);
+            public List<EntityMatch> resolve(Lookup lookup, UserContext user) {
+                return search.apply(lookup, user);
             }
         };
     }

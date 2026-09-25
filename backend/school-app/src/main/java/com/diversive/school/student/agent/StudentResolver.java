@@ -2,6 +2,8 @@ package com.diversive.school.student.agent;
 
 import com.diversive.agent.spi.EntityMatch;
 import com.diversive.agent.spi.EntityResolver;
+import com.diversive.agent.spi.Lookup;
+import com.diversive.agent.spi.LookupField;
 import com.diversive.agent.spi.UserContext;
 import com.diversive.school.platform.agent.NameSearch;
 import com.diversive.school.platform.agent.SchoolScope;
@@ -52,12 +54,24 @@ public class StudentResolver implements EntityResolver {
     }
 
     @Override
+    public List<LookupField> fields() {
+        return List.of(
+                LookupField.identifying("student_name", "the student's name as the user wrote it, e.g. Ahmed Raza"),
+                LookupField.identifying("admission_no", "the admission number, e.g. 2026-0501"),
+                LookupField.narrowing("class", "the student's class, e.g. class 5"),
+                LookupField.narrowing("section", "the student's section, e.g. blue"));
+    }
+
+    @Override
     public String type() {
         return "student";
     }
 
     @Override
-    public List<EntityMatch> resolve(String raw, UserContext user) {
+    public List<EntityMatch> resolve(Lookup lookup, UserContext user) {
+        String raw = lookup.parts().isEmpty()
+                ? lookup.raw()
+                : lookup.joined("admission_no", "student_name", "class", "section");
         List<String> words = NameSearch.words(raw).stream().filter(word -> !FILLER.contains(word)).toList();
         if (words.isEmpty()) {
             return List.of();

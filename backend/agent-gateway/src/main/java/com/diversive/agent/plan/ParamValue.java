@@ -1,6 +1,7 @@
 package com.diversive.agent.plan;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import java.util.Map;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
@@ -9,7 +10,9 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming;
  *
  * <ul>
  *   <li><b>A value</b>, used as given: {@code {"value": "whatsapp"}}. For parameters without a resolver.</li>
- *   <li><b>A name to look up</b>: {@code {"raw": "class 5 blue"}}. For parameters with a resolver. After
+ *   <li><b>A name to look up</b>: {@code {"raw": "class 5 blue"}}, and, when the resolver declares parts,
+ *       what each part of it is: {@code {"raw": "Hasan Ali class 5 blue", "lookup": {"student_name": "Hasan
+ *       Ali", "class": "class 5", "section": "blue"}}}. For parameters with a resolver. After
  *       {@code AMBIGUOUS_ENTITY}, the user's choice is sent back with the same words:
  *       {@code {"raw": "class 5", "chosen_id": "2"}}. The choice must be one of the candidates those
  *       words match, so an id cannot be slipped in.</li>
@@ -23,14 +26,19 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming;
 public record ParamValue(
         Object value,
         String raw,
+        Map<String, String> lookup,
         String chosenId,
         Integer fromStep,
         String field) {
 
+    public ParamValue {
+        lookup = lookup == null ? null : Map.copyOf(lookup);
+    }
+
     /** Which of the three forms this is, or {@link Form#MALFORMED} when it is not exactly one. */
     public Form form() {
         boolean isValue = value != null;
-        boolean isName = raw != null || chosenId != null;
+        boolean isName = raw != null || chosenId != null || lookup != null;
         boolean isEarlierStep = fromStep != null || field != null;
         int forms = (isValue ? 1 : 0) + (isName ? 1 : 0) + (isEarlierStep ? 1 : 0);
         if (forms != 1) {
@@ -40,7 +48,10 @@ public record ParamValue(
             return Form.VALUE;
         }
         if (isName) {
-            return raw == null || raw.isBlank() || (chosenId != null && chosenId.isBlank()) ? Form.MALFORMED : Form.NAME;
+            boolean badLookup = lookup != null && lookup.isEmpty();
+            return raw == null || raw.isBlank() || badLookup || (chosenId != null && chosenId.isBlank())
+                    ? Form.MALFORMED
+                    : Form.NAME;
         }
         return fromStep == null || field == null || field.isBlank() ? Form.MALFORMED : Form.EARLIER_STEP;
     }

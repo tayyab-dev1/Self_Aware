@@ -18,6 +18,7 @@ import com.diversive.agent.spi.AffectedCount;
 import com.diversive.agent.spi.AuditTrail;
 import com.diversive.agent.spi.CapabilityPolicy;
 import com.diversive.agent.spi.EntityResolver;
+import com.diversive.agent.spi.LookupField;
 import com.diversive.agent.spi.PreconditionCheck;
 import com.diversive.agent.spi.TemplateFormatter;
 import com.diversive.agent.spi.UserContextResolver;
@@ -93,9 +94,13 @@ public class AgentGatewayAutoConfiguration {
         entityResolvers.orderedStream()
                 .filter(resolver -> resolver.lookup() != null && !resolver.lookup().isBlank())
                 .forEach(resolver -> lookups.putIfAbsent(resolver.type(), resolver.lookup().strip()));
+        Map<String, List<LookupField>> lookupFields = new LinkedHashMap<>();
+        entityResolvers.orderedStream()
+                .filter(resolver -> !resolver.fields().isEmpty())
+                .forEach(resolver -> lookupFields.putIfAbsent(resolver.type(), List.copyOf(resolver.fields())));
 
         CapabilityRegistry registry = new CapabilityRegistryBuilder(objectMapper)
-                .build(handlerTypes, checkIds, countIds, resolverTypes, lookups);
+                .build(handlerTypes, checkIds, countIds, resolverTypes, lookups, lookupFields);
         log.info("Agent capability registry: {} capabilities {}", registry.size(), registry.ids());
         return registry;
     }

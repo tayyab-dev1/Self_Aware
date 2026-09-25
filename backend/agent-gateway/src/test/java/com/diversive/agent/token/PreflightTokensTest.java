@@ -36,8 +36,8 @@ class PreflightTokensTest {
 
     private static Plan plan(String sectionWords) {
         return new Plan("plan-1", "session-1", List.of(new PlanStep(1, "fee.reminder.send", "a".repeat(64), Map.of(
-                "section_id", new ParamValue(null, sectionWords, null, null, null),
-                "channel", new ParamValue("whatsapp", null, null, null, null)))));
+                "section_id", new ParamValue(null, sectionWords, null, null, null, null),
+                "channel", new ParamValue("whatsapp", null, null, null, null, null)))));
     }
 
     @Test

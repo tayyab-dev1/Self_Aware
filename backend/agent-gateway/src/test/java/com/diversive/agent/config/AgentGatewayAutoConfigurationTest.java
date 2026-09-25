@@ -44,7 +44,7 @@ class AgentGatewayAutoConfigurationTest {
             .withBean(ShareAndFindHandlers.class)
             .withBean("folderNotEmpty", FixedCheck.class, () -> new FixedCheck("folder_not_empty"))
             .withBean("shareCount", FixedCount.class, () -> new FixedCount("notes.folder.share"))
-            .withBean("folderResolver", EntityResolver.class, () -> EntityResolver.of("folder", (raw, user) -> List.of()))
+            .withBean("folderResolver", EntityResolver.class, () -> EntityResolver.of("folder", (lookup, user) -> List.of()))
             .withBean(UserContextResolver.class, () -> request -> Optional.empty())
             .withBean(CapabilityPolicy.class, () -> (user, capabilityId) -> true)
             .withBean(AuditTrail.class, MemoryAuditTrail::new);
@@ -54,7 +54,7 @@ class AgentGatewayAutoConfigurationTest {
     }
 
     private static WebApplicationContextRunner withNoteResolver(WebApplicationContextRunner runner) {
-        return runner.withBean("noteResolver", EntityResolver.class, () -> EntityResolver.of("note", (raw, user) -> List.of()));
+        return runner.withBean("noteResolver", EntityResolver.class, () -> EntityResolver.of("note", (lookup, user) -> List.of()));
     }
 
     @Test
@@ -140,7 +140,7 @@ class AgentGatewayAutoConfigurationTest {
                 .withBean(ShareAndFindHandlers.class)
                 .withBean("folderNotEmpty", FixedCheck.class, () -> new FixedCheck("folder_not_empty"))
                 .withBean("shareCount", FixedCount.class, () -> new FixedCount("notes.folder.share"))
-                .withBean("folderResolver", EntityResolver.class, () -> EntityResolver.of("folder", (raw, user) -> List.of()))
+                .withBean("folderResolver", EntityResolver.class, () -> EntityResolver.of("folder", (lookup, user) -> List.of()))
                 .withBean(UserContextResolver.class, () -> request -> Optional.empty())
                 .withBean(CapabilityPolicy.class, () -> (user, capabilityId) -> true))
                 .withBean(ArchiveHandler.class)

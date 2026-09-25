@@ -63,7 +63,7 @@ class AgentGatewayEndpointIT extends PostgresIntegrationTest {
                 [{"name":"section_id","type":"integer","multiple":false,"required":true,\
                 "meaning":"The section whose families with overdue fees are reminded, e.g. Class 5 Blue",\
                 "resolver":"section","label":"section_name",\
-                "lookup":"the class and section together, e.g. class 5 blue, or only the section, e.g. blue","allowed":[]},\
+                "lookup":"the class and section together, e.g. class 5 blue, or only the section, e.g. blue","lookup_fields":[{"name":"section","meaning":"the section's name on its own, e.g. blue","identifies":true},{"name":"class","meaning":"the class the section is in, e.g. class 5","identifies":false}],"allowed":[]},\
                 {"name":"channel","type":"string","multiple":false,"required":true,\
                 "meaning":"How the reminder is delivered","allowed":["whatsapp","sms","email"],"default_value":"whatsapp"}]""");
         assertThat(reminder.get("preconditions").findValuesAsText("id"))
@@ -73,8 +73,12 @@ class AgentGatewayEndpointIT extends PostgresIntegrationTest {
 
         JsonNode payment = capability(body, "fee.payment.record");
         assertThat(payment.get("reverses").asText()).isEqualTo("fee.payment.correction.raise");
-        assertThat(payment.get("params").findValuesAsText("name")).containsExactly(
-                "invoice_id", "route", "amount_received", "payment_date", "bank_stamp_date", "remarks");
+        assertThat(payment.get("params").valueStream().map(param -> param.get("name").asText()).toList())
+                .containsExactly("invoice_id", "route", "amount_received", "payment_date", "bank_stamp_date",
+                        "remarks");
+        assertThat(payment.get("params").get(0).get("lookup_fields").valueStream()
+                .map(field -> field.get("name").asText()).toList())
+                .containsExactly("student_name", "invoice_no", "month", "year", "class", "section");
         assertThat(payment.get("params").findValuesAsText("type")).containsExactly(
                 "integer", "string", "decimal", "date", "date", "string");
 

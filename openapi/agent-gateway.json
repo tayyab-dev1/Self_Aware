@@ -234,6 +234,21 @@
         "required" : [ "capability_id", "status", "step" ],
         "type" : "object"
       },
+      "LookupField" : {
+        "properties" : {
+          "identifies" : {
+            "type" : "boolean"
+          },
+          "meaning" : {
+            "type" : "string"
+          },
+          "name" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "identifies", "meaning", "name" ],
+        "type" : "object"
+      },
       "ParamMetadata" : {
         "properties" : {
           "allowed" : {
@@ -250,6 +265,12 @@
           },
           "lookup" : {
             "type" : "string"
+          },
+          "lookup_fields" : {
+            "items" : {
+              "$ref" : "#/components/schemas/LookupField"
+            },
+            "type" : "array"
           },
           "meaning" : {
             "type" : "string"
@@ -288,6 +309,12 @@
           "from_step" : {
             "format" : "int32",
             "type" : "integer"
+          },
+          "lookup" : {
+            "additionalProperties" : {
+              "type" : "string"
+            },
+            "type" : "object"
           },
           "raw" : {
             "type" : "string"

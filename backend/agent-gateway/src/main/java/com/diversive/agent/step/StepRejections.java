@@ -7,6 +7,7 @@ import com.diversive.agent.error.EntityCandidate;
 import com.diversive.agent.metadata.ParamMetadata;
 import com.diversive.agent.metadata.PreconditionMetadata;
 import com.diversive.agent.spi.EntityMatch;
+import com.diversive.agent.spi.LookupField;
 import java.util.List;
 
 /**
@@ -56,6 +57,31 @@ public final class StepRejections {
     public static AgentRejectionException notFound(int step, ParamMetadata param, String raw) {
         return reject(AgentErrorResponse.forParam(AgentErrorCodes.NOT_FOUND,
                 step, param.name(), "Step " + step + ": no " + entityWord(param) + " matches \"" + raw + "\""));
+    }
+
+    /** The plan filled a part of a lookup the resolver does not have: a plan mistake, like a bad field. */
+    public static AgentRejectionException unknownLookupPart(int step, ParamMetadata param, String part,
+            List<LookupField> declared) {
+        return reject(AgentErrorResponse.forParam(AgentErrorCodes.INVALID_PLAN, step, param.name(),
+                "Step " + step + ": " + param.name() + " has no lookup part \"" + part + "\"; it has "
+                        + names(declared)));
+    }
+
+    public static AgentRejectionException blankLookupPart(int step, ParamMetadata param, String part) {
+        return reject(AgentErrorResponse.forParam(AgentErrorCodes.INVALID_PLAN, step, param.name(),
+                "Step " + step + ": the lookup part \"" + part + "\" of " + param.name() + " is empty"));
+    }
+
+    /** Only narrowing parts were filled, so the words name no record: "September" is not a student. */
+    public static AgentRejectionException lookupNamesNothing(int step, ParamMetadata param,
+            List<LookupField> declared) {
+        List<String> identifying = declared.stream().filter(LookupField::identifies).map(LookupField::name).toList();
+        return reject(AgentErrorResponse.forParam(AgentErrorCodes.INVALID_PLAN, step, param.name(),
+                "Step " + step + ": " + param.name() + " names no record; one of " + identifying + " is needed"));
+    }
+
+    private static String names(List<LookupField> declared) {
+        return declared.stream().map(LookupField::name).toList().toString();
     }
 
     public static AgentRejectionException chosenNotAMatch(int step, ParamMetadata param, String raw) {

@@ -31,6 +31,31 @@
       "allowed" : [ ],
       "label" : "invoice_label",
       "lookup" : "the student's name, optionally with the month or year billed and the class and section, e.g. Ahmed Raza September or Ahmed Raza class 5 blue; or the invoice number, e.g. INV/LHR/26-27/000031",
+      "lookup_fields" : [ {
+        "identifies" : true,
+        "meaning" : "the student the invoice is for, e.g. Ahmed Raza",
+        "name" : "student_name"
+      }, {
+        "identifies" : true,
+        "meaning" : "the printed invoice number, e.g. INV/LHR/26-27/000031",
+        "name" : "invoice_no"
+      }, {
+        "identifies" : false,
+        "meaning" : "the month billed, as the user wrote it, e.g. September",
+        "name" : "month"
+      }, {
+        "identifies" : false,
+        "meaning" : "the year billed, e.g. 2026",
+        "name" : "year"
+      }, {
+        "identifies" : false,
+        "meaning" : "the student's class, e.g. class 5",
+        "name" : "class"
+      }, {
+        "identifies" : false,
+        "meaning" : "the student's section, e.g. blue",
+        "name" : "section"
+      } ],
       "meaning" : "The invoice raised in error",
       "multiple" : false,
       "name" : "invoice_id",
@@ -62,7 +87,7 @@
       "text" : "The invoice must not already be cancelled, credited or written off"
     } ],
     "read_only" : false,
-    "version" : "646e2d8016d7e04f4955ca89a7423a42211ccfdc5c9a9e5f7e454f47e48a6043"
+    "version" : "e2cdef585c966f85da0eceac9c188eb829ffb7e58579325b8efb503956963f51"
   }, {
     "blast_radius" : "single",
     "description" : "Proposes crediting a fee charge that was wrong but has already been paid, holding the money on the family's account so it reduces their next bill rather than being handed back. It credits nothing on its own: a School Admin must approve it. Not for a wrong charge nobody has paid yet - use fee.cancellation.raise. Not for a correct debt the school will never collect - use fee.writeoff.propose. Not for removing only a late fee - use fee.latefee.waive.",
@@ -81,6 +106,31 @@
       "allowed" : [ ],
       "label" : "invoice_label",
       "lookup" : "the student's name, optionally with the month or year billed and the class and section, e.g. Ahmed Raza September or Ahmed Raza class 5 blue; or the invoice number, e.g. INV/LHR/26-27/000031",
+      "lookup_fields" : [ {
+        "identifies" : true,
+        "meaning" : "the student the invoice is for, e.g. Ahmed Raza",
+        "name" : "student_name"
+      }, {
+        "identifies" : true,
+        "meaning" : "the printed invoice number, e.g. INV/LHR/26-27/000031",
+        "name" : "invoice_no"
+      }, {
+        "identifies" : false,
+        "meaning" : "the month billed, as the user wrote it, e.g. September",
+        "name" : "month"
+      }, {
+        "identifies" : false,
+        "meaning" : "the year billed, e.g. 2026",
+        "name" : "year"
+      }, {
+        "identifies" : false,
+        "meaning" : "the student's class, e.g. class 5",
+        "name" : "class"
+      }, {
+        "identifies" : false,
+        "meaning" : "the student's section, e.g. blue",
+        "name" : "section"
+      } ],
       "meaning" : "The paid invoice that carried the wrong charge",
       "multiple" : false,
       "name" : "invoice_id",
@@ -123,7 +173,7 @@
       "text" : "The invoice must not already be cancelled, credited or written off"
     } ],
     "read_only" : false,
-    "version" : "2296bd6443f4c535ea324dcb26f3190ddc0afabe40bb630e0eca7f81058916a8"
+    "version" : "3f5f1c70f61323fdece57e37406381641a32f2393fc98fa4a126560bb038f341"
   }, {
     "blast_radius" : "single",
     "description" : "Waives a late fee that has already been charged to a family, removing the fine from their invoice while both the fine and its waiver stay on record. One fine at a time, each with its own reason. Not for cancelling or crediting the fee charge itself - use fee.cancellation.raise or fee.credit.raise. Not for writing off an unpaid debt - use fee.writeoff.propose.",
@@ -181,6 +231,11 @@
       "allowed" : [ ],
       "label" : "class_name",
       "lookup" : "the class's name, e.g. class 5",
+      "lookup_fields" : [ {
+        "identifies" : true,
+        "meaning" : "the class's name as the user wrote it, e.g. class 5",
+        "name" : "class"
+      } ],
       "meaning" : "The class, when the list covers a whole class, e.g. Class 5",
       "multiple" : false,
       "name" : "class_id",
@@ -191,6 +246,15 @@
       "allowed" : [ ],
       "label" : "section_name",
       "lookup" : "the class and section together, e.g. class 5 blue, or only the section, e.g. blue",
+      "lookup_fields" : [ {
+        "identifies" : true,
+        "meaning" : "the section's name on its own, e.g. blue",
+        "name" : "section"
+      }, {
+        "identifies" : false,
+        "meaning" : "the class the section is in, e.g. class 5",
+        "name" : "class"
+      } ],
       "meaning" : "The section, when the list covers one section, e.g. Class 5 Blue",
       "multiple" : false,
       "name" : "section_id",
@@ -201,6 +265,23 @@
       "allowed" : [ ],
       "label" : "student_name",
       "lookup" : "the student's name, optionally with their class and section, e.g. Ahmed Raza class 5 blue; or the admission number, e.g. 2026-0501",
+      "lookup_fields" : [ {
+        "identifies" : true,
+        "meaning" : "the student's name as the user wrote it, e.g. Ahmed Raza",
+        "name" : "student_name"
+      }, {
+        "identifies" : true,
+        "meaning" : "the admission number, e.g. 2026-0501",
+        "name" : "admission_no"
+      }, {
+        "identifies" : false,
+        "meaning" : "the student's class, e.g. class 5",
+        "name" : "class"
+      }, {
+        "identifies" : false,
+        "meaning" : "the student's section, e.g. blue",
+        "name" : "section"
+      } ],
       "meaning" : "The student, when the list covers one student",
       "multiple" : false,
       "name" : "student_id",
@@ -224,7 +305,7 @@
     } ],
     "preconditions" : [ ],
     "read_only" : true,
-    "version" : "e9ca41751b8bf96b5601b6fc943b875a65f04a498f5c9f9c663c2f46d0f2f68a"
+    "version" : "cf341dd639d2d59b04dae5e6891c95f25c59b9b4cc5c68cb569adeba3e78737b"
   }, {
     "blast_radius" : "single",
     "description" : "Records money a family has paid against one fee invoice, in cash at the office or through a bank challan, and issues the numbered receipt. Use this when a payment has actually been received. Not for online payments, which record themselves. Not for fixing a payment that was recorded wrongly - use fee.payment.correction.raise.",
@@ -243,6 +324,31 @@
       "allowed" : [ ],
       "label" : "invoice_label",
       "lookup" : "the student's name, optionally with the month or year billed and the class and section, e.g. Ahmed Raza September or Ahmed Raza class 5 blue; or the invoice number, e.g. INV/LHR/26-27/000031",
+      "lookup_fields" : [ {
+        "identifies" : true,
+        "meaning" : "the student the invoice is for, e.g. Ahmed Raza",
+        "name" : "student_name"
+      }, {
+        "identifies" : true,
+        "meaning" : "the printed invoice number, e.g. INV/LHR/26-27/000031",
+        "name" : "invoice_no"
+      }, {
+        "identifies" : false,
+        "meaning" : "the month billed, as the user wrote it, e.g. September",
+        "name" : "month"
+      }, {
+        "identifies" : false,
+        "meaning" : "the year billed, e.g. 2026",
+        "name" : "year"
+      }, {
+        "identifies" : false,
+        "meaning" : "the student's class, e.g. class 5",
+        "name" : "class"
+      }, {
+        "identifies" : false,
+        "meaning" : "the student's section, e.g. blue",
+        "name" : "section"
+      } ],
       "meaning" : "The invoice the money is for",
       "multiple" : false,
       "name" : "invoice_id",
@@ -296,7 +402,7 @@
     } ],
     "read_only" : false,
     "reverses" : "fee.payment.correction.raise",
-    "version" : "726cd7266b7106ad45c3594b7712cc587897cdb8509d652d0b978d1ff2d291b6"
+    "version" : "c23a7eae34ceb279570843d0e56ce4e14f4e0146b192382b8a930db319fcd403"
   }, {
     "blast_radius" : "group",
     "description" : "Sends a fee reminder by WhatsApp, SMS or email to the guardians of every student in a section who has overdue fees, each message carrying that family's own amount and due date. Use this for chasing overdue payments. Not for seeing who owes money without contacting anyone - use fee.overdue.list.",
@@ -315,6 +421,15 @@
       "allowed" : [ ],
       "label" : "section_name",
       "lookup" : "the class and section together, e.g. class 5 blue, or only the section, e.g. blue",
+      "lookup_fields" : [ {
+        "identifies" : true,
+        "meaning" : "the section's name on its own, e.g. blue",
+        "name" : "section"
+      }, {
+        "identifies" : false,
+        "meaning" : "the class the section is in, e.g. class 5",
+        "name" : "class"
+      } ],
       "meaning" : "The section whose families with overdue fees are reminded, e.g. Class 5 Blue",
       "multiple" : false,
       "name" : "section_id",
@@ -340,7 +455,7 @@
       "text" : "At least one guardian with overdue fees in the section must have a contact for the chosen channel"
     } ],
     "read_only" : false,
-    "version" : "e60fa8a94a2f5c35d3e930b88dd8e3a4ee13e02f4b3260ac86ae9ac18d10b69d"
+    "version" : "f33849e2e7cc30ef36f957480b50a5ca6802f213e8a3f53c03010b70fd89edc6"
   }, {
     "blast_radius" : "single",
     "description" : "Proposes writing off a correctly charged fee debt that the school will never collect, for example because the family cannot be traced or cannot pay, with an account of what was done to recover it. It writes off nothing on its own: the Principal must approve it. Not for a charge raised in error - use fee.cancellation.raise, or fee.credit.raise if it was paid. Not for removing only a late fee - use fee.latefee.waive.",
@@ -359,6 +474,31 @@
       "allowed" : [ ],
       "label" : "invoice_label",
       "lookup" : "the student's name, optionally with the month or year billed and the class and section, e.g. Ahmed Raza September or Ahmed Raza class 5 blue; or the invoice number, e.g. INV/LHR/26-27/000031",
+      "lookup_fields" : [ {
+        "identifies" : true,
+        "meaning" : "the student the invoice is for, e.g. Ahmed Raza",
+        "name" : "student_name"
+      }, {
+        "identifies" : true,
+        "meaning" : "the printed invoice number, e.g. INV/LHR/26-27/000031",
+        "name" : "invoice_no"
+      }, {
+        "identifies" : false,
+        "meaning" : "the month billed, as the user wrote it, e.g. September",
+        "name" : "month"
+      }, {
+        "identifies" : false,
+        "meaning" : "the year billed, e.g. 2026",
+        "name" : "year"
+      }, {
+        "identifies" : false,
+        "meaning" : "the student's class, e.g. class 5",
+        "name" : "class"
+      }, {
+        "identifies" : false,
+        "meaning" : "the student's section, e.g. blue",
+        "name" : "section"
+      } ],
       "meaning" : "The invoice carrying the debt",
       "multiple" : false,
       "name" : "invoice_id",
@@ -401,6 +541,6 @@
       "text" : "The invoice must not already be cancelled, credited or written off"
     } ],
     "read_only" : false,
-    "version" : "050d2fc3fc448739e7d373b95e39129cd241c08fc646b329853ce56ae8fe9598"
+    "version" : "a56c077c42b27f3369b3d1874d1ded69cd486de3da9cd96065e455973c545c24"
   } ]
 }

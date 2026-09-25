@@ -2,6 +2,8 @@ package com.diversive.school.academic.agent;
 
 import com.diversive.agent.spi.EntityMatch;
 import com.diversive.agent.spi.EntityResolver;
+import com.diversive.agent.spi.Lookup;
+import com.diversive.agent.spi.LookupField;
 import com.diversive.agent.spi.UserContext;
 import com.diversive.school.platform.agent.NameSearch;
 import com.diversive.school.platform.agent.SchoolScope;
@@ -48,12 +50,20 @@ public class SectionResolver implements EntityResolver {
     }
 
     @Override
+    public List<LookupField> fields() {
+        return List.of(
+                LookupField.identifying("section", "the section's name on its own, e.g. blue"),
+                LookupField.narrowing("class", "the class the section is in, e.g. class 5"));
+    }
+
+    @Override
     public String type() {
         return "section";
     }
 
     @Override
-    public List<EntityMatch> resolve(String raw, UserContext user) {
+    public List<EntityMatch> resolve(Lookup lookup, UserContext user) {
+        String raw = lookup.parts().isEmpty() ? lookup.raw() : lookup.joined("class", "section");
         List<String> words = NameSearch.words(raw).stream().filter(word -> !FILLER.contains(word)).toList();
         if (words.isEmpty()) {
             return List.of();

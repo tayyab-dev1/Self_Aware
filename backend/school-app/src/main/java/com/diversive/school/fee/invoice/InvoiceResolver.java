@@ -2,6 +2,8 @@ package com.diversive.school.fee.invoice;
 
 import com.diversive.agent.spi.EntityMatch;
 import com.diversive.agent.spi.EntityResolver;
+import com.diversive.agent.spi.Lookup;
+import com.diversive.agent.spi.LookupField;
 import com.diversive.agent.spi.UserContext;
 import com.diversive.school.platform.agent.NameSearch;
 import com.diversive.school.platform.agent.SchoolScope;
@@ -23,6 +25,27 @@ import org.springframework.stereotype.Component;
 @Component
 public class InvoiceResolver implements EntityResolver {
 
+    /** The plan named the parts: the name matches the name, the class and section match the placement. */
+    private static final String BY_PARTS = """
+            SELECT fi.id, fi.invoice_no, fi.billing_period, fi.status, st.full_name, b.outstanding_amount, b.settlement
+            FROM fee_invoices fi
+            JOIN students st              ON st.id = fi.student_id
+            JOIN fee_invoice_balances b   ON b.invoice_id = fi.id
+            JOIN sections sec             ON sec.id = fi.section_id
+            JOIN classes c                ON c.id = sec.class_id
+            WHERE fi.branch_id = :branchId
+              AND (:invoiceNo <> '' AND lower(fi.invoice_no) = lower(:invoiceNo)
+                   OR (:invoiceNo = ''
+                       AND :nameWords <> ''
+                       AND %s @> string_to_array(:nameWords, ' ')
+                       AND (:placeWords = '' OR %s @> string_to_array(:placeWords, ' '))
+                       AND (:month = 0 OR extract(month FROM fi.billing_period) = :month)
+                       AND (:year = 0 OR extract(year FROM fi.billing_period) = :year)))
+            ORDER BY fi.billing_period, st.full_name, fi.invoice_no
+            LIMIT 50""".formatted(NameSearch.wordsOf("st.full_name"),
+            NameSearch.wordsOf("c.name || ' ' || sec.name"));
+
+    /** The plan sent only the words it was given, so they still have to be taken apart here. */
     private static final String SQL = """
             SELECT fi.id, fi.invoice_no, fi.billing_period, fi.status, st.full_name, b.outstanding_amount, b.settlement
             FROM fee_invoices fi
@@ -53,12 +76,41 @@ public class InvoiceResolver implements EntityResolver {
     }
 
     @Override
+    public List<LookupField> fields() {
+        return List.of(
+                LookupField.identifying("student_name", "the student the invoice is for, e.g. Ahmed Raza"),
+                LookupField.identifying("invoice_no", "the printed invoice number, e.g. INV/LHR/26-27/000031"),
+                LookupField.narrowing("month", "the month billed, as the user wrote it, e.g. September"),
+                LookupField.narrowing("year", "the year billed, e.g. 2026"),
+                LookupField.narrowing("class", "the student's class, e.g. class 5"),
+                LookupField.narrowing("section", "the student's section, e.g. blue"));
+    }
+
+    @Override
     public String type() {
         return "invoice";
     }
 
     @Override
-    public List<EntityMatch> resolve(String raw, UserContext user) {
+    public List<EntityMatch> resolve(Lookup lookup, UserContext user) {
+        return lookup.parts().isEmpty() ? fromWords(lookup.raw(), user) : fromParts(lookup, user);
+    }
+
+    /** Every part goes to the column it names, so no word has to be guessed at. */
+    private List<EntityMatch> fromParts(Lookup lookup, UserContext user) {
+        InvoicePhrase when = InvoicePhrase.parse(lookup.joined("month", "year"));
+        return jdbc.sql(BY_PARTS)
+                .param("branchId", SchoolScope.branchId(user))
+                .param("invoiceNo", lookup.partOr("invoice_no", "").strip())
+                .param("nameWords", NameSearch.sqlWords(NameSearch.words(lookup.partOr("student_name", ""))))
+                .param("placeWords", NameSearch.sqlWords(NameSearch.words(lookup.joined("class", "section"))))
+                .param("month", when.month())
+                .param("year", when.year())
+                .query((row, rowNumber) -> match(row))
+                .list();
+    }
+
+    private List<EntityMatch> fromWords(String raw, UserContext user) {
         InvoicePhrase phrase = InvoicePhrase.parse(raw);
         return jdbc.sql(SQL)
                 .param("branchId", SchoolScope.branchId(user))

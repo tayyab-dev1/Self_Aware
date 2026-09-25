@@ -87,8 +87,8 @@ public final class PreflightFixtures {
 
     public static List<EntityResolver> resolvers(NotesStore store) {
         return List.of(
-                EntityResolver.of("folder", (raw, user) -> search(store.folders, raw, "folder")),
-                EntityResolver.of("note", (raw, user) -> search(store.notes, raw, "note")));
+                EntityResolver.of("folder", (lookup, user) -> search(store.folders, lookup.raw(), "folder")),
+                EntityResolver.of("note", (lookup, user) -> search(store.notes, lookup.raw(), "note")));
     }
 
     public static List<String> checkIds() {

@@ -18,8 +18,8 @@ class PlanHasherTest {
 
     private static Map<String, ParamValue> params(String sectionWords, String channel) {
         Map<String, ParamValue> params = new LinkedHashMap<>();
-        params.put("section_id", new ParamValue(null, sectionWords, null, null, null));
-        params.put("channel", new ParamValue(channel, null, null, null, null));
+        params.put("section_id", new ParamValue(null, sectionWords, null, null, null, null));
+        params.put("channel", new ParamValue(channel, null, null, null, null, null));
         return params;
     }
 
@@ -37,8 +37,8 @@ class PlanHasherTest {
     @Test
     void theOrderParametersArriveInDoesNotMatter() {
         Map<String, ParamValue> reversed = new LinkedHashMap<>();
-        reversed.put("channel", new ParamValue("whatsapp", null, null, null, null));
-        reversed.put("section_id", new ParamValue(null, "class 5 blue", null, null, null));
+        reversed.put("channel", new ParamValue("whatsapp", null, null, null, null, null));
+        reversed.put("section_id", new ParamValue(null, "class 5 blue", null, null, null, null));
 
         assertThat(PlanHasher.hash(plan(reversed))).isEqualTo(PlanHasher.hash(plan(params("class 5 blue", "whatsapp"))));
     }

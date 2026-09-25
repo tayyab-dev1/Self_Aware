@@ -167,7 +167,7 @@ class PreflightServiceTest {
     void candidatesAreCappedSoAVagueNameAsksForMoreWords() {
         List<EntityMatch> many = IntStream.rangeClosed(1, 12).mapToObj(i -> new EntityMatch("" + i, "Folder " + i, null)).toList();
         List<EntityResolver> resolvers = new ArrayList<>(PreflightFixtures.resolvers());
-        resolvers.set(0, EntityResolver.of("folder", (raw, user) -> many));
+        resolvers.set(0, EntityResolver.of("folder", (lookup, user) -> many));
         PreflightService vague = service(List.of(
                 PreconditionCheck.of("folder_not_empty", (params, user) -> true),
                 PreconditionCheck.of("note_not_archived", (params, user) -> true)), PreflightFixtures.counts(), resolvers);
@@ -383,7 +383,7 @@ class PreflightServiceTest {
                         "'reason': must not be blank"),
                 new Case(plan(step(1, "notes.note.archive", "note_id", raw("packing"), "reason", value("x".repeat(41)))),
                         "'reason': size must be between 0 and 40"),
-                new Case(plan(step(1, "notes.note.archive", "note_id", new ParamValue("x", "y", null, null, null),
+                new Case(plan(step(1, "notes.note.archive", "note_id", new ParamValue("x", "y", null, null, null, null),
                         "reason", value("done"))), "'note_id': give exactly one of"),
                 new Case(plan(step(1, "notes.note.pin", "note_id", fromStep(1, "copy_id"))), "from_step must name an earlier step"),
                 new Case(plan(step(1, "notes.note.copy", "note_id", raw("packing")),

@@ -3,6 +3,7 @@ package com.diversive.school.agent;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
 import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.containsString;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -166,6 +167,49 @@ class PreflightIT extends PostgresIntegrationTest {
                 .andExpect(jsonPath("$.code").value("NOT_FOUND"));
         preflight(plan(step(1, "fee.overdue.list", Map.of("scope", value("student"), "student_id", raw("class 5 blue")))))
                 .andExpect(jsonPath("$.code").value("NOT_FOUND"));
+    }
+
+    /**
+     * The plan may name each part of a lookup instead of one line of words, and then nothing has to be
+     * guessed: the name matches the name, the class and section match the placement, the month the period.
+     */
+    @Test
+    @Transactional
+    void aLookupMadeOfNamedPartsFindsTheRecordWithoutTakingWordsApart() throws Exception {
+        preflight(plan(payment(parts(Map.of("student_name", "Ahmed Raza", "class", "Class 5", "section", "Blue",
+                "month", "September")), "2000")))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.steps[0].resolved[0].label")
+                        .value("Ahmed Raza's September 2026 invoice INV/LHR/26-27/000031"));
+
+        // The invoice number alone is enough, and words that belong to no part never reach the search.
+        preflight(plan(payment(parts(Map.of("invoice_no", "INV/LHR/26-27/000031")), "2000")))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.steps[0].resolved[0].label")
+                        .value("Ahmed Raza's September 2026 invoice INV/LHR/26-27/000031"));
+
+        // A part in the wrong place finds nothing, rather than matching by accident.
+        preflight(plan(payment(parts(Map.of("student_name", "Ahmed Raza", "section", "Green")), "2000")))
+                .andExpect(jsonPath("$.code").value("NOT_FOUND"));
+    }
+
+    /** A part the resolver never declared, or one that names no record, is the plan's mistake. */
+    @Test
+    @Transactional
+    void aLookupWithAnUnknownPartOrWithNothingThatNamesARecordIsRefused() throws Exception {
+        preflight(plan(payment(parts(Map.of("student_name", "Ahmed Raza", "colour", "blue")), "2000")))
+                .andExpect(jsonPath("$.code").value("INVALID_PLAN"))
+                .andExpect(jsonPath("$.message").value(containsString("no lookup part \"colour\"")));
+
+        preflight(plan(payment(parts(Map.of("month", "September")), "2000")))
+                .andExpect(jsonPath("$.code").value("INVALID_PLAN"))
+                .andExpect(jsonPath("$.message").value(containsString("names no record")));
+
+        Map<String, Object> blankMonth = Map.of("raw", "Ahmed Raza September",
+                "lookup", Map.of("student_name", "Ahmed Raza", "month", " "));
+        preflight(plan(payment(blankMonth, "2000")))
+                .andExpect(jsonPath("$.code").value("INVALID_PLAN"))
+                .andExpect(jsonPath("$.message").value(containsString("is empty")));
     }
 
     /** Invariant 7: another branch's records are simply not there, so "not yours" looks like "no such record". */
@@ -382,6 +426,11 @@ class PreflightIT extends PostgresIntegrationTest {
 
     private static Map<String, Object> raw(String words) {
         return Map.of("raw", words);
+    }
+
+    /** What the planner sends when the resolver declares parts: the words, and what each part of them is. */
+    private static Map<String, Object> parts(Map<String, String> parts) {
+        return Map.of("raw", String.join(" ", parts.values()), "lookup", parts);
     }
 
     private static Map<String, Object> value(Object value) {

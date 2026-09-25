@@ -94,18 +94,18 @@ public final class PreflightTestSupport {
     }
 
     public static ParamValue value(Object value) {
-        return new ParamValue(value, null, null, null, null);
+        return new ParamValue(value, null, null, null, null, null);
     }
 
     public static ParamValue raw(String words) {
-        return new ParamValue(null, words, null, null, null);
+        return new ParamValue(null, words, null, null, null, null);
     }
 
     public static ParamValue chosen(String words, String id) {
-        return new ParamValue(null, words, id, null, null);
+        return new ParamValue(null, words, null, id, null, null);
     }
 
     public static ParamValue fromStep(int step, String field) {
-        return new ParamValue(null, null, null, step, field);
+        return new ParamValue(null, null, null, null, step, field);
     }
 }

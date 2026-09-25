@@ -59,6 +59,15 @@ class ExecuteOutcome(StrEnum):
     failed = "failed"
 
 
+class LookupField(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    identifies: bool
+    meaning: str
+    name: str
+
+
 class ParamType(StrEnum):
     string = "string"
     integer = "integer"
@@ -74,6 +83,7 @@ class ParamValue(BaseModel):
     chosen_id: str | None = None
     field: str | None = None
     from_step: int | None = None
+    lookup: dict[str, str] | None = None
     raw: str | None = None
     value: Any | None = None
 
@@ -157,6 +167,7 @@ class ParamMetadata(BaseModel):
     default_value: str | None = None
     label: str | None = None
     lookup: str | None = None
+    lookup_fields: list[LookupField] | None = None
     meaning: str
     multiple: bool
     name: str

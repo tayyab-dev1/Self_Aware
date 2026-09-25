@@ -6,6 +6,8 @@ import com.diversive.agent.plan.ParamValue;
 import com.diversive.agent.registry.TemplatePlaceholders;
 import com.diversive.agent.spi.AffectedCount.CountResult;
 import com.diversive.agent.spi.EntityMatch;
+import com.diversive.agent.spi.Lookup;
+import com.diversive.agent.spi.LookupField;
 import com.diversive.agent.spi.TemplateFormatter;
 import com.diversive.agent.spi.UserContext;
 import java.util.ArrayList;
@@ -55,8 +57,9 @@ public final class StepPasses {
                 ParamMetadata param = step.param(name.getKey());
                 ParamValue given = name.getValue();
                 String raw = given.raw().strip();
+                Lookup lookup = lookup(step, param, given);
 
-                List<EntityMatch> matches = search(param, raw, user);
+                List<EntityMatch> matches = search(param, lookup, user);
                 if (given.chosenId() != null) {
                     matches = matches.stream().filter(match -> match.id().equals(given.chosenId())).toList();
                     if (matches.isEmpty()) {
@@ -134,7 +137,8 @@ public final class StepPasses {
         for (Map.Entry<String, ParamValue> name : step.names().entrySet()) {
             ParamMetadata param = step.param(name.getKey());
             String confirmedId = confirmedIds.get(param.name());
-            EntityMatch match = confirmedId == null ? null : search(param, name.getValue().raw().strip(), user).stream()
+            EntityMatch match = confirmedId == null ? null
+                    : search(param, lookup(step, param, name.getValue()), user).stream()
                     .filter(candidate -> candidate.id().equals(confirmedId))
                     .findFirst()
                     .orElse(null);
@@ -150,10 +154,39 @@ public final class StepPasses {
         step.earlierStepValue(param, binder.bindId(step.capability(), step.param(param), value));
     }
 
-    private List<EntityMatch> search(ParamMetadata param, String raw, UserContext user) {
+    private List<EntityMatch> search(ParamMetadata param, Lookup lookup, UserContext user) {
         Map<String, EntityMatch> byId = new LinkedHashMap<>();
-        beans.resolver(param.resolver()).resolve(raw, user).forEach(match -> byId.putIfAbsent(match.id(), match));
+        beans.resolver(param.resolver()).resolve(lookup, user).forEach(match -> byId.putIfAbsent(match.id(), match));
         return List.copyOf(byId.values());
+    }
+
+    /**
+     * The words and the parts the plan filled, checked against what the resolver declares: an unknown
+     * part, or one with nothing in it, is the plan's mistake and is refused like any other bad field.
+     * A lookup with parts must fill at least one that alone names a record.
+     */
+    private static Lookup lookup(PreparedStep step, ParamMetadata param, ParamValue given) {
+        Map<String, String> parts = given.lookup();
+        if (parts == null || parts.isEmpty()) {
+            return Lookup.of(given.raw().strip());
+        }
+        Map<String, String> kept = new LinkedHashMap<>();
+        boolean identified = false;
+        for (Map.Entry<String, String> part : parts.entrySet()) {
+            LookupField declared = param.lookupField(part.getKey());
+            if (declared == null) {
+                throw StepRejections.unknownLookupPart(step.number(), param, part.getKey(), param.lookupFields());
+            }
+            if (part.getValue() == null || part.getValue().isBlank()) {
+                throw StepRejections.blankLookupPart(step.number(), param, part.getKey());
+            }
+            kept.put(part.getKey(), part.getValue().strip());
+            identified |= declared.identifies();
+        }
+        if (!identified) {
+            throw StepRejections.lookupNamesNothing(step.number(), param, param.lookupFields());
+        }
+        return new Lookup(given.raw().strip(), kept);
     }
 
     // --- Validate the whole request --------------------------------------------------------------------------

@@ -1,6 +1,7 @@
 package com.diversive.agent.registry;
 
 import com.diversive.agent.metadata.CapabilityMetadata;
+import com.diversive.agent.spi.LookupField;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -33,7 +34,7 @@ public final class CapabilityRegistryBuilder {
                                     Collection<String> preconditionCheckIds,
                                     Collection<String> affectedCountIds,
                                     Collection<String> entityResolverTypes) {
-        return build(handlerTypes, preconditionCheckIds, affectedCountIds, entityResolverTypes, Map.of());
+        return build(handlerTypes, preconditionCheckIds, affectedCountIds, entityResolverTypes, Map.of(), Map.of());
     }
 
     /**
@@ -42,12 +43,14 @@ public final class CapabilityRegistryBuilder {
      *
      * @param lookups what each resolver type searches by, from {@code EntityResolver#lookup()}; types that
      *                say nothing are left out
+     * @param fields  the labelled parts each resolver type searches by, from {@code EntityResolver#fields()}
      */
     public CapabilityRegistry build(Collection<Class<?>> handlerTypes,
                                     Collection<String> preconditionCheckIds,
                                     Collection<String> affectedCountIds,
                                     Collection<String> entityResolverTypes,
-                                    Map<String, String> lookups) {
+                                    Map<String, String> lookups,
+                                    Map<String, List<LookupField>> fields) {
         List<String> problems = new ArrayList<>();
         List<RegisteredCapability> scanned = scan(handlerTypes, problems);
         problems.addAll(RegistryRules.check(scanned, List.copyOf(preconditionCheckIds), List.copyOf(affectedCountIds),
@@ -57,15 +60,18 @@ public final class CapabilityRegistryBuilder {
         }
         return new CapabilityRegistry(scanned.stream()
                 .map(capability -> {
-                    CapabilityMetadata described = withLookups(capability.metadata(), lookups);
+                    CapabilityMetadata described = withLookups(capability.metadata(), lookups, fields);
                     return capability.withMetadata(described.withVersion(CapabilityVersioner.version(described)));
                 })
                 .toList());
     }
 
-    private static CapabilityMetadata withLookups(CapabilityMetadata metadata, Map<String, String> lookups) {
+    private static CapabilityMetadata withLookups(CapabilityMetadata metadata, Map<String, String> lookups,
+            Map<String, List<LookupField>> fields) {
         return metadata.withParams(metadata.params().stream()
-                .map(param -> param.resolver() == null ? param : param.withLookup(lookups.get(param.resolver())))
+                .map(param -> param.resolver() == null ? param
+                        : param.withLookup(lookups.get(param.resolver()),
+                                fields.getOrDefault(param.resolver(), List.of())))
                 .toList());
     }
 
