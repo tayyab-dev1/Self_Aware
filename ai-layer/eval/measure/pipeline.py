@@ -22,6 +22,7 @@ from pydantic import BaseModel, ConfigDict
 from app.choosing.chooser import CapabilityChooser, Choice
 from app.choosing.jev import DecisionModel
 from app.decompose.decomposer import Decomposition, Intent
+from app.filling.pieces import vocabulary
 from app.filling.service import PieceFiller
 from app.filling.values import ValueChooser
 from app.gateway.models import CapabilityMetadata
@@ -232,7 +233,11 @@ class Pipeline:
             else None
         )
         filler = PieceFiller(
-            values, today=lambda: TODAY, max_steps=MAX_STEPS, record_words=RECORD_WORDS
+            values,
+            today=lambda: TODAY,
+            max_steps=MAX_STEPS,
+            known_pieces=vocabulary(self.catalog.values()),
+            record_words=RECORD_WORDS,
         )
         found = functools.partial(
             CaseResult,

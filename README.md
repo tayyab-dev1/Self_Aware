@@ -2368,8 +2368,18 @@ message -> decompose (intents + pieces) -> search -> Jev picks the capability ->
   writes kind-of-thing pieces in English ("naqad" as "cash"), and where that is not enough Jev reads the word as
   one of the allowed values, used only above a confidence floor.
 - **It refuses to guess.** A date it cannot work out, an amount that is not a number, a value Jev was unsure of,
-  two records read from the same words, or more than one action where one is incomplete: each gives up and the
-  planner is asked. The plan it does build goes through the same validator as the planner's.
+  two records read from the same words, a piece name that was never published, or more than one action where one
+  is incomplete: each gives up and the planner is asked. The plan it does build goes through the same validator
+  as the planner's.
+- **A piece name we never published gives up too.** The assembler reads pieces by name, so a name nothing asks
+  for was silently ignored: decompose writing `method_of_payment` for `payment_method` dropped the word the user
+  said and asked for the route again, and for a parameter that is not required it would have confirmed a plan
+  missing something the user gave. `PieceFiller` now holds the vocabulary decompose was given and hands any
+  message carrying a name outside it to the planner (the name is logged, never the user's words). Across the 245
+  recorded messages decompose invented no name at all, so the numbers below are unchanged: this is a safety net
+  for the 489-capability catalog, not a fix for something the eval sees. Making a wrong name impossible instead
+  (`fields` as a list with `name` an enum of the published pieces) would re-record every message and grow the
+  prompt with the catalog, so it waits until a real one is seen.
 - **Measured** (recorded 28 Sep 2026, `make measure-pieces`):
 
   ```

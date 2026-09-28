@@ -232,17 +232,17 @@ def _build_chat(
         return None, None, str(exc)
     # The pieces a message is read into are the ones the published capabilities use. Read from the
     # committed snapshot at startup, so a capability added later is picked up by the next deploy.
-    pieces = (
-        pieces_prompt(vocabulary(load_snapshot().capabilities))
-        if settings.params_from == "pieces"
-        else ""
+    known_pieces = (
+        vocabulary(load_snapshot().capabilities) if settings.params_from == "pieces" else {}
     )
+    pieces = pieces_prompt(known_pieces) if known_pieces else ""
     intents: IntentSource = translator or Decomposer(model, glossary_lines(), pieces)
     filler = (
         PieceFiller(
             ValueChooser(chooser_model) if chooser_model is not None else None,
             today=school_today,
             max_steps=settings.plan_max_steps,
+            known_pieces=known_pieces,
             record_words=RECORD_WORDS,
         )
         if pieces

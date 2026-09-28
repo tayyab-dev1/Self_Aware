@@ -5,9 +5,9 @@ values a parameter allows are read from the user's words (Jev again, only when n
 is put together by code. The validator then checks that plan exactly as it checks the planner's.
 
 Anything this is not sure of gives ``None`` and the planner is asked instead: a piece that is not a
-date or a number, a value Jev was not sure enough about, two records read from the same words, or
-more than one intent where one is incomplete. So the fast path is only ever taken for messages it
-can fill with confidence (README decision 79).
+date or a number, a value Jev was not sure enough about, two records read from the same words, more
+than one intent where one is incomplete, or a piece name that was never published. So the fast path
+is only ever taken for messages it can fill with confidence (README decision 79).
 """
 
 from __future__ import annotations
@@ -37,8 +37,12 @@ class PieceFiller:
         *,
         today: Callable[[], date],
         max_steps: int,
+        known_pieces: Collection[str],
         record_words: Collection[str] = (),
     ) -> None:
+        # The piece names decompose was given (``pieces.vocabulary``), so a name it made up is
+        # noticed rather than ignored.
+        self._known_pieces = frozenset(known_pieces)
         self._values = values
         self._today = today
         self._max_steps = max_steps
@@ -94,6 +98,12 @@ class PieceFiller:
         needs_input: dict[str, Any] | None = None
         for intent, picked in zip(decomposition.intents, choice.intents, strict=True):
             if picked.choice == NONE or picked.choice not in catalog or not intent.fields:
+                return None
+            if invented := sorted(set(intent.fields) - self._known_pieces):
+                # A piece name no published capability uses, as "method_of_payment" would be for
+                # "payment_method": nothing reads it, so what the user said there would be dropped
+                # and a parameter they did give asked for again. The planner reads the message.
+                log.info("piece_name_not_published", names=invented)
                 return None
             capability = catalog[picked.choice]
             chosen = await self._values.choose(capability, intent.fields) if self._values else {}

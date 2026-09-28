@@ -6,10 +6,15 @@ from datetime import date
 from typing import Any
 
 from app.capabilities.snapshot import load_snapshot
+from app.choosing.chooser import Choice, IntentChoice
 from app.choosing.jev import DecisionRequest
+from app.decompose.decomposer import Decomposition, Intent
 from app.filling.assembler import assemble
 from app.filling.pieces import vocabulary
+from app.filling.service import PieceFiller
 from app.filling.values import SURE_AT, ValueChooser, wanted
+from app.planning.outcomes import PlannedSteps, PlanOutcome
+from domain.school.glossary import RECORD_WORDS
 
 CATALOG = {capability.id: capability for capability in load_snapshot().capabilities}
 TODAY = date(2026, 9, 28)
@@ -155,3 +160,42 @@ async def test_a_value_jev_is_unsure_of_is_left_for_the_planner() -> None:
     )
 
     assert chosen == {}
+
+
+SENTENCE = "Record payment of 2,000 for Hassan Ali in Class 5 Blue received through cash today"
+PICKED = "fee.payment.record"
+
+
+async def _plan(pieces: dict[str, str]) -> PlanOutcome | None:
+    """One intent, the payment capability already chosen, and these pieces to build it from."""
+    intent = "Record a payment of 2,000 for Hassan Ali in Class 5 Blue"
+    filler = PieceFiller(
+        None,
+        today=lambda: TODAY,
+        max_steps=3,
+        known_pieces=vocabulary(CATALOG.values()),
+        record_words=RECORD_WORDS,
+    )
+    return await filler.plan(
+        SENTENCE,
+        Decomposition((Intent(intent, ("Hassan Ali",), pieces),)),
+        Choice((IntentChoice(intent, PICKED, 0.98, {PICKED: 0.98}),)),
+        allowed=list(CATALOG),
+        catalog=CATALOG,
+        candidates=[PICKED],
+        session_id="test",
+    )
+
+
+async def test_a_published_piece_this_capability_does_not_use_is_simply_ignored() -> None:
+    # message_channel is a real piece, but it belongs to the reminder, not to recording a payment.
+    outcome = await _plan({**PAYMENT, "message_channel": "whatsapp"})
+
+    assert isinstance(outcome, PlannedSteps)
+    assert [step.capability_id for step in outcome.plan.steps] == [PICKED]
+
+
+async def test_a_piece_name_that_was_never_published_asks_the_planner() -> None:
+    # Decompose writing "method_of_payment" for "payment_method": nothing reads it, so the user's
+    # word would be dropped and the route asked for again. The planner reads the message instead.
+    assert await _plan({**PAYMENT, "method_of_payment": "cash"}) is None
