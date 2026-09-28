@@ -2352,6 +2352,43 @@ those words appears in the record. Any extra word (and, at times, the whole sent
   they are in. Close-spelling matching (`pg_trgm`, `fuzzystrmatch`, both available in our Postgres) is the next step,
   and the name now arrives in its own field, which makes it straightforward.
 
+**79. A plan built from the pieces a message was read into, instead of a second model call.** Decompose already
+reads the message; asking it for what the user said in pieces at the same time lets the plan be put together by
+code, so the planner is called only for what the pieces cannot fill.
+
+```
+message -> decompose (intents + pieces) -> search -> Jev picks the capability -> built by code -> confirm
+```
+
+- **The pieces are declared, not hand-written.** Each parameter says which piece of what a user says fills it
+  (`@AgentParam(filledBy)`: `amount`, `date`, `payment_method`, `explanation`), and a looked-up record uses the
+  parts of decision 78. The vocabulary decompose is given is read from the published capabilities, so a new
+  capability is included by the next deploy rather than by editing a list here.
+- **User words, not system codes.** A piece holds what the user wrote; parameters take fixed values. Decompose
+  writes kind-of-thing pieces in English ("naqad" as "cash"), and where that is not enough Jev reads the word as
+  one of the allowed values, used only above a confidence floor.
+- **It refuses to guess.** A date it cannot work out, an amount that is not a number, a value Jev was unsure of,
+  two records read from the same words, or more than one action where one is incomplete: each gives up and the
+  planner is asked. The plan it does build goes through the same validator as the planner's.
+- **Measured** (recorded 28 Sep 2026, `make measure-pieces`):
+
+  ```
+                        all                       English                   Roman Urdu
+  recall@30             95.4% -> 96.0% (+0.6)     98.4% -> 96.8% (-1.6)     93.8% -> 95.5% (+1.8)
+  plan accuracy         89.1% -> 89.7% (+0.6)     90.5% -> 95.2% (+4.8)     88.4% -> 86.6% (-1.8)
+  refusal correctness   91.0% -> 91.4% (+0.4)     93.9% -> 94.9% (+1.0)     89.1% -> 89.1% (+0.0)
+  validator catch rate  100.0% -> 100.0% (+0.0)   100.0% -> 100.0% (+0.0)   100.0% -> 100.0% (+0.0)
+  ```
+
+  **126 of 245 messages (51.4%) were answered with no planner call**, and the whole run took 291 Gemini calls
+  against 460 for the planner design. Live, such a turn takes 2.7-4 s instead of 7-12 s.
+- **What it gets wrong that the planner does not**: four sentences, all Roman Urdu, and all about which capability
+  ("ye bill kam kar do" as a cancellation rather than a credit) rather than about the filling. It also wins four
+  the planner misses.
+- **One behaviour change.** "Ahmed Raza ki fees 5000 naqad mili, record kar do" says no date; the planner quietly
+  assumed today, the pieces path asks. Stricter, and one more question for the user.
+- **Off by default**: `AI_LAYER_PARAMS_FROM=pieces` turns it on, and it needs the chooser.
+
 ## Open questions
 
 - **Is Jev's accuracy cost worth it?** It is on for speed (decision 75), 1.1 points behind in plan

@@ -22,6 +22,8 @@ from pydantic import BaseModel, ConfigDict
 from app.choosing.chooser import CapabilityChooser, Choice
 from app.choosing.jev import DecisionModel
 from app.decompose.decomposer import Decomposition, Intent
+from app.filling.service import PieceFiller
+from app.filling.values import ValueChooser
 from app.gateway.models import CapabilityMetadata
 from app.llm.runner import ModelError, StructuredModel
 from app.planning.outcomes import NeedsInput, PlannedSteps, Refusal
@@ -88,6 +90,8 @@ class CaseResult:
     raw_plan: Mapping[str, Any] | None = None
     # With the chooser on: what it picked. ``plannable`` is then its shortlist.
     choice: Choice | None = None
+    # True when the pieces made this answer, so no planner call was needed (decision 79).
+    from_pieces: bool = False
 
     @property
     def acted(self) -> bool:
@@ -117,6 +121,10 @@ class Pipeline:
     model: StructuredModel | None
     choose_recordings: Recordings | None = None
     decider: DecisionModel | None = None
+    # The pieces design (decision 79): decompose is asked for them, the plan is built from them,
+    # and the planner is called only for what the assembler cannot fill.
+    pieces: str = ""
+    fill_recordings: Recordings | None = None
     # True when the intents are a translation: Jev reads the message as typed too (decision 79).
     chooser_reads_the_message: bool = False
 
@@ -130,7 +138,9 @@ class Pipeline:
         return list(await asyncio.gather(*(one(case) for case in cases)))
 
     async def run(self, case: Case) -> CaseResult:
-        decomposed = await decompose(case.text, self.decompose_recordings, self.model)
+        decomposed = await decompose(
+            case.text, self.decompose_recordings, self.model, pieces=self.pieces
+        )
         if not decomposed.intents:
             return CaseResult(case, (), (), (), "invalid", problems=decomposed.problems)
 
@@ -169,10 +179,21 @@ class Pipeline:
             time_zone=SCHOOL_TIME_ZONE,
             record_words=RECORD_WORDS,
         )
-        decomposition = Decomposition(tuple(Intent(text, ()) for text in decomposed.intents))
+        fields: tuple[Mapping[str, str], ...] = decomposed.fields or ({},) * len(decomposed.intents)
+        decomposition = Decomposition(
+            tuple(
+                Intent(text, (), dict(said or {}))
+                for text, said in zip(decomposed.intents, fields, strict=False)
+            )
+        )
         found = functools.partial(
             CaseResult, case, decomposed.intents, candidates, plannable, choice=choice
         )
+
+        if self.pieces and choice is not None:
+            built = await self._from_pieces(case, decomposition, choice, candidates, plannable)
+            if built is not None:
+                return built
         try:
             outcome = await planner.plan(
                 case.text,
@@ -195,6 +216,56 @@ class Pipeline:
         assert isinstance(outcome, PlannedSteps)
         steps = tuple(step.capability_id for step in outcome.plan.steps)
         return found("plan", capabilities=steps, raw_plan=raw)
+
+    async def _from_pieces(
+        self,
+        case: Case,
+        decomposition: Decomposition,
+        choice: Choice,
+        candidates: tuple[str, ...],
+        plannable: tuple[str, ...],
+    ) -> CaseResult | None:
+        """What the pieces make of this case, or None when the planner has to be asked."""
+        values = (
+            ValueChooser(self.fill_recordings.decider_for(case.text, self.decider))
+            if self.fill_recordings is not None
+            else None
+        )
+        filler = PieceFiller(
+            values, today=lambda: TODAY, max_steps=MAX_STEPS, record_words=RECORD_WORDS
+        )
+        found = functools.partial(
+            CaseResult,
+            case,
+            tuple(decomposition.texts),
+            candidates,
+            plannable,
+            choice=choice,
+            from_pieces=True,
+        )
+        try:
+            outcome = await filler.plan(
+                case.text,
+                decomposition,
+                choice,
+                allowed=list(self.catalog),
+                catalog=self.catalog,
+                candidates=list(self.catalog),
+                session_id="measure",
+            )
+        except InvalidModelOutputError as exc:
+            # A plan the pieces made that breaks a rule is this design's answer, not the planner's.
+            return found("invalid", problems=tuple(exc.codes))
+        except (ModelCallFailedError, ModelError) as exc:
+            return found("failed", problems=(type(exc).__name__,))
+        if outcome is None:
+            return None
+        if isinstance(outcome, Refusal):
+            return found("refusal", problems=(outcome.reason.value,))
+        if isinstance(outcome, NeedsInput):
+            return found("needs_input", capabilities=(outcome.capability_id,))
+        assert isinstance(outcome, PlannedSteps)
+        return found("plan", capabilities=tuple(s.capability_id for s in outcome.plan.steps))
 
     def raw(self, case: Case) -> Mapping[str, Any] | None:
         return self.plan_recordings.recorded(case.text)

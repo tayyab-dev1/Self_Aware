@@ -1,0 +1,147 @@
+{
+ "model": "jev-1.13.0",
+ "system_prompt_sha256": "374960eaa17f22e4409ff489aadc7c655badc8ac4cafb5bd5ecf1b976eaf1359",
+ "answers": {
+  "2000 zyada le liye aur wo de bhi chuke, credit kar do": {
+   "model": "jev-1.13.0",
+   "answers": {
+    "reason": {
+     "type": "choice",
+     "choice": "wrong_amount_charged",
+     "confidence": 0.99,
+     "probabilities": {
+      "other": 0.0,
+      "charge_should_not_have_been_raised": 0.0,
+      "wrong_amount_charged": 0.99,
+      "concession_not_applied": 0.0,
+      "charged_to_wrong_student": 0.0,
+      "none": 0.01,
+      "duplicate_charge": 0.0
+     }
+    }
+   },
+   "usage": {
+    "input_tokens": 534,
+    "output_tokens": 91
+   }
+  },
+  "Ali's parents paid the duplicate invoice too, credit it against next month": {
+   "model": "jev-1.13.0",
+   "answers": {
+    "reason": {
+     "type": "choice",
+     "choice": "duplicate_charge",
+     "confidence": 0.98,
+     "probabilities": {
+      "concession_not_applied": 0.0,
+      "none": 0.01,
+      "wrong_amount_charged": 0.0,
+      "charge_should_not_have_been_raised": 0.0,
+      "other": 0.0,
+      "charged_to_wrong_student": 0.0,
+      "duplicate_charge": 0.99
+     }
+    }
+   },
+   "usage": {
+    "input_tokens": 534,
+    "output_tokens": 88
+   }
+  },
+  "charge hi galat tha": {
+   "model": "jev-1.13.0",
+   "answers": {
+    "reason": {
+     "type": "choice",
+     "choice": "wrong_amount",
+     "confidence": 0.99,
+     "probabilities": {
+      "billed_to_wrong_student": 0.0,
+      "wrong_amount": 0.99,
+      "structure_applied_in_error": 0.0,
+      "none": 0.01,
+      "duplicate_invoice": 0.0,
+      "student_had_left": 0.0,
+      "other": 0.0,
+      "wrong_billing_period": 0.0
+     }
+    }
+   },
+   "usage": {
+    "input_tokens": 583,
+    "output_tokens": 92
+   }
+  },
+  "is bill ki rakam hi ghalat hai aur kisi ne pay nahi kiya": {
+   "model": "jev-1.13.0",
+   "answers": {
+    "reason": {
+     "type": "choice",
+     "choice": "wrong_amount",
+     "confidence": 0.99,
+     "probabilities": {
+      "wrong_amount": 0.99,
+      "other": 0.0,
+      "duplicate_invoice": 0.0,
+      "structure_applied_in_error": 0.0,
+      "none": 0.01,
+      "billed_to_wrong_student": 0.0,
+      "wrong_billing_period": 0.0,
+      "student_had_left": 0.0
+     }
+    }
+   },
+   "usage": {
+    "input_tokens": 583,
+    "output_tokens": 92
+   }
+  },
+  "raise a credit — we charged this family twice and they paid both": {
+   "model": "jev-1.13.0",
+   "answers": {
+    "reason": {
+     "type": "choice",
+     "choice": "duplicate_charge",
+     "confidence": 0.98,
+     "probabilities": {
+      "none": 0.01,
+      "duplicate_charge": 0.99,
+      "wrong_amount_charged": 0.0,
+      "concession_not_applied": 0.0,
+      "charged_to_wrong_student": 0.0,
+      "charge_should_not_have_been_raised": 0.0,
+      "other": 0.0
+     }
+    }
+   },
+   "usage": {
+    "input_tokens": 534,
+    "output_tokens": 88
+   }
+  },
+  "ye bill kam kar do": {
+   "model": "jev-1.13.0",
+   "answers": {
+    "reason": {
+     "type": "choice",
+     "choice": "wrong_amount",
+     "confidence": 0.99,
+     "probabilities": {
+      "billed_to_wrong_student": 0.0,
+      "student_had_left": 0.0,
+      "wrong_amount": 1.0,
+      "duplicate_invoice": 0.0,
+      "structure_applied_in_error": 0.0,
+      "wrong_billing_period": 0.0,
+      "other": 0.0,
+      "none": 0.0
+     }
+    }
+   },
+   "usage": {
+    "input_tokens": 583,
+    "output_tokens": 92
+   }
+  }
+ }
+}

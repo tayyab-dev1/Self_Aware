@@ -7,7 +7,7 @@ against recall like any other miss.
 from __future__ import annotations
 
 import asyncio
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 
 from app.decompose.decomposer import Decomposer
@@ -23,6 +23,8 @@ CONCURRENT_CALLS = 6
 class DecomposedSentence:
     intents: tuple[str, ...]
     problems: tuple[str, ...] = ()
+    # What the user said in pieces, one per intent, when the caller asked for them (decision 79).
+    fields: tuple[Mapping[str, str], ...] = ()
 
 
 async def decompose(
@@ -31,11 +33,18 @@ async def decompose(
     model: StructuredModel | None,
     *,
     key: str | None = None,
+    pieces: str = "",
 ) -> DecomposedSentence:
-    """``key`` records the answer under another name than the sentence (one per repeated run)."""
-    decomposer = Decomposer(recordings.model_for(key or sentence, model), glossary_lines())
+    """``key`` records the answer under another name than the sentence (one per repeated run).
+
+    ``pieces`` asks for what the user said split up as well, for the design that plans from them.
+    """
+    decomposer = Decomposer(recordings.model_for(key or sentence, model), glossary_lines(), pieces)
     try:
-        return DecomposedSentence(tuple((await decomposer.decompose(sentence)).texts))
+        decomposed = await decomposer.decompose(sentence)
+        return DecomposedSentence(
+            tuple(decomposed.texts), fields=tuple(intent.fields for intent in decomposed.intents)
+        )
     except InvalidModelOutputError as exc:
         return DecomposedSentence((), tuple(exc.codes))
     except (ModelCallFailedError, ModelError) as exc:

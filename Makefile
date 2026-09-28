@@ -130,6 +130,10 @@ decompose-repeat: ## Decompose each sentence in request_counts.jsonl 3 times: th
 measure-jev: ## The chooser experiment: plan every eval sentence without and with Jev choosing first; records missing answers
 	$(UV) run pytest eval/test_measure_with_jev.py -p no:cacheprovider -q
 
+.PHONY: measure-pieces
+measure-pieces: ## The pieces design (decision 79): plan from what decompose read, against a planner call; records missing answers
+	$(UV) run pytest eval/test_measure_pieces.py -p no:cacheprovider -q
+
 .PHONY: measure-ci
 measure-ci: ## The regression run: every eval from eval/recordings/ only, no model called (what CI runs)
 	cd ai-layer && EVAL_MODEL_CALLS=replay AI_LAYER_GEMINI_API_KEY= AI_LAYER_TYPESAFE_API_KEY= uv run pytest eval -p no:cacheprovider -q
