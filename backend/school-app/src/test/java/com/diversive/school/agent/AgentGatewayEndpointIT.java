@@ -48,7 +48,7 @@ class AgentGatewayEndpointIT extends PostgresIntegrationTest {
     }
 
     @Test
-    void servesEveryCapabilityWithFullDetail() throws Exception {
+    void servesEveryCapabilityAsTheAiLayerReadsIt() throws Exception {
         String body = mockMvc.perform(get("/agent/metadata"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.capabilities[*].id", contains(CAPABILITY_IDS.toArray())))
@@ -56,23 +56,21 @@ class AgentGatewayEndpointIT extends PostgresIntegrationTest {
                 .andReturn().getResponse().getContentAsString();
 
         JsonNode reminder = capability(body, "fee.reminder.send");
-        assertThat(reminder.get("blast_radius").asText()).isEqualTo("group");
         assertThat(reminder.get("read_only").asBoolean()).isFalse();
+        assertThat(reminder.get("module").asText()).isEqualTo("fee");
         assertThat(reminder.get("disambiguate_from").toString()).isEqualTo("[\"fee.overdue.list\"]");
         assertThat(reminder.get("params").toString()).isEqualTo("""
-                [{"name":"section_id","type":"integer","multiple":false,"required":true,\
+                [{"name":"section_id","type":"integer","required":true,\
                 "meaning":"The section whose families with overdue fees are reminded, e.g. Class 5 Blue",\
-                "resolver":"section","label":"section_name",\
+                "resolver":"section",\
                 "lookup":"the class and section together, e.g. class 5 blue, or only the section, e.g. blue","lookup_fields":[{"name":"section","meaning":"the section's name on its own, e.g. blue","identifies":true},{"name":"class","meaning":"the class the section is in, e.g. class 5","identifies":false}],"allowed":[]},\
-                {"name":"channel","type":"string","multiple":false,"required":true,\
-                "meaning":"How the reminder is delivered","allowed":["whatsapp","sms","email"],"default_value":"whatsapp"}]""");
-        assertThat(reminder.get("preconditions").findValuesAsText("id"))
-                .containsExactly("section_has_defaulters", "channel_reaches_defaulters");
-        assertThat(reminder.get("effect").get("confirmation_template").asText()).isEqualTo(
-                "Send a fee reminder to {guardians} in {section_name} by {channel}, covering {total_outstanding} outstanding.");
+                {"name":"channel","type":"string","required":true,\
+                "meaning":"How the reminder is delivered","filled_by":"message_channel",\
+                "allowed":["whatsapp","sms","email"],"default_value":"whatsapp"}]""");
+        assertThat(reminder.get("effect").toString())
+                .isEqualTo("{\"facts\":[\"guardians\",\"total_outstanding\"]}");
 
         JsonNode payment = capability(body, "fee.payment.record");
-        assertThat(payment.get("reverses").asText()).isEqualTo("fee.payment.correction.raise");
         assertThat(payment.get("params").valueStream().map(param -> param.get("name").asText()).toList())
                 .containsExactly("invoice_id", "route", "amount_received", "payment_date", "bank_stamp_date",
                         "remarks");
@@ -81,10 +79,31 @@ class AgentGatewayEndpointIT extends PostgresIntegrationTest {
                 .containsExactly("student_name", "invoice_no", "month", "year", "class", "section");
         assertThat(payment.get("params").findValuesAsText("type")).containsExactly(
                 "integer", "string", "decimal", "date", "date", "string");
+    }
 
-        JsonNode overdue = capability(body, "fee.overdue.list");
-        assertThat(overdue.get("blast_radius").asText()).isEqualTo("none");
-        assertThat(overdue.get("effect").has("confirmation_template")).isFalse();
+    /** What only this side uses is kept here, not sent: the AI layer reads none of it. */
+    @Test
+    void keepsWhatTheAiLayerDoesNotReadOffTheWire() throws Exception {
+        String body = mockMvc.perform(get("/agent/metadata")).andReturn().getResponse().getContentAsString();
+        JsonNode reminder = capability(body, "fee.reminder.send");
+
+        assertThat(reminder.has("blast_radius")).isFalse();
+        assertThat(reminder.has("preconditions")).isFalse();
+        assertThat(capability(body, "fee.payment.record").has("reverses")).isFalse();
+        assertThat(reminder.get("effect").has("confirmation_template")).isFalse();
+        assertThat(reminder.get("params").get(0).has("multiple")).isFalse();
+        assertThat(reminder.get("params").get(0).has("label")).isFalse();
+
+        // All of it is still here, and still hashed into the version the AI layer is sent.
+        var kept = registry.find("fee.reminder.send").orElseThrow().metadata();
+        assertThat(kept.blastRadius().wireValue()).isEqualTo("group");
+        assertThat(kept.preconditions().stream().map(precondition -> precondition.id()).toList())
+                .containsExactly("section_has_defaulters", "channel_reaches_defaulters");
+        assertThat(kept.effect().confirmationTemplate()).isEqualTo(
+                "Send a fee reminder to {guardians} in {section_name} by {channel}, covering {total_outstanding} outstanding.");
+        assertThat(kept.params().get(0).label()).isEqualTo("section_name");
+        assertThat(registry.find("fee.payment.record").orElseThrow().metadata().reverses())
+                .isEqualTo("fee.payment.correction.raise");
     }
 
     @Test

@@ -21,7 +21,7 @@ from app.choosing.chooser import CapabilityChooser, Choice
 from app.core import trace
 from app.decompose.decomposer import Decomposition, IntentSource
 from app.filling.service import PieceFiller
-from app.gateway.models import CapabilityMetadata
+from app.gateway.models import PublishedCapability
 from app.llm.runner import ModelError, ModelUnavailableError
 from app.planning.outcomes import NeedsInput, PlannedSteps, PlanOutcome, Refusal, RefusalReason
 from app.planning.planner import Planner
@@ -51,7 +51,7 @@ class SentencePlanner:
         decomposer: IntentSource,
         retriever: CandidateRetriever,
         planner: Planner,
-        catalog: Callable[[], Mapping[str, CapabilityMetadata]],
+        catalog: Callable[[], Mapping[str, PublishedCapability]],
         chooser: CapabilityChooser | None = None,
         filler: PieceFiller | None = None,
     ) -> None:
@@ -137,7 +137,7 @@ class SentencePlanner:
         self,
         sentence: str,
         intents: Sequence[str],
-        candidates: Sequence[CapabilityMetadata],
+        candidates: Sequence[PublishedCapability],
         session_id: str,
     ) -> Choice | None:
         """The chooser's pick, or None when it is off, has nothing to choose from, or failed."""

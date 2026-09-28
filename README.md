@@ -2399,6 +2399,35 @@ message -> decompose (intents + pieces) -> search -> Jev picks the capability ->
   assumed today, the pieces path asks. Stricter, and one more question for the user.
 - **Off by default**: `AI_LAYER_PARAMS_FROM=pieces` turns it on, and it needs the chooser.
 
+**80. The AI layer is sent only the capability metadata it reads.** `GET /agent/metadata` served the
+registry's whole entry, and the AI layer ignored about a quarter of it. Measured at the POC's 8
+capabilities: 20,173 B, 2,521 B each, of which `params` 52%, `description` 15%, `effect` 15%,
+`preconditions` 11.5%. Projected to the 489-capability stress index that is about 1.09 MB a fetch.
+
+- **A published view, not a narrower record.** `PublishedCapability` (with `PublishedParam` and
+  `PublishedEffect`) is what the endpoint serves; `CapabilityMetadata` stays as it is and keeps
+  everything. Left off the wire: `preconditions` (preflight sends the failing one's hint back as
+  words), `blast_radius` (the scanner and the confirmation composer read it here), `reverses`, the
+  effect's templates with `creates` and `notifies` (invariant 3), and a parameter's `multiple` and
+  `label`. Kept: id, version, module, read_only, description, disambiguate_from, params, and the
+  effect's `facts`, which a later step may read. In the AI layer the generated models are now named
+  after what they are, `PublishedCapability` and `PublishedParam`.
+- **The version still covers what is not published.** It is a SHA-256 of the registry's full entry,
+  so a reworded hint or a new reply template still changes the version the AI layer is sent, and
+  still invalidates its cached plans and its index row. Hashing the published view instead would
+  have hidden those changes: `@JsonIgnore` on the existing record would have done exactly that,
+  which is why the view is a separate record.
+- **Result.** 2,521 B a capability becomes 1,801 B, 28.5% smaller, about 780 KB at 489. Every
+  capability's version is unchanged, so nothing re-embedded, no recording was re-taken and the
+  pieces measurement replays identically.
+- **What the size measurement also showed** (`/agent/metadata` at 489, embeddings on the local
+  3 GB CPU container): the sync polls `/agent/metadata/versions` (855 B today, ~53 KB at 489) and
+  fetches the full metadata only when a version changed, so the payload is a cold-start and deploy
+  cost, not a per-poll one. Parsing 489 entries takes 35 ms. Embedding 489 descriptions takes 120 s
+  sequentially and 85 s with 4 requests in flight; bigger batches are slower, and more than 32 texts
+  in one request is a 422. The backend sends no `Content-Encoding`: gzip would take the 489-capability
+  payload to 41 KB, which is worth doing and is not done here.
+
 ## Open questions
 
 - **Is Jev's accuracy cost worth it?** It is on for speed (decision 75), 1.1 points behind in plan

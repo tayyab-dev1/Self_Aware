@@ -14,7 +14,7 @@ from collections import OrderedDict
 from collections.abc import Collection, Mapping
 from datetime import date
 
-from app.gateway.models import CapabilityMetadata
+from app.gateway.models import PublishedCapability
 from app.planning.outcomes import PlanOutcome
 from app.validation.problems import normalise
 
@@ -22,7 +22,7 @@ from app.validation.problems import normalise
 def plan_cache_key(
     sentence: str,
     allowed: Collection[str],
-    catalog: Mapping[str, CapabilityMetadata],
+    catalog: Mapping[str, PublishedCapability],
     today: date,
 ) -> str:
     material = {

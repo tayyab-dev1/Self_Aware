@@ -17,7 +17,7 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from app.gateway.models import CapabilityMetadata
+from app.gateway.models import PublishedCapability
 
 DATA_DIR = Path(__file__).resolve().parent / "data"
 SENTENCE_FILES = ("contract_sentences.jsonl", "authored_sentences.jsonl")
@@ -67,14 +67,14 @@ def load_distractors(data_dir: Path = DATA_DIR) -> list[Distractor]:
     ]
 
 
-def cluster_members(capabilities: Sequence[CapabilityMetadata]) -> set[str]:
+def cluster_members(capabilities: Sequence[PublishedCapability]) -> set[str]:
     """Every capability that declares at least one sibling."""
     return {capability.id for capability in capabilities if capability.disambiguate_from}
 
 
 def dataset_problems(
     sentences: Sequence[EvalSentence],
-    capabilities: Sequence[CapabilityMetadata],
+    capabilities: Sequence[PublishedCapability],
     distractors: Sequence[Distractor] = (),
 ) -> list[str]:
     """Why this eval set would report a flattering or meaningless number. Empty when sound."""

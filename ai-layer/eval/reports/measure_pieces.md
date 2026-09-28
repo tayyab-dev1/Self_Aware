@@ -1,6 +1,6 @@
 # Measure: planning from the pieces, instead of a second model call
 
-Generated 2026-09-28 11:09 UTC by `make measure-pieces`. Decompose `gemini-3.1-flash-lite` (asked for the pieces), the chooser and the value readings from Jev, the planner `gemini-3.1-flash-lite` only where the pieces could not fill the plan.
+Generated 2026-09-28 12:26 UTC by `make measure-pieces`. Decompose `gemini-3.1-flash-lite` (asked for the pieces), the chooser and the value readings from Jev, the planner `gemini-3.1-flash-lite` only where the pieces could not fill the plan.
 
 ## Both ways, over the same cases
 

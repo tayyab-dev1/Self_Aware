@@ -18,7 +18,7 @@ from typing import Any
 
 from pydantic import ValidationError
 
-from app.gateway.models import CapabilityMetadata, ParamMetadata, ParamType, ParamValue, Plan
+from app.gateway.models import ParamType, ParamValue, Plan, PublishedCapability, PublishedParam
 from app.gateway.models import PlanStep as GatewayPlanStep
 from app.planning.outcomes import (
     NeedsInput,
@@ -42,7 +42,7 @@ def validate_plan(
     output: Mapping[str, Any],
     *,
     sentence: str,
-    catalog: Mapping[str, CapabilityMetadata],
+    catalog: Mapping[str, PublishedCapability],
     allowed: Collection[str],
     candidates: Collection[str],
     max_steps: int,
@@ -76,7 +76,7 @@ class _Checker:
     def __init__(
         self,
         sentence: str,
-        catalog: Mapping[str, CapabilityMetadata],
+        catalog: Mapping[str, PublishedCapability],
         allowed: set[str],
         candidates: set[str],
         record_words: Collection[str],
@@ -120,7 +120,7 @@ class _Checker:
             Plan(plan_id=plan_id, session_id=session_id, steps=[s for s in steps if s is not None])
         )
 
-    def capability(self, capability_id: str, step: int | None) -> CapabilityMetadata | None:
+    def capability(self, capability_id: str, step: int | None) -> PublishedCapability | None:
         metadata = self.catalog.get(capability_id)
         if metadata is None:
             self.fail("UNKNOWN_CAPABILITY", f"{capability_id!r} is not in the metadata", step)
@@ -192,7 +192,11 @@ class _Checker:
         )
 
     def param(
-        self, number: int, param: ParamMetadata, given: ParamOutput, all_steps: Sequence[StepOutput]
+        self,
+        number: int,
+        param: PublishedParam,
+        given: ParamOutput,
+        all_steps: Sequence[StepOutput],
     ) -> ParamValue | None:
         forms = [
             name
@@ -218,7 +222,9 @@ class _Checker:
             return None
         return self.value(number, param, given.value)
 
-    def looked_up(self, number: int, param: ParamMetadata, given: ParamOutput) -> ParamValue | None:
+    def looked_up(
+        self, number: int, param: PublishedParam, given: ParamOutput
+    ) -> ParamValue | None:
         """A record named by its parts, when the resolver declares them, or by the user's words."""
         declared = {field.name: field for field in param.lookup_fields or []}
         if declared:
@@ -252,7 +258,7 @@ class _Checker:
             return None
         return ParamValue(raw=given.words.strip())
 
-    def value(self, number: int, param: ParamMetadata, value: object) -> ParamValue | None:
+    def value(self, number: int, param: PublishedParam, value: object) -> ParamValue | None:
         ok = {
             ParamType.string: isinstance(value, str),
             ParamType.date: isinstance(value, str) and _is_date(value),
@@ -279,7 +285,11 @@ class _Checker:
         return ParamValue(value=value)
 
     def earlier_step(
-        self, number: int, param: ParamMetadata, given: ParamOutput, all_steps: Sequence[StepOutput]
+        self,
+        number: int,
+        param: PublishedParam,
+        given: ParamOutput,
+        all_steps: Sequence[StepOutput],
     ) -> ParamValue | None:
         if given.from_step is None or given.field is None:
             self.fail("MALFORMED_PARAMETER", f"{param.name} needs from_step and field", number)

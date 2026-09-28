@@ -15,7 +15,7 @@ from typing import Any
 from app.choosing.chooser import CHOOSER_MODEL, NONE
 from app.choosing.jev import DecisionModel, DecisionRequest
 from app.core import trace
-from app.gateway.models import CapabilityMetadata, ParamMetadata
+from app.gateway.models import PublishedCapability, PublishedParam
 
 INSTRUCTIONS = (
     'A school office staff member wrote "{said}" for "{meaning}". Which of these is that? '
@@ -27,8 +27,8 @@ SURE_AT = 0.7
 
 
 def wanted(
-    capability: CapabilityMetadata, pieces: Mapping[str, str]
-) -> list[tuple[ParamMetadata, str]]:
+    capability: PublishedCapability, pieces: Mapping[str, str]
+) -> list[tuple[PublishedParam, str]]:
     """Every parameter whose piece is not already one of its allowed values."""
     asking = []
     for param in capability.params:
@@ -41,7 +41,7 @@ def wanted(
     return asking
 
 
-def decision_request(asking: Sequence[tuple[ParamMetadata, str]]) -> DecisionRequest:
+def decision_request(asking: Sequence[tuple[PublishedParam, str]]) -> DecisionRequest:
     questions: dict[str, Any] = {}
     for param, said in asking:
         criteria: dict[str, Any] = {value: f"{param.meaning}: {value}" for value in param.allowed}
@@ -61,7 +61,7 @@ def decision_request(asking: Sequence[tuple[ParamMetadata, str]]) -> DecisionReq
 
 
 def parse_values(
-    answer: Mapping[str, Any], asking: Sequence[tuple[ParamMetadata, str]]
+    answer: Mapping[str, Any], asking: Sequence[tuple[PublishedParam, str]]
 ) -> dict[str, str]:
     """The value for each parameter Jev was sure enough about; the rest are left out."""
     answers = answer.get("answers")
@@ -87,7 +87,7 @@ class ValueChooser:
         self._model = model
 
     async def choose(
-        self, capability: CapabilityMetadata, pieces: Mapping[str, str]
+        self, capability: PublishedCapability, pieces: Mapping[str, str]
     ) -> dict[str, str]:
         asking = wanted(capability, pieces)
         if not asking:

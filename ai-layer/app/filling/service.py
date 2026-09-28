@@ -23,7 +23,7 @@ from app.core import trace
 from app.decompose.decomposer import Decomposition
 from app.filling.assembler import assemble
 from app.filling.values import ValueChooser
-from app.gateway.models import CapabilityMetadata
+from app.gateway.models import PublishedCapability
 from app.planning.outcomes import PlanOutcome
 from app.validation.plan_validator import validate_plan
 
@@ -55,7 +55,7 @@ class PieceFiller:
         choice: Choice,
         *,
         allowed: Collection[str],
-        catalog: Mapping[str, CapabilityMetadata],
+        catalog: Mapping[str, PublishedCapability],
         candidates: Sequence[str],
         session_id: str,
     ) -> PlanOutcome | None:
@@ -92,7 +92,7 @@ class PieceFiller:
         self,
         decomposition: Decomposition,
         choice: Choice,
-        catalog: Mapping[str, CapabilityMetadata],
+        catalog: Mapping[str, PublishedCapability],
     ) -> dict[str, Any] | None:
         steps: list[dict[str, Any]] = []
         needs_input: dict[str, Any] | None = None

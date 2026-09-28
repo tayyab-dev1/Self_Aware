@@ -13,13 +13,13 @@ from __future__ import annotations
 
 from collections.abc import Iterable, Mapping
 
-from app.gateway.models import CapabilityMetadata
+from app.gateway.models import PublishedCapability
 
 # Kept short so the prompt stays readable: a piece is described by the parameters that take it.
 MAX_MEANINGS = 2
 
 
-def vocabulary(catalog: Iterable[CapabilityMetadata]) -> dict[str, str]:
+def vocabulary(catalog: Iterable[PublishedCapability]) -> dict[str, str]:
     """Every piece the published capabilities can use, with what it means, in name order."""
     meanings: dict[str, list[str]] = {}
     for capability in catalog:

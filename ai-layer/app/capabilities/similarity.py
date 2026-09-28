@@ -13,7 +13,7 @@ from dataclasses import dataclass
 from typing import Protocol
 
 from app.embeddings.client import cosine_similarity
-from app.gateway.models import CapabilityMetadata
+from app.gateway.models import PublishedCapability
 
 NEAR_DUPLICATE_THRESHOLD = 0.92
 
@@ -35,7 +35,7 @@ class SimilarPair:
 
 
 def pairwise_similarities(
-    capabilities: Sequence[CapabilityMetadata], vectors: Sequence[Sequence[float]]
+    capabilities: Sequence[PublishedCapability], vectors: Sequence[Sequence[float]]
 ) -> list[SimilarPair]:
     """Every pair of capabilities with its description similarity, most similar first."""
     if len(capabilities) != len(vectors):
@@ -62,7 +62,7 @@ def near_duplicates(
 
 
 async def description_similarities(
-    capabilities: Sequence[CapabilityMetadata], embedder: Embedder
+    capabilities: Sequence[PublishedCapability], embedder: Embedder
 ) -> list[SimilarPair]:
     vectors = await embedder.embed([capability.description for capability in capabilities])
     return pairwise_similarities(capabilities, vectors)

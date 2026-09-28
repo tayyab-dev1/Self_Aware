@@ -249,9 +249,15 @@ This is the single biggest lever on quality. Two rules:
 
 **Always say what it is NOT,** naming the alternative. The fee module holds `fee.cancellation.raise`, `fee.credit.raise`, `fee.writeoff.propose` and `fee.latefee.waive`: cancel an unpaid charge, credit a charge already paid, write off a debt, waive a late fee. They are four near-synonyms with very different consequences, and the contrast lines are what keeps them apart in retrieval.
 
+### What is published
+
+`GET /agent/metadata` serves `PublishedCapability`, not the registry's own entry: the AI layer is sent only what it reads. Kept here are `preconditions` (preflight checks them and sends the failing one's hint back as words), `blast_radius` (the scanner and the confirmation composer use it), `reverses`, the effect's templates with `creates` and `notifies` (invariant 3: no model writes what a user reads, so the backend sends the finished sentence), and a parameter's `multiple` and `label`. Published are id, version, module, read_only, description, disambiguate_from, params, and the effect's `facts`, which a later step may read.
+
+Add a field to `CapabilityMetadata` and it stays here until someone adds it to `PublishedCapability` too. That is the intended direction: publish a field when the AI layer needs it, not before.
+
 ### Version
 
-SHA-256 of the entry's canonical JSON: every field except the version, keys sorted, no whitespace. It is computed when the registry is built at startup, and never bumped by hand. Changing one character of one description changes that entry's version and no other. Plans stamp the versions they used; execute rejects a stale one.
+SHA-256 of the entry's canonical JSON: every field except the version, keys sorted, no whitespace. **It is hashed from the registry's full entry, not from what is published**, so a change the AI layer cannot see — a reworded hint, a new reply template — still changes the version it is sent, and still invalidates its cached plans and its index row. Never hash the published view instead. It is computed when the registry is built at startup, and never bumped by hand. Changing one character of one description changes that entry's version and no other. Plans stamp the versions they used; execute rejects a stale one.
 
 ---
 

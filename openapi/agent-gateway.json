@@ -44,64 +44,12 @@
         "properties" : {
           "capabilities" : {
             "items" : {
-              "$ref" : "#/components/schemas/CapabilityMetadata"
+              "$ref" : "#/components/schemas/PublishedCapability"
             },
             "type" : "array"
           }
         },
         "required" : [ "capabilities" ],
-        "type" : "object"
-      },
-      "BlastRadius" : {
-        "enum" : [ "none", "single", "group", "branch", "organisation" ],
-        "type" : "string"
-      },
-      "CapabilityMetadata" : {
-        "properties" : {
-          "blast_radius" : {
-            "$ref" : "#/components/schemas/BlastRadius"
-          },
-          "description" : {
-            "type" : "string"
-          },
-          "disambiguate_from" : {
-            "items" : {
-              "type" : "string"
-            },
-            "type" : "array"
-          },
-          "effect" : {
-            "$ref" : "#/components/schemas/EffectMetadata"
-          },
-          "id" : {
-            "type" : "string"
-          },
-          "module" : {
-            "type" : "string"
-          },
-          "params" : {
-            "items" : {
-              "$ref" : "#/components/schemas/ParamMetadata"
-            },
-            "type" : "array"
-          },
-          "preconditions" : {
-            "items" : {
-              "$ref" : "#/components/schemas/PreconditionMetadata"
-            },
-            "type" : "array"
-          },
-          "read_only" : {
-            "type" : "boolean"
-          },
-          "reverses" : {
-            "type" : "string"
-          },
-          "version" : {
-            "type" : "string"
-          }
-        },
-        "required" : [ "blast_radius", "description", "disambiguate_from", "effect", "id", "module", "params", "preconditions", "read_only", "version" ],
         "type" : "object"
       },
       "CapabilityVersion" : {
@@ -126,33 +74,6 @@
           }
         },
         "required" : [ "versions" ],
-        "type" : "object"
-      },
-      "EffectMetadata" : {
-        "properties" : {
-          "confirmation_template" : {
-            "type" : "string"
-          },
-          "creates" : {
-            "type" : "string"
-          },
-          "facts" : {
-            "items" : {
-              "type" : "string"
-            },
-            "type" : "array"
-          },
-          "notifies" : {
-            "type" : "string"
-          },
-          "pending_template" : {
-            "type" : "string"
-          },
-          "reply_template" : {
-            "type" : "string"
-          }
-        },
-        "required" : [ "facts", "reply_template" ],
         "type" : "object"
       },
       "EntityCandidate" : {
@@ -249,54 +170,6 @@
         "required" : [ "identifies", "meaning", "name" ],
         "type" : "object"
       },
-      "ParamMetadata" : {
-        "properties" : {
-          "allowed" : {
-            "items" : {
-              "type" : "string"
-            },
-            "type" : "array"
-          },
-          "default_value" : {
-            "type" : "string"
-          },
-          "filled_by" : {
-            "type" : "string"
-          },
-          "label" : {
-            "type" : "string"
-          },
-          "lookup" : {
-            "type" : "string"
-          },
-          "lookup_fields" : {
-            "items" : {
-              "$ref" : "#/components/schemas/LookupField"
-            },
-            "type" : "array"
-          },
-          "meaning" : {
-            "type" : "string"
-          },
-          "multiple" : {
-            "type" : "boolean"
-          },
-          "name" : {
-            "type" : "string"
-          },
-          "required" : {
-            "type" : "boolean"
-          },
-          "resolver" : {
-            "type" : "string"
-          },
-          "type" : {
-            "$ref" : "#/components/schemas/ParamType"
-          }
-        },
-        "required" : [ "allowed", "meaning", "multiple", "name", "required", "type" ],
-        "type" : "object"
-      },
       "ParamType" : {
         "enum" : [ "string", "integer", "decimal", "boolean", "date" ],
         "type" : "string"
@@ -364,21 +237,6 @@
           }
         },
         "required" : [ "capability_id", "capability_version", "params", "step" ],
-        "type" : "object"
-      },
-      "PreconditionMetadata" : {
-        "properties" : {
-          "hint" : {
-            "type" : "string"
-          },
-          "id" : {
-            "type" : "string"
-          },
-          "text" : {
-            "type" : "string"
-          }
-        },
-        "required" : [ "hint", "id", "text" ],
         "type" : "object"
       },
       "PreflightRequest" : {
@@ -454,6 +312,96 @@
           }
         },
         "required" : [ "capability_id", "pending", "resolved", "step" ],
+        "type" : "object"
+      },
+      "PublishedCapability" : {
+        "properties" : {
+          "description" : {
+            "type" : "string"
+          },
+          "disambiguate_from" : {
+            "items" : {
+              "type" : "string"
+            },
+            "type" : "array"
+          },
+          "effect" : {
+            "$ref" : "#/components/schemas/PublishedEffect"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "module" : {
+            "type" : "string"
+          },
+          "params" : {
+            "items" : {
+              "$ref" : "#/components/schemas/PublishedParam"
+            },
+            "type" : "array"
+          },
+          "read_only" : {
+            "type" : "boolean"
+          },
+          "version" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "description", "disambiguate_from", "effect", "id", "module", "params", "read_only", "version" ],
+        "type" : "object"
+      },
+      "PublishedEffect" : {
+        "properties" : {
+          "facts" : {
+            "items" : {
+              "type" : "string"
+            },
+            "type" : "array"
+          }
+        },
+        "required" : [ "facts" ],
+        "type" : "object"
+      },
+      "PublishedParam" : {
+        "properties" : {
+          "allowed" : {
+            "items" : {
+              "type" : "string"
+            },
+            "type" : "array"
+          },
+          "default_value" : {
+            "type" : "string"
+          },
+          "filled_by" : {
+            "type" : "string"
+          },
+          "lookup" : {
+            "type" : "string"
+          },
+          "lookup_fields" : {
+            "items" : {
+              "$ref" : "#/components/schemas/LookupField"
+            },
+            "type" : "array"
+          },
+          "meaning" : {
+            "type" : "string"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "required" : {
+            "type" : "boolean"
+          },
+          "resolver" : {
+            "type" : "string"
+          },
+          "type" : {
+            "$ref" : "#/components/schemas/ParamType"
+          }
+        },
+        "required" : [ "allowed", "meaning", "name", "required", "type" ],
         "type" : "object"
       },
       "ResolvedEntity" : {

@@ -18,7 +18,7 @@ from datetime import date
 from types import MappingProxyType
 from typing import Any
 
-from app.gateway.models import CapabilityMetadata, ParamMetadata, ParamType
+from app.gateway.models import ParamType, PublishedCapability, PublishedParam
 
 # What a user says for "the day I mean today", in both languages.
 TODAY_WORDS = frozenset({"today", "aaj", "aj"})
@@ -31,7 +31,7 @@ class CannotFill(Exception):
 
 
 def assemble(
-    capability: CapabilityMetadata,
+    capability: PublishedCapability,
     pieces: Mapping[str, str],
     today: date,
     chosen: Mapping[str, str] = MappingProxyType({}),
@@ -52,7 +52,7 @@ def assemble(
 
 
 def _params(
-    capability: CapabilityMetadata,
+    capability: PublishedCapability,
     pieces: Mapping[str, str],
     today: date,
     chosen: Mapping[str, str],
@@ -78,7 +78,7 @@ def _params(
 
 
 def _lookup(
-    param: ParamMetadata, pieces: Mapping[str, str]
+    param: PublishedParam, pieces: Mapping[str, str]
 ) -> tuple[dict[str, Any] | None, set[str]]:
     """The parts of the record this parameter looks up, and which pieces they came from."""
     declared = param.lookup_fields or []
@@ -97,7 +97,7 @@ def _lookup(
 
 
 def _value(
-    param: ParamMetadata, pieces: Mapping[str, str], today: date, chosen: Mapping[str, str]
+    param: PublishedParam, pieces: Mapping[str, str], today: date, chosen: Mapping[str, str]
 ) -> dict[str, Any] | None:
     said = pieces.get(param.filled_by or "", "").strip() if param.filled_by else ""
     if not said:
@@ -113,7 +113,7 @@ def _value(
     raise CannotFill(f"{param.name} is a {param.type.value}")
 
 
-def _allowed_value(param: ParamMetadata, said: str) -> str:
+def _allowed_value(param: PublishedParam, said: str) -> str:
     """The allowed value the user's word is, or nothing: guessing here changes what happens."""
     wanted = said.strip().lower().replace(" ", "_").replace("-", "_")
     for allowed in param.allowed:
@@ -130,7 +130,7 @@ def _date(said: str, today: date) -> str:
     raise CannotFill(f"{said!r} is not a date this can work out")
 
 
-def _number(param: ParamMetadata, said: str) -> float | int:
+def _number(param: PublishedParam, said: str) -> float | int:
     if not _NUMBER.match(said.strip()):
         raise CannotFill(f"{said!r} is not a number")
     plain = said.strip().replace(",", "")

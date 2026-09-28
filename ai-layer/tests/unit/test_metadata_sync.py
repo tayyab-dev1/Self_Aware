@@ -11,9 +11,9 @@ from app.embeddings.client import UnexpectedEmbeddingModelError
 from app.gateway.errors import GatewayUnavailableError
 from app.gateway.models import (
     AgentMetadataResponse,
-    CapabilityMetadata,
     CapabilityVersion,
     CapabilityVersionsResponse,
+    PublishedCapability,
 )
 from app.index.database import CapabilityRow, IndexedVersion
 from app.sync.metadata_sync import EMBEDDING_MODEL, MetadataSync
@@ -22,7 +22,7 @@ SNAPSHOT = load_snapshot()
 
 
 class FakeBackend:
-    def __init__(self, capabilities: Sequence[CapabilityMetadata]) -> None:
+    def __init__(self, capabilities: Sequence[PublishedCapability]) -> None:
         self.capabilities = list(capabilities)
         self.metadata_calls = 0
         self.down = False

@@ -9,14 +9,6 @@ from typing import Any
 from pydantic import AwareDatetime, BaseModel, ConfigDict
 
 
-class BlastRadius(StrEnum):
-    none = "none"
-    single = "single"
-    group = "group"
-    branch = "branch"
-    organisation = "organisation"
-
-
 class CapabilityVersion(BaseModel):
     model_config = ConfigDict(
         extra="forbid",
@@ -30,18 +22,6 @@ class CapabilityVersionsResponse(BaseModel):
         extra="forbid",
     )
     versions: list[CapabilityVersion]
-
-
-class EffectMetadata(BaseModel):
-    model_config = ConfigDict(
-        extra="forbid",
-    )
-    confirmation_template: str | None = None
-    creates: str | None = None
-    facts: list[str]
-    notifies: str | None = None
-    pending_template: str | None = None
-    reply_template: str
 
 
 class EntityCandidate(BaseModel):
@@ -98,13 +78,27 @@ class PlanStep(BaseModel):
     step: int
 
 
-class PreconditionMetadata(BaseModel):
+class PublishedEffect(BaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
-    hint: str
-    id: str
-    text: str
+    facts: list[str]
+
+
+class PublishedParam(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    allowed: list[str]
+    default_value: str | None = None
+    filled_by: str | None = None
+    lookup: str | None = None
+    lookup_fields: list[LookupField] | None = None
+    meaning: str
+    name: str
+    required: bool
+    resolver: str | None = None
+    type: ParamType
 
 
 class ResolvedEntity(BaseModel):
@@ -159,24 +153,6 @@ class ExecutedStep(BaseModel):
     step: int
 
 
-class ParamMetadata(BaseModel):
-    model_config = ConfigDict(
-        extra="forbid",
-    )
-    allowed: list[str]
-    default_value: str | None = None
-    filled_by: str | None = None
-    label: str | None = None
-    lookup: str | None = None
-    lookup_fields: list[LookupField] | None = None
-    meaning: str
-    multiple: bool
-    name: str
-    required: bool
-    resolver: str | None = None
-    type: ParamType
-
-
 class Plan(BaseModel):
     model_config = ConfigDict(
         extra="forbid",
@@ -206,21 +182,25 @@ class PreflightStepResult(BaseModel):
     unit: str | None = None
 
 
-class CapabilityMetadata(BaseModel):
+class PublishedCapability(BaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
-    blast_radius: BlastRadius
     description: str
     disambiguate_from: list[str]
-    effect: EffectMetadata
+    effect: PublishedEffect
     id: str
     module: str
-    params: list[ParamMetadata]
-    preconditions: list[PreconditionMetadata]
+    params: list[PublishedParam]
     read_only: bool
-    reverses: str | None = None
     version: str
+
+
+class AgentMetadataResponse(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    capabilities: list[PublishedCapability]
 
 
 class ExecuteRequest(BaseModel):
@@ -252,10 +232,3 @@ class PreflightResponse(BaseModel):
     steps: list[PreflightStepResult]
     token: str
     warnings: list[str]
-
-
-class AgentMetadataResponse(BaseModel):
-    model_config = ConfigDict(
-        extra="forbid",
-    )
-    capabilities: list[CapabilityMetadata]

@@ -27,11 +27,11 @@ import structlog
 from app.core import trace
 from app.gateway.errors import GatewayError, GatewayRejectedError, GatewayUnavailableError
 from app.gateway.models import (
-    CapabilityMetadata,
     ExecuteResponse,
     ParamValue,
     Plan,
     PreflightResponse,
+    PublishedCapability,
     SessionCapabilitiesResponse,
     StepStatus,
 )
@@ -86,7 +86,7 @@ class ChatOrchestrator:
         *,
         gateway: ChatGateway,
         planner: Understander,
-        catalog: Callable[[], Mapping[str, CapabilityMetadata]],
+        catalog: Callable[[], Mapping[str, PublishedCapability]],
         sessions: SessionStore,
         plan_cache: PlanCache,
         today: Callable[[], date],
@@ -284,7 +284,7 @@ class _Turn:
 
     # --- questions and answers --------------------------------------------------------------
 
-    def param(self, step_number: int, name: str) -> CapabilityMetadata | None:
+    def param(self, step_number: int, name: str) -> PublishedCapability | None:
         step = self.plan.steps[step_number - 1]
         return self.o._catalog().get(step.capability_id)
 

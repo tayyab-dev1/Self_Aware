@@ -11,7 +11,7 @@ from collections.abc import Sequence
 from datetime import date, timedelta
 from decimal import Decimal, InvalidOperation
 
-from app.gateway.models import EntityCandidate, ParamMetadata, ParamType
+from app.gateway.models import EntityCandidate, ParamType, PublishedParam
 from app.validation.problems import normalise
 
 YES = frozenset(
@@ -51,7 +51,7 @@ def choose(text: str, options: Sequence[EntityCandidate]) -> str | None:
     return partial[0] if len(partial) == 1 else None
 
 
-def read_value(param: ParamMetadata, text: str, today: date) -> str | int | bool | None:
+def read_value(param: PublishedParam, text: str, today: date) -> str | int | bool | None:
     """The answer as a value of the parameter's type, or None when it cannot be read as one."""
     plain = _plain(text)
     if param.type in (ParamType.decimal, ParamType.integer):

@@ -14,7 +14,7 @@ from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass, field
 from typing import Any
 
-from app.gateway.models import CapabilityMetadata, ParamType
+from app.gateway.models import ParamType, PublishedCapability
 from app.validation.plan_validator import validate_plan
 from app.validation.problems import InvalidModelOutputError
 from eval.measure.pipeline import MAX_STEPS, CaseResult
@@ -30,7 +30,7 @@ class Broken:
     candidates: Sequence[str] | None = None
 
 
-FaultFn = Callable[[Answer, Mapping[str, CapabilityMetadata]], Broken | None]
+FaultFn = Callable[[Answer, Mapping[str, PublishedCapability]], Broken | None]
 
 
 def _first_step(answer: Answer) -> dict[str, Any]:
@@ -40,7 +40,7 @@ def _first_step(answer: Answer) -> dict[str, Any]:
 
 def _param_where(
     answer: Answer,
-    catalog: Mapping[str, CapabilityMetadata],
+    catalog: Mapping[str, PublishedCapability],
     wanted: Callable[[Any, dict[str, Any]], bool],
 ) -> dict[str, Any] | None:
     step = _first_step(answer)
@@ -55,28 +55,28 @@ def _param_where(
     )
 
 
-def hallucinated_capability(answer: Answer, _: Mapping[str, CapabilityMetadata]) -> Broken:
+def hallucinated_capability(answer: Answer, _: Mapping[str, PublishedCapability]) -> Broken:
     _first_step(answer)["capability_id"] = "fee.defaulters.expel"
     return Broken(answer, "UNKNOWN_CAPABILITY")
 
 
-def capability_not_allowed(answer: Answer, catalog: Mapping[str, CapabilityMetadata]) -> Broken:
+def capability_not_allowed(answer: Answer, catalog: Mapping[str, PublishedCapability]) -> Broken:
     chosen = _first_step(answer)["capability_id"]
     return Broken(answer, "NOT_ALLOWED", allowed=[c for c in catalog if c != chosen])
 
 
-def not_a_candidate(answer: Answer, catalog: Mapping[str, CapabilityMetadata]) -> Broken:
+def not_a_candidate(answer: Answer, catalog: Mapping[str, PublishedCapability]) -> Broken:
     chosen = _first_step(answer)["capability_id"]
     return Broken(answer, "NOT_A_CANDIDATE", candidates=[c for c in catalog if c != chosen])
 
 
-def invented_parameter(answer: Answer, _: Mapping[str, CapabilityMetadata]) -> Broken:
+def invented_parameter(answer: Answer, _: Mapping[str, PublishedCapability]) -> Broken:
     _first_step(answer)["params"].append({"name": "priority", "value": "urgent"})
     return Broken(answer, "INVENTED_PARAMETER")
 
 
 def missing_required_parameter(
-    answer: Answer, catalog: Mapping[str, CapabilityMetadata]
+    answer: Answer, catalog: Mapping[str, PublishedCapability]
 ) -> Broken | None:
     given = _param_where(answer, catalog, lambda p, _: p.required and p.default_value is None)
     if given is None:
@@ -85,7 +85,7 @@ def missing_required_parameter(
     return Broken(answer, "MISSING_PARAMETER")
 
 
-def wrong_type(answer: Answer, catalog: Mapping[str, CapabilityMetadata]) -> Broken | None:
+def wrong_type(answer: Answer, catalog: Mapping[str, PublishedCapability]) -> Broken | None:
     given = _param_where(answer, catalog, lambda p, g: p.type is ParamType.string and "value" in g)
     if given is None:
         return None
@@ -94,7 +94,7 @@ def wrong_type(answer: Answer, catalog: Mapping[str, CapabilityMetadata]) -> Bro
 
 
 def words_not_from_the_user(
-    answer: Answer, catalog: Mapping[str, CapabilityMetadata]
+    answer: Answer, catalog: Mapping[str, PublishedCapability]
 ) -> Broken | None:
     given = _param_where(
         answer, catalog, lambda p, g: p.resolver is not None and ("words" in g or "lookup" in g)
@@ -111,7 +111,7 @@ def words_not_from_the_user(
 
 
 def amount_not_from_the_user(
-    answer: Answer, catalog: Mapping[str, CapabilityMetadata]
+    answer: Answer, catalog: Mapping[str, PublishedCapability]
 ) -> Broken | None:
     given = _param_where(answer, catalog, lambda p, g: p.type is ParamType.decimal and "value" in g)
     if given is None:
@@ -121,7 +121,7 @@ def amount_not_from_the_user(
 
 
 def value_outside_allowed(
-    answer: Answer, catalog: Mapping[str, CapabilityMetadata]
+    answer: Answer, catalog: Mapping[str, PublishedCapability]
 ) -> Broken | None:
     given = _param_where(answer, catalog, lambda p, g: bool(p.allowed) and "value" in g)
     if given is None:
@@ -131,7 +131,7 @@ def value_outside_allowed(
 
 
 def forward_step_reference(
-    answer: Answer, catalog: Mapping[str, CapabilityMetadata]
+    answer: Answer, catalog: Mapping[str, PublishedCapability]
 ) -> Broken | None:
     given = _param_where(answer, catalog, lambda _, g: bool({"value", "words", "lookup"} & set(g)))
     if given is None:
@@ -142,17 +142,17 @@ def forward_step_reference(
     return Broken(answer, "BAD_STEP_REFERENCE")
 
 
-def too_many_steps(answer: Answer, _: Mapping[str, CapabilityMetadata]) -> Broken:
+def too_many_steps(answer: Answer, _: Mapping[str, PublishedCapability]) -> Broken:
     answer["steps"] = [copy.deepcopy(_first_step(answer)) for _ in range(MAX_STEPS + 1)]
     return Broken(answer, "TOO_MANY_STEPS")
 
 
-def unexpected_field(answer: Answer, _: Mapping[str, CapabilityMetadata]) -> Broken:
+def unexpected_field(answer: Answer, _: Mapping[str, PublishedCapability]) -> Broken:
     answer["confidence"] = 0.97
     return Broken(answer, "SCHEMA")
 
 
-def contradictory_outcome(answer: Answer, _: Mapping[str, CapabilityMetadata]) -> Broken:
+def contradictory_outcome(answer: Answer, _: Mapping[str, PublishedCapability]) -> Broken:
     answer["refusal"] = "no_matching_capability"
     return Broken(answer, "INCONSISTENT_OUTCOME")
 
@@ -183,7 +183,7 @@ class FaultTally:
 
 
 def inject_faults(
-    results: Sequence[CaseResult], catalog: Mapping[str, CapabilityMetadata]
+    results: Sequence[CaseResult], catalog: Mapping[str, PublishedCapability]
 ) -> dict[str, dict[str, FaultTally]]:
     """Per language ("all", "en", "ur-Latn"), per fault: how many were applied and caught."""
     tallies: dict[str, dict[str, FaultTally]] = {}

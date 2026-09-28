@@ -13,10 +13,10 @@ from app.capabilities.similarity import (
     pairwise_similarities,
 )
 from app.capabilities.snapshot import load_snapshot
-from app.gateway.models import CapabilityMetadata
+from app.gateway.models import PublishedCapability
 
 
-def capability(capability_id: str, siblings: Sequence[str] = ()) -> CapabilityMetadata:
+def capability(capability_id: str, siblings: Sequence[str] = ()) -> PublishedCapability:
     template = load_snapshot().capabilities[0]
     return template.model_copy(
         update={

@@ -25,7 +25,7 @@ from app.decompose.decomposer import Decomposition, Intent
 from app.filling.pieces import vocabulary
 from app.filling.service import PieceFiller
 from app.filling.values import ValueChooser
-from app.gateway.models import CapabilityMetadata
+from app.gateway.models import PublishedCapability
 from app.llm.runner import ModelError, StructuredModel
 from app.planning.outcomes import NeedsInput, PlannedSteps, Refusal
 from app.planning.planner import Planner
@@ -116,7 +116,7 @@ class CaseResult:
 class Pipeline:
     retriever: HybridRetriever
     index_ids: Sequence[str]
-    catalog: Mapping[str, CapabilityMetadata]
+    catalog: Mapping[str, PublishedCapability]
     decompose_recordings: Recordings
     plan_recordings: Recordings
     model: StructuredModel | None

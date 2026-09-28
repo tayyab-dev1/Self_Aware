@@ -22,8 +22,8 @@ import structlog
 from app.embeddings.client import EXPECTED_MODEL_ID, EXPECTED_MODEL_REVISION
 from app.gateway.models import (
     AgentMetadataResponse,
-    CapabilityMetadata,
     CapabilityVersionsResponse,
+    PublishedCapability,
 )
 from app.index.database import CapabilityRow, IndexedVersion
 
@@ -74,7 +74,7 @@ class SyncStatus:
     last_success_at: datetime | None = None
     last_error: str | None = None
     indexed: int = 0
-    catalog: Mapping[str, CapabilityMetadata] = field(default_factory=dict)
+    catalog: Mapping[str, PublishedCapability] = field(default_factory=dict)
 
 
 class MetadataSync:
@@ -94,7 +94,7 @@ class MetadataSync:
         self.status = SyncStatus()
 
     @property
-    def catalog(self) -> Mapping[str, CapabilityMetadata]:
+    def catalog(self) -> Mapping[str, PublishedCapability]:
         """The full metadata of every capability the index holds, as of the last sync."""
         return self.status.catalog
 
@@ -143,7 +143,7 @@ class MetadataSync:
         }
 
         catalog = {k: v for k, v in self.catalog.items() if k in versions}
-        entries: list[CapabilityMetadata] = []
+        entries: list[PublishedCapability] = []
         if stale or catalog_versions != versions:
             metadata = await self._source.get_metadata()
             catalog = {capability.id: capability for capability in metadata.capabilities}

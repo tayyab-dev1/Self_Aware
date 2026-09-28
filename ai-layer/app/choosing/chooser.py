@@ -23,7 +23,7 @@ from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
 from app.choosing.jev import DecisionModel, DecisionRequest
 from app.core import trace
-from app.gateway.models import CapabilityMetadata
+from app.gateway.models import PublishedCapability
 from app.llm.runner import ModelOutputError
 
 # Pinned, never "jev-latest": a silent model update would change behaviour with no deploy.
@@ -65,7 +65,7 @@ MAX_KEPT = 3
 MIN_KEPT = 0.05
 
 
-def option(capability: CapabilityMetadata) -> dict[str, Any]:
+def option(capability: PublishedCapability) -> dict[str, Any]:
     """How one candidate is described to Jev."""
     needs: dict[str, str] = {}
     for param in capability.params:
@@ -160,7 +160,7 @@ def question_id(number: int) -> str:
 
 def decision_request(
     intents: Sequence[str],
-    candidates: Sequence[CapabilityMetadata],
+    candidates: Sequence[PublishedCapability],
     message: str | None = None,
 ) -> DecisionRequest:
     """``message`` is given when the intents are a plain translation, which can be wrong."""
@@ -220,7 +220,7 @@ class CapabilityChooser:
     async def choose(
         self,
         intents: Sequence[str],
-        candidates: Sequence[CapabilityMetadata],
+        candidates: Sequence[PublishedCapability],
         message: str | None = None,
     ) -> Choice:
         """Raises ``ModelError`` when the call fails or its answer breaks a rule."""

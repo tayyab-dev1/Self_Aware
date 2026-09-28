@@ -16,7 +16,7 @@ from typing import Any
 
 from app.core import trace
 from app.decompose.decomposer import Decomposition
-from app.gateway.models import CapabilityMetadata
+from app.gateway.models import PublishedCapability
 from app.llm.runner import PLANNER_MODEL, ModelRequest, StructuredModel, Thinking
 from app.planning.outcomes import SCHEMA, NeedsInput, PlannedSteps, PlanOutcome
 from app.validation.plan_validator import validate_plan
@@ -28,7 +28,7 @@ SYSTEM = (Path(__file__).parent / "system_prompt.md").read_text().strip()
 THINKING: Thinking = True
 
 
-def candidate_entry(capability: CapabilityMetadata) -> dict[str, Any]:
+def candidate_entry(capability: PublishedCapability) -> dict[str, Any]:
     """What the planner needs to know about one candidate, and nothing it could misuse."""
     parameters = []
     for param in capability.params:
@@ -68,7 +68,7 @@ def candidate_entry(capability: CapabilityMetadata) -> dict[str, Any]:
 def planner_prompt(
     sentence: str,
     decomposition: Decomposition,
-    candidates: Sequence[CapabilityMetadata],
+    candidates: Sequence[PublishedCapability],
     today: date,
     time_zone: str,
 ) -> str:
@@ -107,10 +107,10 @@ class Planner:
         self,
         sentence: str,
         decomposition: Decomposition,
-        candidates: Sequence[CapabilityMetadata],
+        candidates: Sequence[PublishedCapability],
         *,
         allowed: Collection[str],
-        catalog: dict[str, CapabilityMetadata],
+        catalog: dict[str, PublishedCapability],
         session_id: str,
     ) -> PlanOutcome:
         request = ModelRequest(

@@ -19,9 +19,9 @@ from dataclasses import dataclass
 from app.capabilities.snapshot import load_snapshot
 from app.gateway.models import (
     AgentMetadataResponse,
-    CapabilityMetadata,
     CapabilityVersion,
     CapabilityVersionsResponse,
+    PublishedCapability,
 )
 from app.index.database import CapabilityRow, IndexDatabase
 from app.retrieval.hybrid import HybridRetriever
@@ -133,5 +133,5 @@ async def retrieve_for(
     )
 
 
-def sibling_map(capabilities: Sequence[CapabilityMetadata]) -> dict[str, tuple[str, ...]]:
+def sibling_map(capabilities: Sequence[PublishedCapability]) -> dict[str, tuple[str, ...]]:
     return {capability.id: tuple(capability.disambiguate_from) for capability in capabilities}

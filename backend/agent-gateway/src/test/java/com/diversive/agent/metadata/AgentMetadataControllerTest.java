@@ -46,27 +46,41 @@ class AgentMetadataControllerTest {
     private CapabilityRegistry registry;
 
     @Test
-    void servesEveryCapabilityWithFullDetailInSnakeCase() throws Exception {
+    void servesWhatTheAiLayerReadsInSnakeCase() throws Exception {
         mockMvc.perform(get("/agent/metadata"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.capabilities[*].id", contains("notes.folder.share", "notes.note.archive", "notes.note.find")))
                 .andExpect(jsonPath("$.capabilities[0].version", matchesPattern("[0-9a-f]{64}")))
+                .andExpect(jsonPath("$.capabilities[0].module").value("notes"))
                 .andExpect(jsonPath("$.capabilities[0].read_only").value(false))
-                .andExpect(jsonPath("$.capabilities[0].blast_radius").value("group"))
+                .andExpect(jsonPath("$.capabilities[0].description").exists())
                 .andExpect(jsonPath("$.capabilities[0].disambiguate_from", contains("notes.note.archive")))
                 .andExpect(jsonPath("$.capabilities[0].params", hasSize(3)))
                 .andExpect(jsonPath("$.capabilities[0].params[0].name").value("folder_id"))
                 .andExpect(jsonPath("$.capabilities[0].params[0].type").value("integer"))
+                .andExpect(jsonPath("$.capabilities[0].params[0].required").value(true))
                 .andExpect(jsonPath("$.capabilities[0].params[0].resolver").value("folder"))
                 .andExpect(jsonPath("$.capabilities[0].params[1].allowed", contains("email", "sms")))
                 .andExpect(jsonPath("$.capabilities[0].params[1].default_value").value("email"))
-                .andExpect(jsonPath("$.capabilities[0].preconditions[0].hint").value("There is nothing in this folder to share"))
-                .andExpect(jsonPath("$.capabilities[0].effect.confirmation_template")
-                        .value("Share {count} notes in {folder_name} by {channel}."))
-                .andExpect(jsonPath("$.capabilities[0].effect.facts", contains("shared_bytes")))
-                .andExpect(jsonPath("$.capabilities[0].reverses").doesNotExist())
-                .andExpect(jsonPath("$.capabilities[1].reverses").value("notes.note.restore"))
-                .andExpect(jsonPath("$.capabilities[2].effect.confirmation_template").doesNotExist());
+                .andExpect(jsonPath("$.capabilities[0].effect.facts", contains("shared_bytes")));
+    }
+
+    @Test
+    void publishesNothingOnlyThisSideUses() throws Exception {
+        // The AI layer reads none of these, so it is never sent them; the version still covers
+        // them, so a change it cannot see still invalidates its plans and its index row.
+        mockMvc.perform(get("/agent/metadata"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.capabilities[0].blast_radius").doesNotExist())
+                .andExpect(jsonPath("$.capabilities[0].preconditions").doesNotExist())
+                .andExpect(jsonPath("$.capabilities[1].reverses").doesNotExist())
+                .andExpect(jsonPath("$.capabilities[0].effect.confirmation_template").doesNotExist())
+                .andExpect(jsonPath("$.capabilities[0].effect.pending_template").doesNotExist())
+                .andExpect(jsonPath("$.capabilities[0].effect.reply_template").doesNotExist())
+                .andExpect(jsonPath("$.capabilities[0].effect.creates").doesNotExist())
+                .andExpect(jsonPath("$.capabilities[0].effect.notifies").doesNotExist())
+                .andExpect(jsonPath("$.capabilities[0].params[0].multiple").doesNotExist())
+                .andExpect(jsonPath("$.capabilities[0].params[0].label").doesNotExist());
     }
 
     @Test

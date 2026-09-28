@@ -5,7 +5,7 @@ from datetime import date
 import pytest
 
 from app.capabilities.snapshot import load_snapshot
-from app.gateway.models import EntityCandidate, ParamMetadata
+from app.gateway.models import EntityCandidate, PublishedParam
 from app.orchestration.answers import choose, is_no, is_yes, read_value
 from app.orchestration.plan_cache import PlanCache, plan_cache_key
 from app.planning.outcomes import Refusal, RefusalReason
@@ -14,7 +14,7 @@ CATALOG = {capability.id: capability for capability in load_snapshot().capabilit
 TODAY = date(2026, 9, 14)
 
 
-def param(capability_id: str, name: str) -> ParamMetadata:
+def param(capability_id: str, name: str) -> PublishedParam:
     return next(p for p in CATALOG[capability_id].params if p.name == name)
 
 

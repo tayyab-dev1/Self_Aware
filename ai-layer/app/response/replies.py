@@ -15,8 +15,8 @@ from app.gateway.models import (
     EntityCandidate,
     ExecuteOutcome,
     ExecuteResponse,
-    ParamMetadata,
     ParamType,
+    PublishedParam,
     StepStatus,
 )
 from app.planning.outcomes import RefusalReason
@@ -111,7 +111,7 @@ def not_found(
     )
 
 
-def missing_value(param: ParamMetadata, *, plan_id: str, again: bool = False) -> ChatReply:
+def missing_value(param: PublishedParam, *, plan_id: str, again: bool = False) -> ChatReply:
     lead = "I couldn't read that. " if again else "I need one more detail. "
     choices = f" ({', '.join(value.replace('_', ' ') for value in param.allowed)})"
     hint = {
