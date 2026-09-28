@@ -20,6 +20,7 @@ import structlog
 from app.choosing.chooser import CapabilityChooser, Choice
 from app.core import trace
 from app.decompose.decomposer import Decomposition, IntentSource
+from app.filling.service import PieceFiller
 from app.gateway.models import CapabilityMetadata
 from app.llm.runner import ModelError, ModelUnavailableError
 from app.planning.outcomes import NeedsInput, PlannedSteps, PlanOutcome, Refusal, RefusalReason
@@ -52,12 +53,14 @@ class SentencePlanner:
         planner: Planner,
         catalog: Callable[[], Mapping[str, CapabilityMetadata]],
         chooser: CapabilityChooser | None = None,
+        filler: PieceFiller | None = None,
     ) -> None:
         self._decomposer = decomposer
         self._retriever = retriever
         self._planner = planner
         self._catalog = catalog
         self._chooser = chooser
+        self._filler = filler
 
     async def understand(
         self, sentence: str, *, allowed: Collection[str], session_id: str
@@ -75,7 +78,7 @@ class SentencePlanner:
             by_id = {c.id: c for c in candidates}
             candidates = [by_id[c] for c in choice.shortlist]
 
-        outcome: PlanOutcome
+        outcome: PlanOutcome | None
         if not candidates and choice is not None:
             outcome = Refusal(RefusalReason.NO_MATCHING_CAPABILITY)
             trace.note(
@@ -99,14 +102,27 @@ class SentencePlanner:
                 output={"outcome": "refusal", "reason": outcome.reason.value},
             )
         else:
-            outcome = await self._planner.plan(
-                sentence,
-                decomposition,
-                candidates,
-                allowed=allow_list,
-                catalog=catalog,
-                session_id=session_id,
-            )
+            outcome = None
+            if self._filler is not None and choice is not None:
+                # The pieces decompose read, put together by code; None means ask the planner.
+                outcome = await self._filler.plan(
+                    sentence,
+                    decomposition,
+                    choice,
+                    allowed=allow_list,
+                    catalog=catalog,
+                    candidates=[c.id for c in candidates],
+                    session_id=session_id,
+                )
+            if outcome is None:
+                outcome = await self._planner.plan(
+                    sentence,
+                    decomposition,
+                    candidates,
+                    allowed=allow_list,
+                    catalog=catalog,
+                    session_id=session_id,
+                )
         log.info(
             "sentence_planned",
             session_id=session_id,

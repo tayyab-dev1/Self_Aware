@@ -40,8 +40,8 @@ public class FeeCancellationController {
             disambiguateFrom = {"fee.credit.raise", "fee.writeoff.propose", "fee.latefee.waive"})
     @AgentNotImplemented
     @AgentParam(name = "invoice_id", meaning = "The invoice raised in error", resolver = "invoice", label = "invoice_label")
-    @AgentParam(name = "reason", meaning = "Why the charge should not have been raised, as the user stated it")
-    @AgentParam(name = "description", meaning = "What went wrong, in the user's own words, 20 to 500 characters")
+    @AgentParam(name = "reason", meaning = "Why the charge should not have been raised, as the user stated it", filledBy = "reason")
+    @AgentParam(name = "description", meaning = "What went wrong, in the user's own words, 20 to 500 characters", filledBy = "explanation")
     @AgentPrecondition(id = "invoice_has_no_payment",
             text = "No money may have been received against the invoice",
             hint = "Money has already been received against this invoice, so it cannot be cancelled")

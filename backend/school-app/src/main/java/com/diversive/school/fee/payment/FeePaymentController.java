@@ -37,12 +37,12 @@ public class FeePaymentController {
                     Not for fixing a payment that was recorded wrongly - use fee.payment.correction.raise.
                     """)
     @AgentParam(name = "invoice_id", meaning = "The invoice the money is for", resolver = "invoice", label = "invoice_label")
-    @AgentParam(name = "route", meaning = "How the money arrived")
+    @AgentParam(name = "route", meaning = "How the money arrived", filledBy = "payment_method")
     @AgentParam(name = "amount_received",
-            meaning = "Exactly the amount received, never rounded and never assumed to be the balance")
-    @AgentParam(name = "payment_date", meaning = "The day the money was received, not the day it is entered")
-    @AgentParam(name = "bank_stamp_date", meaning = "The date stamped on the bank's copy of a challan")
-    @AgentParam(name = "remarks", meaning = "A short note printed on the receipt")
+            meaning = "Exactly the amount received, never rounded and never assumed to be the balance", filledBy = "amount")
+    @AgentParam(name = "payment_date", meaning = "The day the money was received, not the day it is entered", filledBy = "date")
+    @AgentParam(name = "bank_stamp_date", meaning = "The date stamped on the bank's copy of a challan", filledBy = "bank_stamp_date")
+    @AgentParam(name = "remarks", meaning = "A short note printed on the receipt", filledBy = "note")
     @AgentPrecondition(id = "invoice_is_open",
             text = "The invoice must be issued and not yet fully paid",
             hint = "This invoice has nothing left to pay")

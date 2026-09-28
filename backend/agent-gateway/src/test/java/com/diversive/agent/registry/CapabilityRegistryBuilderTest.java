@@ -70,11 +70,11 @@ class CapabilityRegistryBuilderTest {
         assertThat(share.disambiguateFrom()).containsExactly("notes.note.archive");
         assertThat(share.params()).containsExactly(
                 new ParamMetadata("folder_id", ParamType.INTEGER, false, true, "The folder to share",
-                        "folder", "folder_name", null, List.of(), List.of(), null),
+                        "folder", "folder_name", null, List.of(), null, List.of(), null),
                 new ParamMetadata("channel", ParamType.STRING, false, true, "How members are told",
-                        null, null, null, List.of(), List.of("email", "sms"), "email"),
+                        null, null, null, List.of(), null, List.of("email", "sms"), "email"),
                 new ParamMetadata("cover_note", ParamType.STRING, false, false, "A short note sent with the share",
-                        null, null, null, List.of(), List.of(), null));
+                        null, null, null, List.of(), null, List.of(), null));
         assertThat(share.preconditions()).containsExactly(new PreconditionMetadata(
                 "folder_not_empty", "The folder must contain a note", "There is nothing in this folder to share"));
         assertThat(share.effect()).isEqualTo(new EffectMetadata(

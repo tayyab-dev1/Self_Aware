@@ -9,6 +9,7 @@ the planner does, from the original sentence.
 from __future__ import annotations
 
 import re
+import types
 from collections.abc import Mapping
 from dataclasses import dataclass
 from pathlib import Path
@@ -32,6 +33,8 @@ class IntentOutput(BaseModel):
 
     text: str = Field(min_length=3, max_length=200)
     entities: list[str] = Field(max_length=6)
+    # What the user said, in pieces, when the caller asked for them (README decision 79).
+    fields: dict[str, str] | None = Field(default=None, max_length=20)
 
 
 class DecomposeOutput(BaseModel):
@@ -55,6 +58,7 @@ SCHEMA: dict[str, Any] = {
                 "required": ["text", "entities"],
                 "properties": {
                     "text": {"type": "string", "minLength": 3, "maxLength": 200},
+                    "fields": {"type": "object", "additionalProperties": {"type": "string"}},
                     "entities": {
                         "type": "array",
                         "maxItems": 6,
@@ -67,6 +71,7 @@ SCHEMA: dict[str, Any] = {
 }
 
 SYSTEM = (Path(__file__).parent / "system_prompt.md").read_text().strip()
+PIECES = (Path(__file__).parent / "pieces_prompt.md").read_text().strip()
 
 # Common Urdu function words that never appear in plain English instructions. An intent carrying
 # one outside a quoted name was not translated. Words that are also English ("do", "par") are left
@@ -125,6 +130,9 @@ _WORD = re.compile(r"[a-z]+")
 class Intent:
     text: str
     entities: tuple[str, ...]
+    # What the user said in pieces ({"student_name": "Hassan Ali", "amount": "2000"}), empty when
+    # the caller did not ask for them (README decision 79).
+    fields: Mapping[str, str] = types.MappingProxyType({})
 
 
 @dataclass(frozen=True, slots=True)
@@ -142,14 +150,16 @@ class IntentSource(Protocol):
     async def decompose(self, sentence: str) -> Decomposition: ...
 
 
-def system_prompt(glossary: str) -> str:
-    return SYSTEM.format(max_intents=MAX_INTENTS, glossary=glossary)
+def system_prompt(glossary: str, pieces: str = "") -> str:
+    """The instructions, with the pieces section when the caller wants the user's words split up."""
+    prompt = SYSTEM.format(max_intents=MAX_INTENTS, glossary=glossary)
+    return f"{prompt}\n\n{PIECES.format(pieces=pieces)}" if pieces else prompt
 
 
 class Decomposer:
-    def __init__(self, model: StructuredModel, glossary: str) -> None:
+    def __init__(self, model: StructuredModel, glossary: str, pieces: str = "") -> None:
         self._model = model
-        self._system = system_prompt(glossary)
+        self._system = system_prompt(glossary, pieces)
 
     async def decompose(self, sentence: str) -> Decomposition:
         request = ModelRequest(
@@ -216,5 +226,8 @@ def check_decomposition(sentence: str, output: Mapping[str, Any]) -> Decompositi
     if problems:
         raise InvalidModelOutputError(PURPOSE, problems)
     return Decomposition(
-        tuple(Intent(intent.text.strip(), tuple(intent.entities)) for intent in parsed.intents)
+        tuple(
+            Intent(intent.text.strip(), tuple(intent.entities), intent.fields or {})
+            for intent in parsed.intents
+        )
     )

@@ -66,6 +66,11 @@ class Settings(BaseSettings):
     # Groq's API: only for comparing other models with Gemini (eval scripts). Chat never uses it.
     groq_api_key: SecretStr = SecretStr("")
 
+    # Where a plan's parameters come from: "planner" asks the model a second time, "pieces" builds
+    # the plan from what decompose read the message into, asking the planner only for what it
+    # cannot fill (README decision 79). "pieces" needs the chooser on.
+    params_from: Literal["planner", "pieces"] = "planner"
+
     # The capability chooser (on by default, decision 75): TypeSafe's Jev picks which candidates the
     # planner sees. Without a key it stays off even when enabled, and chat plans as before.
     chooser_enabled: bool = True

@@ -41,9 +41,9 @@ public class FeeCreditController {
     @AgentParam(name = "invoice_id", meaning = "The paid invoice that carried the wrong charge",
             resolver = "invoice", label = "invoice_label")
     @AgentParam(name = "amount",
-            meaning = "How much to credit, all of what was paid or part of it, exactly as the user stated")
-    @AgentParam(name = "reason", meaning = "Why the charge was wrong, as the user stated it")
-    @AgentParam(name = "description", meaning = "What went wrong, in the user's own words, 20 to 500 characters")
+            meaning = "How much to credit, all of what was paid or part of it, exactly as the user stated", filledBy = "amount")
+    @AgentParam(name = "reason", meaning = "Why the charge was wrong, as the user stated it", filledBy = "reason")
+    @AgentParam(name = "description", meaning = "What went wrong, in the user's own words, 20 to 500 characters", filledBy = "explanation")
     @AgentPrecondition(id = "invoice_has_payment",
             text = "Money must have been received against the invoice",
             hint = "Nothing has been paid against this invoice yet, so there is nothing to credit")

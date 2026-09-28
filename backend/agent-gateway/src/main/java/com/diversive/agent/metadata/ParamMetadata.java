@@ -18,6 +18,8 @@ import java.util.List;
  *                     absent for literals, and for a resolver that says nothing
  * @param lookupFields the labelled parts the resolver searches by (its {@code EntityResolver#fields()}),
  *                     which the plan fills one by one; empty for literals and for a resolver with none
+ * @param filledBy     the piece of what a user says that fills this parameter (its
+ *                     {@code @AgentParam(filledBy)}); absent when nothing they say fills it directly
  * @param allowed      the only accepted values; empty when any value of the type is accepted
  * @param defaultValue what the planner uses when the user does not say; absent when none
  */
@@ -33,6 +35,7 @@ public record ParamMetadata(
         String label,
         String lookup,
         @JsonInclude(JsonInclude.Include.NON_EMPTY) List<LookupField> lookupFields,
+        String filledBy,
         @NotNull List<String> allowed,
         String defaultValue) {
 
@@ -43,7 +46,7 @@ public record ParamMetadata(
 
     public ParamMetadata withLookup(String newLookup, List<LookupField> newFields) {
         return new ParamMetadata(name, type, multiple, required, meaning, resolver, label, newLookup, newFields,
-                allowed, defaultValue);
+                filledBy, allowed, defaultValue);
     }
 
     /** The part by that name, or null when this parameter's resolver does not declare it. */

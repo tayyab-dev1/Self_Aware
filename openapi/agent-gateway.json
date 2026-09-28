@@ -260,6 +260,9 @@
           "default_value" : {
             "type" : "string"
           },
+          "filled_by" : {
+            "type" : "string"
+          },
           "label" : {
             "type" : "string"
           },

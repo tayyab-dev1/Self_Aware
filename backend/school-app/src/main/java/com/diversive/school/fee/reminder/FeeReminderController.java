@@ -37,7 +37,7 @@ public class FeeReminderController {
             disambiguateFrom = {"fee.overdue.list"})
     @AgentParam(name = "section_id", meaning = "The section whose families with overdue fees are reminded, e.g. Class 5 Blue",
             resolver = "section", label = "section_name")
-    @AgentParam(name = "channel", meaning = "How the reminder is delivered", defaultValue = "whatsapp")
+    @AgentParam(name = "channel", meaning = "How the reminder is delivered", defaultValue = "whatsapp", filledBy = "message_channel")
     @AgentPrecondition(id = "section_has_defaulters",
             text = "The section must have at least one unpaid invoice past its due date",
             hint = "Nobody in this section has overdue fees right now")

@@ -68,7 +68,8 @@ async def ready(response: Response, resources: Resources) -> ReadinessResponse:
         checks["chat"] = CheckResult(
             ok=True,
             detail=f"a Gemini API key is set; POST /chat is on; the chooser (Jev) is {chooser}; "
-            f"the search query comes from {english}",
+            f"the search query comes from {english}; "
+            f"parameters come from {resources.params_from}",
         )
     elif resources.chat_problem is not None:
         checks["chat"] = CheckResult(

@@ -165,6 +165,7 @@ class ParamMetadata(BaseModel):
     )
     allowed: list[str]
     default_value: str | None = None
+    filled_by: str | None = None
     label: str | None = None
     lookup: str | None = None
     lookup_fields: list[LookupField] | None = None

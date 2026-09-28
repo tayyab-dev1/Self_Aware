@@ -40,10 +40,10 @@ public class FeeWriteoffController {
     @AgentNotImplemented
     @AgentParam(name = "invoice_id", meaning = "The invoice carrying the debt", resolver = "invoice", label = "invoice_label")
     @AgentParam(name = "amount",
-            meaning = "How much to write off, the outstanding balance or part of it, exactly as the user stated")
-    @AgentParam(name = "reason", meaning = "Why the debt cannot be collected, as the user stated it")
+            meaning = "How much to write off, the outstanding balance or part of it, exactly as the user stated", filledBy = "amount")
+    @AgentParam(name = "reason", meaning = "Why the debt cannot be collected, as the user stated it", filledBy = "reason")
     @AgentParam(name = "recovery_attempted",
-            meaning = "What was actually done to recover the money, in the user's own words, 20 to 1000 characters")
+            meaning = "What was actually done to recover the money, in the user's own words, 20 to 1000 characters", filledBy = "explanation")
     @AgentPrecondition(id = "invoice_has_outstanding_balance",
             text = "The invoice must have an outstanding balance",
             hint = "Nothing is outstanding on this invoice")

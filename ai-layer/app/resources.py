@@ -17,12 +17,16 @@ from typing import Protocol
 import httpx
 import structlog
 
+from app.capabilities.snapshot import load_snapshot
 from app.choosing.chooser import CapabilityChooser
 from app.choosing.jev import JevModel
 from app.core.settings import Settings
 from app.decompose.decomposer import Decomposer, IntentSource
 from app.decompose.translator import TranslatorDecomposer
 from app.embeddings.client import EmbeddingsClient
+from app.filling.pieces import pieces_prompt, vocabulary
+from app.filling.service import PieceFiller
+from app.filling.values import ValueChooser
 from app.gateway.client import GatewayClient
 from app.gateway.models import AgentMetadataResponse
 from app.index.database import IndexDatabase, IndexProbe
@@ -77,6 +81,8 @@ class AppResources:
     translator: Closeable | None = None
     # Why chat is off while sync is on (for example, no Gemini API key); readiness reports it.
     chat_problem: str | None = None
+    # "the planner" or "the pieces decompose read" (README decision 79); readiness reports it.
+    params_from: str = "the planner"
     # Cheap first calls to each outside service, run once in the background at startup, so the
     # first chat turn does not pay for a cold embedding model or new connections.
     warm_ups: Mapping[str, Callable[[], Awaitable[None]]] = field(default_factory=dict)
@@ -188,6 +194,9 @@ async def build_resources(
         chat=chat,
         model=model,
         chooser_model=chooser_model,
+        params_from="the pieces decompose read"
+        if settings.params_from == "pieces"
+        else "the planner",
         translator=translator,
         chat_problem=chat_problem,
         warm_ups=warm_ups,
@@ -221,7 +230,24 @@ def _build_chat(
     except ModelUnavailableError as exc:
         log.warning("chat_unavailable", reason=str(exc))
         return None, None, str(exc)
-    intents: IntentSource = translator or Decomposer(model, glossary_lines())
+    # The pieces a message is read into are the ones the published capabilities use. Read from the
+    # committed snapshot at startup, so a capability added later is picked up by the next deploy.
+    pieces = (
+        pieces_prompt(vocabulary(load_snapshot().capabilities))
+        if settings.params_from == "pieces"
+        else ""
+    )
+    intents: IntentSource = translator or Decomposer(model, glossary_lines(), pieces)
+    filler = (
+        PieceFiller(
+            ValueChooser(chooser_model) if chooser_model is not None else None,
+            today=school_today,
+            max_steps=settings.plan_max_steps,
+            record_words=RECORD_WORDS,
+        )
+        if pieces
+        else None
+    )
     planner = SentencePlanner(
         intents,
         retriever,
@@ -236,6 +262,7 @@ def _build_chat(
         CapabilityChooser(chooser_model, with_message=translator is not None)
         if chooser_model is not None
         else None,
+        filler,
     )
     chat = ChatOrchestrator(
         gateway=gateway,

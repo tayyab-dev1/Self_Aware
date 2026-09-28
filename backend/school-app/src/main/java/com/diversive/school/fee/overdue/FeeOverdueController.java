@@ -33,15 +33,15 @@ public class FeeOverdueController {
                     Not for chasing the families on the list - use fee.reminder.send.
                     """,
             disambiguateFrom = {"fee.reminder.send"})
-    @AgentParam(name = "scope", meaning = "What the list covers: the whole school, one class, one section or one student")
+    @AgentParam(name = "scope", meaning = "What the list covers: the whole school, one class, one section or one student", filledBy = "list_scope")
     @AgentParam(name = "class_id", meaning = "The class, when the list covers a whole class, e.g. Class 5",
             resolver = "class", label = "class_name")
     @AgentParam(name = "section_id", meaning = "The section, when the list covers one section, e.g. Class 5 Blue",
             resolver = "section", label = "section_name")
     @AgentParam(name = "student_id", meaning = "The student, when the list covers one student",
             resolver = "student", label = "student_name")
-    @AgentParam(name = "age_band", meaning = "Only debts overdue for this long, when the user narrows by age")
-    @AgentParam(name = "minimum_amount", meaning = "Hide debts below this amount, only when the user states one")
+    @AgentParam(name = "age_band", meaning = "Only debts overdue for this long, when the user narrows by age", filledBy = "overdue_age")
+    @AgentParam(name = "minimum_amount", meaning = "Hide debts below this amount, only when the user states one", filledBy = "amount_threshold")
     @AgentEffect(
             replyTemplate = "Overdue fees for {scope_name}: {students}, {total_outstanding} outstanding.",
             facts = {"scope_name", "students", "total_outstanding"})

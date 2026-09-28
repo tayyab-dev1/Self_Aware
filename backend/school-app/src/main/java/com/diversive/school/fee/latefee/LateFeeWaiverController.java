@@ -41,7 +41,7 @@ public class LateFeeWaiverController {
     @AgentParam(name = "late_fee_id",
             meaning = "The late fee to waive, found from the student, the invoice, or the amount and date",
             resolver = "late_fee", label = "late_fee_label")
-    @AgentParam(name = "waiver_reason", meaning = "Why the fine is waived, in the user's own words")
+    @AgentParam(name = "waiver_reason", meaning = "Why the fine is waived, in the user's own words", filledBy = "explanation")
     @AgentPrecondition(id = "late_fee_unpaid",
             text = "The late fee must not have been paid",
             hint = "This late fee has already been paid, so it cannot be waived")

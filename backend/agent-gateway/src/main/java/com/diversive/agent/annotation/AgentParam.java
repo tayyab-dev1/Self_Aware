@@ -43,4 +43,16 @@ public @interface AgentParam {
 
     /** Value the planner uses when the user does not say. Empty means no default. */
     String defaultValue() default "";
+
+    /**
+     * The piece of what a user says that fills this parameter, from the vocabulary the reader of
+     * a message knows nothing about capabilities: {@code amount}, {@code date},
+     * {@code payment_method}, {@code message_channel}, {@code explanation}, and so on.
+     *
+     * <p>It lets a message be read once, into pieces, and a plan be built from them without asking
+     * a model a second time (README decision 79). Two capabilities may take the same piece in
+     * different parameters: an amount is {@code amount_received} for a payment and {@code amount}
+     * for a credit. Empty when nothing a user says fills it directly.
+     */
+    String filledBy() default "";
 }
