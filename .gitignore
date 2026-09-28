@@ -21,3 +21,10 @@ __pycache__/
 
 # Retrieval eval: cached embeddings of the eval texts (rebuilt on demand)
 ai-layer/eval/.cache/
+
+# The stand-in school backend and the working notes: kept out of the repository.
+# school-backend.md describes what school-app is and how it is used; the published
+# contract it generates stays committed (openapi/, snapshots/), so the AI layer and
+# its evaluation still build and run without it.
+backend/school-app/
+docs/

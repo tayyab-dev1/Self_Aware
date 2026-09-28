@@ -23,8 +23,12 @@ BACKEND    backend/    Java 21 · Spring Boot 3.5 · port 8080
 Postgres 16 + pgvector   docker/        Embeddings: BGE-M3 service   docker/
 ```
 
+- **New here?** [architecture.md](architecture.md): how it all fits together, how to run it, and what
+  will bite you. Start there.
 - **The rules:** [docs/CLAUDE.md](docs/CLAUDE.md), the twelve invariants. Read it before changing anything.
 - **The plan:** [docs/POC_Implementation_Plan.md](docs/POC_Implementation_Plan.md), seven phases, one per session.
+- **The stand-in backend:** [school-backend.md](school-backend.md), what `backend/school-app` is and
+  how it is used.
 
 Everything else about this POC is in this file:
 
